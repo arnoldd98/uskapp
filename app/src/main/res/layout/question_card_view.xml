@@ -2,15 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/attached_image"
+    android:id="@+id/card_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/colorLightGrayPost">
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:id="@+id/profile_imageview"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,38 +22,53 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/gotham"
         android:text="Name"
         android:textColor="#000000"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/profile_imageview"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/post_timestamp"
-        android:layout_width="29dp"
-        android:layout_height="9dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
+        android:fontFamily="@font/nunitosans_regular"
         android:text="Time"
         android:textAlignment="viewStart"
-        android:textSize="8sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/profile_imageview"
         app:layout_constraintTop_toBottomOf="@+id/question_author_name" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/question_textview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
-        android:text="What are some recommended algorithm  to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
-        android:textSize="12sp"
+        android:fontFamily="@font/nunitosans_semibold"
+        android:text="What are some recommended algorithm to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
+        android:textColor="#000000"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/post_timestamp" />
+
+    <Toolbar
+        android:id="@+id/options_menu_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/question_card_dropdown_menu" />
 
     <LinearLayout
         android:id="@+id/tag_horizontal_linear_layout"
@@ -64,44 +79,47 @@
         android:orientation="horizontal"
         android:padding="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3">
+        app:layout_constraintTop_toBottomOf="@+id/question_textview">
 
         <Button
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/nunitosans_regular"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:padding="8dp"
-            android:text="Tag"
 
+            android:text="Tag"
             android:textAlignment="center"
-            android:textSize="6sp" />
+            android:textSize="8sp" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/nunitosans_regular"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:padding="8dp"
-            android:text="Tag"
 
+            android:text="Tag"
             android:textAlignment="center"
-            android:textSize="6sp" />
+            android:textSize="8sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="60dp"
-        android:layout_height="60"
+        android:id="@+id/image_horizontal_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
         android:orientation="horizontal"
-        tools:layout_editor_absoluteX="30dp"
-        tools:layout_editor_absoluteY="110dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout">
 
         <ImageView
             android:id="@+id/imageView3"
@@ -112,13 +130,32 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/ups_indicator_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/nunitosans_regular"
         android:text="25 ups"
-        android:textSize="8sp"
-        tools:layout_editor_absoluteX="47dp"
-        tools:layout_editor_absoluteY="178dp" />
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout" />
+
+    <TextView
+        android:id="@+id/comment_indicator__textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/nunitosans_regular"
+        android:text="10 comments"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ups_indicator_textview"
+        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
