@@ -13,6 +13,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toStartOf="@+id/question_author_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/circular" />
@@ -27,6 +28,7 @@
         android:text="Name"
         android:textColor="#000000"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/post_timestamp"
         app:layout_constraintStart_toEndOf="@+id/profile_imageview"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,6 +43,7 @@
         android:textAlignment="viewStart"
         android:textColor="@color/cardview_dark_background"
         android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/question_textview"
         app:layout_constraintStart_toEndOf="@+id/profile_imageview"
         app:layout_constraintTop_toBottomOf="@+id/question_author_name" />
 
@@ -54,7 +57,7 @@
         android:fontFamily="@font/nunitosans_semibold"
         android:text="What are some recommended algorithm to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
         android:textColor="#000000"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,43 +77,11 @@
         android:id="@+id/tag_horizontal_linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-
+        android:layout_marginStart="22dp"
         android:orientation="horizontal"
-        android:padding="0dp"
+        android:padding="5dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question_textview">
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunitosans_regular"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:padding="8dp"
-
-            android:text="Tag"
-            android:textAlignment="center"
-            android:textSize="8sp" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunitosans_regular"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:padding="8dp"
-
-            android:text="Tag"
-            android:textAlignment="center"
-            android:textSize="8sp" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/question_textview"></LinearLayout>
 
     <LinearLayout
         android:id="@+id/image_horizontal_linear_layout"
@@ -119,15 +90,7 @@
         android:layout_marginStart="30dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout">
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout" />
 
     <TextView
         android:id="@+id/ups_indicator_textview"

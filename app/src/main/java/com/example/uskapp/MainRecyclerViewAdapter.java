@@ -1,10 +1,12 @@
 package com.example.uskapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
+import android.graphics.Color;
+import android.os.Build;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +18,11 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -55,66 +59,87 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     }
 
     // set widget components according to post content
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @SuppressLint({"ResourceAsColor", "ResourceType"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuestionPost post = post_data.get(position);
 
-        ImageView profile_image_view = holder.profile_image_view;
-        TextView question_author_name = holder.question_author_name;
         if (post.toggle_anonymity){
-            profile_image_view.setImageResource(R.drawable.image);
-            question_author_name.setText("Anonymous");
+            holder.profile_image_view.setImageResource(R.drawable.image);
+            holder.question_author_name.setText("Anonymous");
         }
         else {
-            byte[] byte_array_pic = post.user.getProfilePic();
+            byte[] byte_array_pic = post.getUser().getProfilePic();
             if (byte_array_pic != null) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(byte_array_pic, 0, byte_array_pic.length);
-                profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, profile_image_view.getWidth(),
-                        profile_image_view.getHeight(), false));
+                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
+                        holder.profile_image_view.getHeight(), false));
             }
-            question_author_name.setText(post.user.getName());
+            holder.question_author_name.setText(post.getUser().getName());
         }
 
-        TextView post_timestamp = holder.post_timestamp;
-        if (post.timestamp != null) post_timestamp.setText(post.timestamp);
-        else post_timestamp.setText("Missing timestamp");
+        if (post.getTimestamp() != null) holder.post_timestamp.setText(post.getTimestamp());
+        else holder.post_timestamp.setText("Missing timestamp");
 
-        TextView question_textview = holder.question_textview;
-        question_textview.setText(post.text);
+        holder.question_textview.setText(post.getText());
 
-        LinearLayout tag_layout = holder.tag_layout;
-        if (post.tags_list != null) {
-            for (Tag tag : post.tags_list) {
-                Button button = new Button(holder.card_view_context);
-                button.setText(tag.tag_name);
+        if (post.getTagsList() != null) {
+            for (Tag tag : post.getTagsList()) {
+                // programmatically create button for each tag and add to horizontal linear layout
+                Context context = holder.tag_layout.getContext();
+                TextView clickable_tag = new TextView(context);
+                clickable_tag.setText(tag.tag_name);
+                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.rounded_rectangle));
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
+                        (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.setMargins(0, 0, 8, 8);
+                clickable_tag.setLayoutParams(lp);
+                clickable_tag.setTextSize(12);
+                clickable_tag.setTextColor(Color.parseColor("#707070"));
+                clickable_tag.setPadding(20, 6, 20, 6);
+                clickable_tag.setClickable(true);
+                TypedValue outValue = new TypedValue();
+                context.getTheme().resolveAttribute(
+                        android.R.attr.selectableItemBackground, outValue, true);
+                clickable_tag.setForeground(context.getDrawable(outValue.resourceId));
+
+
                 // add functionality to search for posts with selected tag when tag button is clicked
 
-                tag_layout.addView(button);
+                holder.tag_layout.addView(clickable_tag);
             }
         }
 
-        LinearLayout image_layout = holder.image_layout;
-        for (byte[] image : post.images) {
-            ImageView image_view = new ImageView(holder.card_view_context);
-            Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
-            image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, image_view.getWidth()
-                    , image_view.getHeight(), false));
+        if (!post.getImages().isEmpty()) {
+            for (byte[] image : post.getImages()) {
+                ImageView image_view = new ImageView(holder.card_view_context);
+                Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
+                image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, image_view.getWidth()
+                        , image_view.getHeight(), false));
+                image_view.setMaxHeight(holder.image_layout.getHeight());
 
-            image_layout.addView(image_view);
+                holder.image_layout.addView(image_view);
+            }
+        } else {
+            ConstraintSet cs = new ConstraintSet();
+            cs.clone(holder.card_container);
+            cs.connect(R.id.tag_horizontal_linear_layout, ConstraintSet.BOTTOM, R.id.ups_indicator_textview, ConstraintSet.TOP, 8);
+            holder.card_container.removeView(holder.image_layout);
+            cs.applyTo(holder.card_container);
         }
 
-        TextView ups_indicator_textview = holder.ups_indicator_textview;
-        ups_indicator_textview.setText(post.upvotes + " ups");
+        holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
 
-        TextView comment_indicator_textview = holder.comment_indicator_textview;
-        if (post.answers_list != null) {
-            comment_indicator_textview.setText(post.answers_list.size() + " answers");
+        if (post.getAnswersList() != null) {
+            holder.comment_indicator_textview.setText(post.getAnswersList().size() + " answers");
         }
     }
 
 
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public ConstraintLayout card_container;
         public ImageView profile_image_view;
         public TextView question_author_name;
         public TextView post_timestamp;
@@ -129,6 +154,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         public ViewHolder(View postView) {
             super(postView);
+            card_container = (ConstraintLayout) postView.findViewById(R.id.card_container);
             profile_image_view = (ImageView) postView.findViewById(R.id.profile_imageview);
             question_author_name = (TextView) postView.findViewById(R.id.question_author_name);
             post_timestamp = (TextView) postView.findViewById(R.id.post_timestamp);

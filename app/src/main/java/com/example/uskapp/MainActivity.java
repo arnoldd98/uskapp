@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         // get list of posts from Firebase
         posts_list = new ArrayList<QuestionPost>();
         QuestionPost customPost = new QuestionPost(new User("Gru", "Gru", "Gru"), false, "Hello World!", new ArrayList<byte[]>());
+        customPost.addTag(new Tag("Dumb"));
+        customPost.addTag(new Tag("Shhhhhhhh"));
         posts_list.add(customPost);
 
         // set up main recycler view: linear layout manager to manage the order
