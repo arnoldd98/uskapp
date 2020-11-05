@@ -1,17 +1,10 @@
 package com.example.uskapp;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.view.Menu;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,11 +13,15 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView main_recycler_view;
+    Toolbar top_toolbar;
     ArrayList<QuestionPost> posts_list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        top_toolbar = findViewById(R.id.top_toolbar);
+        setSupportActionBar(top_toolbar);
 
         // get list of posts from Firebase
         posts_list = new ArrayList<QuestionPost>();
@@ -44,10 +41,14 @@ public class MainActivity extends AppCompatActivity {
         main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
-        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
+        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this.getApplicationContext(), posts_list);
         main_recycler_view.setAdapter(viewAdapter);
+    }
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_toolbar_menu, menu);
+        return true;
     }
 
 }

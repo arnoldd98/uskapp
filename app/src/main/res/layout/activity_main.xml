@@ -28,9 +28,8 @@
             android:gravity="center"
             android:text="[Insert Subject here]"
             android:textColor="@color/cardview_light_background"
+            android:singleLine="true"
             android:textSize="20sp" />
-
-
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView

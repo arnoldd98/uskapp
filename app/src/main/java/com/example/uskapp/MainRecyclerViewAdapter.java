@@ -2,6 +2,7 @@ package com.example.uskapp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,9 +31,11 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private List<QuestionPost> post_data;
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener post_click_listener;
+    private Context context;
 
-    public MainRecyclerViewAdapter(Context context, List<QuestionPost> post_data) {
+    public MainRecyclerViewAdapter(Context context,  List<QuestionPost> post_data) {
         this.post_data = post_data;
+        this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.post_click_listener = new AdapterView.OnItemClickListener() {
             @Override
@@ -64,6 +67,15 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuestionPost post = post_data.get(position);
+
+        holder.card_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent viewPostIntent = new Intent(context, PostFocusActivity.class);
+                context.startActivity(viewPostIntent);
+
+            }
+        });
 
         if (post.toggle_anonymity){
             holder.profile_image_view.setImageResource(R.drawable.image);
