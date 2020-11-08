@@ -16,6 +16,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText editTextEmail, editTextConfirmPw, editTextPw, editTextName;
     private Button btnSignUp;
@@ -36,6 +37,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         btnSignUp.setOnClickListener(this);
 
     }
+
 
     @Override
     public void onClick(View view) {
