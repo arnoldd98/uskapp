@@ -113,7 +113,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/nunitosans_regular"
-        android:text="10 comments"
+        android:text="10 answers"
         android:textColor="@color/cardview_dark_background"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"

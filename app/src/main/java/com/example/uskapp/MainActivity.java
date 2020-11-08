@@ -1,7 +1,11 @@
 package com.example.uskapp;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
-        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this.getApplicationContext(), posts_list);
+        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
         main_recycler_view.setAdapter(viewAdapter);
     }
 

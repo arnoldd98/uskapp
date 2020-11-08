@@ -120,7 +120,6 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             up_answer_button = (Button) answerView.findViewById(R.id.up_answer_button);
             answer_textview = (TextView) answerView.findViewById(R.id.answer_textview);
             clickable_to_images_layout = (RelativeLayout) answerView.findViewById(R.id.clickable_to_images_layout);
-            image_count_textview = (TextView) answerView.findViewById(R.id.image_count_textview);
 
             answer_card_context = answerView.getContext();
         }

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostFocusActivity">
@@ -10,23 +11,22 @@
         android:id="@+id/top_toolbar"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:background="?attr/colorPrimary"
+        android:background="#FFFFFF"
         android:backgroundTint="@color/colorPrimary"
-        android:minHeight="60dp"
-        android:paddingLeft="0dp"
+        android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
+            android:id="@+id/back_to_main_button"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="#FFFFFF"
             android:backgroundTint="@color/colorPrimary"
-            android:src="@drawable/back_icon"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="3dp" />
+            app:srcCompat="@drawable/back_icon"
+            tools:layout_editor_absoluteX="16dp" />
     </androidx.appcompat.widget.Toolbar>
 
 
@@ -34,8 +34,9 @@
         android:id="@+id/post_card_view"
         layout="@layout/question_card_view"
         android:layout_width="0dp"
-        android:layout_height="321dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
+        app:layout_constraintBottom_toTopOf="@+id/answer_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -47,62 +48,59 @@
         android:id="@+id/answer_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/toolbar"
+
+        app:layout_constraintBottom_toTopOf="@+id/enter_answer_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/post_card_view" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/toolbar"
+    <LinearLayout
+        android:id="@+id/enter_answer_bar"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/answer_recycler_view">
 
         <EditText
-            android:id="@+id/add_answer_edittext"
+            android:id="@+id/user_answer_edittext"
+            style="@style/Widget.AppCompat.EditText"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginEnd="8dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="5dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/answer_add_image_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            android:layout_weight="500"
+            android:hint="Send an answer..."
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:singleLine="false"
+            android:textAlignment="viewStart"
+            android:textSize="18sp" />
 
         <ImageButton
-            android:id="@+id/answer_add_image_button"
-            android:layout_width="30dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/send_answer_button"
-            app:layout_constraintStart_toEndOf="@+id/add_answer_edittext"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_gallery" />
+            android:id="@+id/get_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_gallery" />
 
         <ImageButton
             android:id="@+id/send_answer_button"
-            android:layout_width="30dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/answer_add_image_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_send" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_send"
+            app:layout_constraintDimensionRatio="1" />
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

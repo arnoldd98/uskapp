@@ -1,6 +1,7 @@
 package com.example.uskapp;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -31,12 +32,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private List<QuestionPost> post_data;
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener post_click_listener;
-    private Context context;
+    private Activity activity;
 
-    public MainRecyclerViewAdapter(Context context,  List<QuestionPost> post_data) {
+    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data) {
         this.post_data = post_data;
-        this.context = context;
-        this.mInflater = LayoutInflater.from(context);
+        this.activity = activity;
+        this.mInflater = LayoutInflater.from(activity.getApplicationContext());
         this.post_click_listener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -71,8 +72,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         holder.card_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent viewPostIntent = new Intent(context, PostFocusActivity.class);
-                context.startActivity(viewPostIntent);
+                Intent viewPostIntent = new Intent(activity, PostFocusActivity.class);
+                activity.startActivity(viewPostIntent);
 
             }
         });
