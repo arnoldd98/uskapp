@@ -16,6 +16,7 @@ public class User implements Parcelable {
     private byte[] profilePic;
     static int count;
 
+
     public User(String name,String email){
         this.name = name;
         this.email = email;

@@ -1,6 +1,7 @@
 package com.example.uskapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "SignupActivity";
     private EditText editTextEmail, editTextConfirmPw, editTextPw, editTextName;
     private Button btnSignUp;
     private FirebaseAuth mAuth;
@@ -29,8 +31,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         mAuth = FirebaseAuth.getInstance();
         editTextName = (EditText) findViewById(R.id.name);
-        editTextPw = (EditText) findViewById(R.id.email);
-        editTextEmail = (EditText) findViewById(R.id.pw);
+        editTextPw = (EditText) findViewById(R.id.pw);
+        editTextEmail = (EditText) findViewById(R.id.email);
         editTextConfirmPw = (EditText) findViewById(R.id.confirmpw);
 
         btnSignUp = (Button) findViewById(R.id.signup);
@@ -45,22 +47,23 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void signUp(){
-        final String name = editTextName.getText().toString().trim();
-        final String email = editTextEmail.getText().toString().trim();
+        String name_signup = editTextName.getText().toString().trim();
+        String email_signup = editTextEmail.getText().toString().trim();
         String password = editTextPw.getText().toString().trim();
         String confirmPassword = editTextConfirmPw.getText().toString().trim();
-        if(name.isEmpty()){
+
+        if(name_signup.isEmpty()){
             editTextName.setError("Full name required");
             editTextName.requestFocus();
             return;
         }
-        if(email.isEmpty()){
+        if(email_signup.isEmpty()){
             editTextEmail.setError("Email required");
             editTextEmail.requestFocus();
             return;
         }
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if(!Patterns.EMAIL_ADDRESS.matcher(email_signup).matches()){
             editTextEmail.setError("Email invalid!");
             editTextEmail.requestFocus();
             return;
@@ -90,24 +93,33 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email,password)
+        mAuth.createUserWithEmailAndPassword(email_signup,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
+
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         if(task.isSuccessful()){
-                            User user = new User(name,email);
+                            Toast.makeText(SignupActivity.this,"1234",Toast.LENGTH_LONG).show();
+                            User user = new User(name_signup,email_signup);
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+
                                     if(task.isSuccessful()){
                                         Toast.makeText(SignupActivity.this,"Success!",Toast.LENGTH_LONG).show();
                                     }else{
+                                        Log.d(TAG, "onComplete: Failed=" + task.getException().getMessage());
                                         Toast.makeText(SignupActivity.this,"Opps, something went wrong...",Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
+                        }else{
+                            Log.d(TAG, "onComplete: Failed=" + task.getException().getMessage());
                         }
                     }
                 });
