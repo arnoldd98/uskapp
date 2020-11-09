@@ -47,8 +47,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void signUp(){
-        String name_signup = editTextName.getText().toString().trim();
-        String email_signup = editTextEmail.getText().toString().trim();
+        final String name_signup = editTextName.getText().toString().trim();
+        final String email_signup = editTextEmail.getText().toString().trim();
         String password = editTextPw.getText().toString().trim();
         String confirmPassword = editTextConfirmPw.getText().toString().trim();
 
