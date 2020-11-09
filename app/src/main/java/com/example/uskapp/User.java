@@ -5,9 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class User implements Parcelable {
-    private String name;
-    private String password;
-    private String email;
+    public String name;
+    public String email;
     private int rank;
     private int exp;
     private int total_posts;
@@ -17,10 +16,10 @@ public class User implements Parcelable {
     private byte[] profilePic;
     static int count;
 
-    public User(String name,String email,String password){
+
+    public User(String name,String email){
         this.name = name;
         this.email = email;
-        this.password = password;
         this.rank=0;
         this.exp=0;
         this.total_posts=0;
@@ -30,10 +29,9 @@ public class User implements Parcelable {
         this.count+=1;
         this.profilePic=null;
     }
-    public User(String name,String email,String password,byte[] profilePic){
+    public User(String name,String email,byte[] profilePic){
         this.name = name;
         this.email = email;
-        this.password = password;
         this.rank=0;
         this.exp=0;
         this.total_posts=0;
@@ -46,7 +44,6 @@ public class User implements Parcelable {
 
     protected User(Parcel in) {
         name = in.readString();
-        password = in.readString();
         email = in.readString();
         rank = in.readInt();
         exp = in.readInt();
@@ -77,14 +74,6 @@ public class User implements Parcelable {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -109,7 +98,6 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
-        parcel.writeString(password);
         parcel.writeString(email);
         parcel.writeInt(rank);
         parcel.writeInt(exp);

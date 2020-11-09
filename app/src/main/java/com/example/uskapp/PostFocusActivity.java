@@ -44,7 +44,7 @@ public class PostFocusActivity extends AppCompatActivity {
             public int getItemCount() {
                 return 0;
             }
-        }
+        };
 
     }
 }
