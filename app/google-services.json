@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "549613177687",
+    "firebase_url": "https://uskapp-a8790.firebaseio.com",
+    "project_id": "uskapp-a8790",
+    "storage_bucket": "uskapp-a8790.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549613177687:android:359423b2def9b0b140cc12",
+        "android_client_info": {
+          "package_name": "com.example.uskapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549613177687-rd6m11iu5t70q79ohq2benv5e5p8nv9v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.uskapp",
+            "certificate_hash": "b0de10d0a708815e585480f0a357892b28f1d1e9"
+          }
+        },
+        {
+          "client_id": "549613177687-455kibi0envhgs6qs9sl2ekrsrshb4u9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAyquYnNgkhBJxo7lU1h9g0E40xVP_PoQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549613177687-455kibi0envhgs6qs9sl2ekrsrshb4u9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
