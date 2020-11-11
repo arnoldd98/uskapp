@@ -74,7 +74,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             public void onClick(View view) {
                 Intent viewPostIntent = new Intent(activity, PostFocusActivity.class);
                 activity.startActivity(viewPostIntent);
-
             }
         });
 
@@ -137,7 +136,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         } else {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(holder.card_container);
-            cs.connect(R.id.tag_horizontal_linear_layout, ConstraintSet.BOTTOM, R.id.ups_indicator_textview, ConstraintSet.TOP, 8);
+            cs.connect(R.id.tag_horizontal_linear_layout, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 8);
             holder.card_container.removeView(holder.image_layout);
             cs.applyTo(holder.card_container);
         }
@@ -160,7 +159,10 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         public Toolbar options_menu_toolbar;
         public LinearLayout tag_layout;
         public LinearLayout image_layout;
+        public LinearLayout ups_indicator_layout;
+        public ImageView ups_indicator_image;
         public TextView ups_indicator_textview;
+        public LinearLayout comment_indicator_layout;
         public TextView comment_indicator_textview;
 
         public Context card_view_context;
@@ -175,7 +177,10 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             options_menu_toolbar = (Toolbar) postView.findViewById(R.id.options_menu_toolbar);
             tag_layout = (LinearLayout) postView.findViewById(R.id.tag_horizontal_linear_layout);
             image_layout = (LinearLayout) postView.findViewById(R.id.image_horizontal_linear_layout);
+            ups_indicator_layout = (LinearLayout) postView.findViewById(R.id.ups_indicator_layout);
+            ups_indicator_image = (ImageView) postView.findViewById(R.id.ups_indicator_imageview);
             ups_indicator_textview = (TextView) postView.findViewById(R.id.ups_indicator_textview);
+            comment_indicator_layout = (LinearLayout) postView.findViewById(R.id.comment_indicator__layout);
             comment_indicator_textview = (TextView) postView.findViewById(R.id.comment_indicator__textview);
 
             card_view_context = postView.getContext();
