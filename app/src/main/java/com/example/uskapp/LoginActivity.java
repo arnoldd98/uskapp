@@ -39,13 +39,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
 
-        //googleSignIn= (Button) findViewById(R.id.googleSignIn);
-        //googleSignIn.setOnClickListener(this);
-
         editTextEmail = (EditText) findViewById(R.id.reset_email);
         editTextPassword = (EditText) findViewById(R.id.pw);
 
         mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser()!=null){
+            startActivity(new Intent(LoginActivity.this,HelloWorld.class));
+        }
+
     }
 
     @Override
@@ -99,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(task.isSuccessful()){
                     //go to homepage
                     startActivity(new Intent(LoginActivity.this,HelloWorld.class));
+                    finish();
                 }
                 else{
                     Toast.makeText(LoginActivity.this,"Failed to Login!",Toast.LENGTH_LONG).show();
