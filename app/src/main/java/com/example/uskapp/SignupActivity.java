@@ -32,7 +32,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         mAuth = FirebaseAuth.getInstance();
         editTextName = (EditText) findViewById(R.id.name);
         editTextPw = (EditText) findViewById(R.id.pw);
-        editTextEmail = (EditText) findViewById(R.id.email);
+        editTextEmail = (EditText) findViewById(R.id.reset_email);
         editTextConfirmPw = (EditText) findViewById(R.id.confirmpw);
 
         btnSignUp = (Button) findViewById(R.id.login);
@@ -100,7 +100,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()){
-                            Toast.makeText(SignupActivity.this,"1234",Toast.LENGTH_LONG).show();
+
                             User user = new User(name_signup,email_signup);
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

@@ -4,114 +4,75 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
-    tools:context=".LoginActivity">
+    android:orientation="vertical"
+    tools:context=".LoginActivity"
+    tools:showIn="@layout/activity_auth">
 
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="96dp"
-        android:layout_height="139dp"
-        android:layout_marginTop="25dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo" />
 
     <EditText
         android:id="@+id/pw"
         android:layout_width="247dp"
         android:layout_height="45dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="40dp"
         android:background="@drawable/text_input"
         android:ems="10"
         android:fontFamily="@font/nunitosans_regular"
         android:hint="Password"
-        android:textColorHint="@color/gray"
-        android:textColor="@color/gray"
         android:inputType="textPassword"
+        android:textColor="@color/gray"
+        android:textColorHint="@color/gray"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email"
-        app:layout_constraintVertical_bias="0.555" />
+        app:layout_constraintTop_toBottomOf="@+id/reset_email"
+        app:layout_constraintVertical_bias="0.506" />
+
 
     <Button
         android:id="@+id/login"
-        android:onClick="onClick"
-        android:clickable="true"
         android:layout_width="247dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="180dp"
         android:background="@drawable/solid_btn"
+        android:clickable="true"
         android:fontFamily="@font/nunitosans_semibold"
+        android:onClick="onClick"
         android:text="Login"
         android:textColor="#ffffff"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.679" />
 
-<!--    <Button-->
-<!--        android:id="@+id/googleSignIn"-->
-<!--        android:onClick="onClick"-->
-<!--        android:clickable="true"-->
-<!--        android:layout_width="247dp"-->
-<!--        android:layout_height="45dp"-->
-<!--        android:layout_marginBottom="36dp"-->
-<!--        android:background="@drawable/holo_gray_btn"-->
-<!--        android:fontFamily="@font/nunitosans_semibold"-->
-<!--        android:text="Sign in with Google"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:textColor="@color/gray"-->
-<!--        android:textSize="15sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/googleSignIn"
+    <EditText
+        android:id="@+id/reset_email"
         android:layout_width="247dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="36dp"
-
-        android:fontFamily="@font/nunitosans_semibold"
-
-        android:textAllCaps="false"
+        android:background="@drawable/text_input"
+        android:ems="10"
+        android:fontFamily="@font/nunitosans_regular"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
         android:textColor="@color/gray"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColorHint="@color/gray"
+
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.744" />
 
-        <EditText
-            android:id="@+id/email"
-            android:layout_width="247dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="100dp"
-            android:background="@drawable/text_input"
-            android:ems="10"
-            android:fontFamily="@font/nunitosans_regular"
-            android:hint="Email"
-            android:textColorHint="@color/gray"
-            android:textColor="@color/gray"
-            android:inputType="textEmailAddress"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-        <ImageView
+    <ImageView
             android:id="@+id/imageView3"
             android:layout_width="22dp"
             android:layout_height="19dp"
-            app:layout_constraintBottom_toBottomOf="@+id/email"
-            app:layout_constraintEnd_toEndOf="@+id/email"
+            app:layout_constraintBottom_toBottomOf="@+id/reset_email"
+            app:layout_constraintEnd_toEndOf="@+id/reset_email"
             app:layout_constraintHorizontal_bias="0.07"
-            app:layout_constraintStart_toStartOf="@+id/email"
-            app:layout_constraintTop_toTopOf="@+id/email"
+            app:layout_constraintStart_toStartOf="@+id/reset_email"
+            app:layout_constraintTop_toTopOf="@+id/reset_email"
             app:srcCompat="@drawable/mail" />
 
         <ImageView
@@ -125,45 +86,41 @@
             app:layout_constraintTop_toTopOf="@+id/pw"
             app:srcCompat="@drawable/key" />
 
-        <TextView
-            android:id="@+id/register"
-            android:onClick="onClick"
-            android:clickable="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="register"
-            android:fontFamily="@font/nunitosans_regular"
-            android:textSize="18sp"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login" />
+    <TextView
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:clickable="true"
+        android:fontFamily="@font/nunitosans_regular"
+        android:onClick="onClick"
+        android:text="register"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.234"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login"
+        app:layout_constraintVertical_bias="0.465" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/nunitosans_regular"
-            android:text="or"
-            android:textColor="@color/gray"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/googleSignIn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-             />
+    <TextView
+        android:id="@+id/forgot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="25dp"
+        android:clickable="true"
+        android:fontFamily="@font/nunitosans_regular"
+        android:onClick="onClick"
+        android:text="Forgot Password"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.154"
+        app:layout_constraintStart_toEndOf="@+id/register"
+        app:layout_constraintTop_toBottomOf="@+id/login"
+        app:layout_constraintVertical_bias="0.465" />
 
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
-            app:layout_constraintBottom_toBottomOf="@+id/googleSignIn"
-            app:layout_constraintEnd_toEndOf="@+id/googleSignIn"
-            app:layout_constraintHorizontal_bias="0.07"
-            app:layout_constraintStart_toStartOf="@+id/googleSignIn"
-            app:layout_constraintTop_toTopOf="@+id/googleSignIn"
-            app:srcCompat="@drawable/google" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

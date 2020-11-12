@@ -12,21 +12,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.regex.Pattern;
-
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView register;
+    private TextView register,forgot;
     private EditText editTextEmail,editTextPassword;
     private Button login;
-    private SignInButton googleSignIn;
     private FirebaseAuth mAuth;
 
 
@@ -34,8 +29,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_auth);
         register = (TextView) findViewById(R.id.register);
+        register.setOnClickListener(this);
+
+        forgot = (TextView) findViewById(R.id.forgot);
+        forgot.setOnClickListener(this);
 
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
@@ -43,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //googleSignIn= (Button) findViewById(R.id.googleSignIn);
         //googleSignIn.setOnClickListener(this);
 
-        editTextEmail = (EditText) findViewById(R.id.email);
+        editTextEmail = (EditText) findViewById(R.id.reset_email);
         editTextPassword = (EditText) findViewById(R.id.pw);
 
         mAuth = FirebaseAuth.getInstance();
@@ -60,8 +59,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 userLogin();
                 break;
 
-            case R.id.googleSignIn:
-                signInWithGoogle();
+            case R.id.forgot:
+                startActivity(new Intent(this,ForgotPassword.class));
                 break;
         }
 

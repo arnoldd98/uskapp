@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/lastName" />
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/reset_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Email"
@@ -57,7 +57,7 @@
         android:text="Submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/reset_email" />
 
     <ImageView
         android:id="@+id/profilepicIV"
