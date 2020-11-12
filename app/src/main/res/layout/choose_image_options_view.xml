@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choose_image_options_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
+    android:background="@color/cardview_light_background"
     android:orientation="vertical">
 
     <HorizontalScrollView
@@ -14,27 +16,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/border">
 
         <TextView
             android:id="@+id/choose_from_gallery_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Choose from Gallery..." />
+            android:text="Choose from Gallery..."
+            android:textColor="@color/design_default_color_primary_dark" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/border">
 
         <TextView
             android:id="@+id/open_camera_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Open Camera..." />
+            android:text="Open Camera..."
+            android:textColor="@color/design_default_color_primary_dark" />
     </LinearLayout>
 
 </LinearLayout>
