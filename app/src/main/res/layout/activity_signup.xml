@@ -48,12 +48,12 @@
         android:textColorHint="@color/gray"
         android:inputType="textPassword"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/signup"
+        app:layout_constraintBottom_toTopOf="@+id/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/signup"
+        android:id="@+id/login"
         android:onClick="onClick"
         android:layout_width="247dp"
         android:layout_height="45dp"
