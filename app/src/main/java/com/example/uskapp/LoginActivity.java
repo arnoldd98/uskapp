@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //googleSignIn= (Button) findViewById(R.id.googleSignIn);
         //googleSignIn.setOnClickListener(this);
 
-        editTextEmail = (EditText) findViewById(R.id.reset_email);
+        editTextEmail = (EditText) findViewById(R.id.email);
         editTextPassword = (EditText) findViewById(R.id.pw);
 
         mAuth = FirebaseAuth.getInstance();

@@ -23,7 +23,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        editTextEmail = (EditText) findViewById(R.id.reset_email);
+        editTextEmail = (EditText) findViewById(R.id.email);
         editTextEmail.setOnClickListener(this);
 
         resetBtn = (Button) findViewById(R.id.reset);

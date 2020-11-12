@@ -32,7 +32,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         mAuth = FirebaseAuth.getInstance();
         editTextName = (EditText) findViewById(R.id.name);
         editTextPw = (EditText) findViewById(R.id.pw);
-        editTextEmail = (EditText) findViewById(R.id.reset_email);
+        editTextEmail = (EditText) findViewById(R.id.email);
         editTextConfirmPw = (EditText) findViewById(R.id.confirmpw);
 
         btnSignUp = (Button) findViewById(R.id.login);
