@@ -5,7 +5,9 @@
     android:id="@+id/card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorLightGrayPost">
+    android:clickable="true"
+    android:background="@color/colorLightGrayPost"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/profile_imageview"
@@ -13,6 +15,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toStartOf="@+id/question_author_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/circular" />
@@ -27,6 +30,7 @@
         android:text="Name"
         android:textColor="#000000"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/post_timestamp"
         app:layout_constraintStart_toEndOf="@+id/profile_imageview"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,6 +45,7 @@
         android:textAlignment="viewStart"
         android:textColor="@color/cardview_dark_background"
         android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/question_textview"
         app:layout_constraintStart_toEndOf="@+id/profile_imageview"
         app:layout_constraintTop_toBottomOf="@+id/question_author_name" />
 
@@ -54,7 +59,7 @@
         android:fontFamily="@font/nunitosans_semibold"
         android:text="What are some recommended algorithm to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
         android:textColor="#000000"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,43 +79,12 @@
         android:id="@+id/tag_horizontal_linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-
+        android:layout_marginStart="22dp"
         android:orientation="horizontal"
-        android:padding="0dp"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/image_horizontal_linear_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question_textview">
-
-        <Button
-            android:id="@+id/googleSignIn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunitosans_regular"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:padding="8dp"
-
-            android:text="Tag"
-            android:textAlignment="center"
-            android:textSize="8sp" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunitosans_regular"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:padding="8dp"
-
-            android:text="Tag"
-            android:textAlignment="center"
-            android:textSize="8sp" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/question_textview"></LinearLayout>
 
     <LinearLayout
         android:id="@+id/image_horizontal_linear_layout"
@@ -119,43 +93,79 @@
         android:layout_marginStart="30dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout">
+        app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout"
+        app:layout_constraintBottom_toTopOf="@id/ups_indicator_layout"/>
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/ups_indicator_textview"
+    <LinearLayout
+        android:id="@+id/ups_indicator_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/nunitosans_regular"
-        android:text="25 ups"
-        android:textColor="@color/cardview_dark_background"
-        android:textSize="12sp"
+        android:layout_height="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
 
-    <TextView
-        android:id="@+id/comment_indicator__textview"
+        <ImageView
+            android:id="@+id/ups_indicator_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:srcCompat="@android:drawable/arrow_up_float" />
+
+        <TextView
+            android:id="@+id/ups_indicator_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:fontFamily="@font/nunitosans_regular"
+            android:text="25 ups"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/comment_indicator__layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/nunitosans_regular"
-        android:text="10 comments"
-        android:textColor="@color/cardview_dark_background"
-        android:textSize="12sp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ups_indicator_textview"
-        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout" />
+        app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
+        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
+
+        <ImageView
+            android:id="@+id/comment_indicator_imageview"
+            android:layout_width="19dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <TextView
+            android:id="@+id/comment_indicator__textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:fontFamily="@font/nunitosans_regular"
+            android:text="10 answers"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/star_question_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/question_textview"
+        app:srcCompat="@android:drawable/star_big_off" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
