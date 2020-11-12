@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -24,7 +26,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView register;
     private EditText editTextEmail,editTextPassword;
     private Button login;
+    private SignInButton googleSignIn;
     private FirebaseAuth mAuth;
+
 
 
     @Override
@@ -36,20 +40,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
 
+        //googleSignIn= (Button) findViewById(R.id.googleSignIn);
+        //googleSignIn.setOnClickListener(this);
+
         editTextEmail = (EditText) findViewById(R.id.email);
         editTextPassword = (EditText) findViewById(R.id.pw);
 
         mAuth = FirebaseAuth.getInstance();
     }
-
-//    public void onRegisterClick(View v){
-//        Intent intent = new Intent(LoginActivity.this,SignupActivity.class);
-//        startActivity(intent);
-//    }
-
-//    public void onLoginClick(View v){
-//        userLogin();
-//    }
 
     @Override
     public void onClick(View view) {
@@ -60,6 +58,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.login:
                 userLogin();
+                break;
+
+            case R.id.googleSignIn:
+                signInWithGoogle();
                 break;
         }
 
@@ -106,5 +108,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private void signInWithGoogle(){
+
+    }
 
 }
