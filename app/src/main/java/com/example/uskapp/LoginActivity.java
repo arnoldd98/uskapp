@@ -39,12 +39,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
 
-        editTextEmail = (EditText) findViewById(R.id.reset_email);
+        editTextEmail = (EditText) findViewById(R.id.email);
         editTextPassword = (EditText) findViewById(R.id.pw);
 
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser()!=null){
-            startActivity(new Intent(LoginActivity.this,HelloWorld.class));
+            startActivity(new Intent(LoginActivity.this,HomeActivity.class));
         }
 
     }
@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //go to homepage
-                    startActivity(new Intent(LoginActivity.this,HelloWorld.class));
+                    startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     finish();
                 }
                 else{
