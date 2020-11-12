@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //go to homepage
-                    startActivity(new Intent(LoginActivity.this,HelloWorld.class));
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 }
                 else{
                     Toast.makeText(LoginActivity.this,"Failed to Login!",Toast.LENGTH_LONG).show();
