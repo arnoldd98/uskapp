@@ -26,6 +26,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Bundle bundle = getIntent().getExtras();
+
         myUser =bundle.getParcelable("user");
 
         profilePicIV =findViewById(R.id.imageView);

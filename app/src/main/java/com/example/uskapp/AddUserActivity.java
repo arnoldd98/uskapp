@@ -48,23 +48,26 @@ public class AddUserActivity extends AppCompatActivity {
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    if( image != null){
+//                try {
+//
+//
+//                    if( image != null){
+//
+//                        //Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+//                        User myUser = new User(firstName.getText().toString()+" "+lastName.getText().toString(),email.getText().toString(),password.getText().toString(),image);
+//                        Intent intent = new Intent(AddUserActivity.this,ProfileActivity.class);
+//                        intent.putExtra("user",myUser);
+//                        intent.putExtra("key","value");
+//                        startActivity(intent);
+//                    }
+//                } catch (Exception e){
+//                    e.printStackTrace();
+//                }
 
-                        //Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-                        User myUser = new User(firstName.getText().toString()+" "+lastName.getText().toString(),email.getText().toString(),password.getText().toString(),image);
-                        Intent intent = new Intent(AddUserActivity.this,ProfileActivity.class);
-                        intent.putExtra("user",myUser);
-                        startActivity(intent);
-                    }
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                User myUser = new User(firstName.getText().toString()+" "+lastName.getText().toString(),email.getText().toString(),password.getText().toString());
-                Intent intent = new Intent(AddUserActivity.this,ProfileActivity.class);
-                intent.putExtra("user",myUser);
-                startActivity(intent);
+//                User myUser = new User(firstName.getText().toString()+" "+lastName.getText().toString(),email.getText().toString(),password.getText().toString());
+//                Intent intent = new Intent(AddUserActivity.this,ProfileActivity.class);
+//                intent.putExtra("user",myUser);
+//                startActivity(intent);
             }
         });
 
@@ -97,7 +100,7 @@ public class AddUserActivity extends AppCompatActivity {
                 RoundedBitmapDrawable d = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                 d.setCircular(true);
                 profilePicIV.setImageDrawable(d);
-
+                //profilePicIV.setImageBitmap(bitmap);
             } catch (IOException e){
                 e.printStackTrace();
             }
