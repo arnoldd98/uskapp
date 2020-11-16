@@ -1,14 +1,5 @@
 package com.example.uskapp;
 
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,26 +7,59 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.Toast;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity {
+public class TestSubjectActivity extends AppCompatActivity {
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
     ArrayList<QuestionPost> posts_list;
+    DatabaseReference dataRef;
+    Query query;
+    MainRecyclerViewAdapter viewAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_test_subject);
+
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
+
+        //subject activity this activity displays all the content inside the specific subject
+        query = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                .orderByChild("subject")
+                .equalTo("50.001");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(posts_list!= null){
+                    posts_list.clear();
+                }
+                if(snapshot.exists()){
+                    for(DataSnapshot s : snapshot.getChildren()){
+                        QuestionPost qnPost = s.getValue(QuestionPost.class);
+                        posts_list.add(qnPost);
+                    }
+                }
+                viewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(TestSubjectActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         // get list of posts from Firebase
         /*
@@ -58,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
         main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
-        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
+        viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
         main_recycler_view.setAdapter(viewAdapter);
     }
 

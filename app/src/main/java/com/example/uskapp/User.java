@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class User implements Observer {
     public String name;
     public String email;
-    private String userId;
+    //private String userId;
     private int rank;
     private int exp;
     private int total_posts;
@@ -17,7 +17,7 @@ public class User implements Observer {
     private ArrayList<String> subjectsEnrolled = new ArrayList<String>();
 
 
-    public User(String name,String email, String userId){
+    public User(String name,String email){
         this.name = name;
         this.email = email;
         this.rank=0;
@@ -25,7 +25,7 @@ public class User implements Observer {
         this.total_posts=0;
         this.karma=0;
         this.total_answers=0;
-        this.userId=userId;
+        //this.userId=userId;
     }
 
     public String getName() {
@@ -82,14 +82,6 @@ public class User implements Observer {
 
     public void setTotal_answers(int total_answers) {
         this.total_answers = total_answers;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public ArrayList<String> getPostFollowing() {

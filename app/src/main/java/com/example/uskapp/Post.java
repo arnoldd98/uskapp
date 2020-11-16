@@ -4,11 +4,11 @@ import android.media.Image;
 
 import java.util.ArrayList;
 
-public abstract class Post implements Subject{
+public abstract class Post{
     private String userID;
     private String postID;
     private ArrayList<String> postImageIDs =new ArrayList<String>();
-    private ArrayList<String> answerPostIDs = new ArrayList<String>(); // array lists need be created IDS added later on thru method
+
     public boolean toggle_anonymity;
     private String text;
     private int upvotes;
@@ -42,13 +42,8 @@ public abstract class Post implements Subject{
     public void setPostImageIDs(ArrayList<String> postImageIDs) {
         this.postImageIDs = postImageIDs;
     }
-
-    public ArrayList<String> getAnswerPostIDs() {
-        return answerPostIDs;
-    }
-
-    public void setAnswerPostIDs(ArrayList<String> answerPostIDs) {
-        this.answerPostIDs = answerPostIDs;
+    public void addPostImageID(String picID){
+        this.postImageIDs.add(picID);
     }
 
     public boolean isToggle_anonymity() {
