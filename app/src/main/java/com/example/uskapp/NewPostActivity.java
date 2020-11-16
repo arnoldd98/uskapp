@@ -80,9 +80,7 @@ public class NewPostActivity extends AppCompatActivity {
 
     private void dispatchTakePictureIntent() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
-        }
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
 
     @Override
