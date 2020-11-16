@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         main_recycler_view.setLayoutManager(linearLayoutManager);
 
-        // Add DividerItemDecoration to divide betewen cards in the RecyclerView
+        // Add DividerItemDecoration to divide between cards in the RecyclerView
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(main_recycler_view.getContext(),
                 linearLayoutManager.getOrientation());
         main_recycler_view.addItemDecoration(dividerItemDecoration);
