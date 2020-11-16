@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.io.IOException;
+
 public class NewPostActivity extends AppCompatActivity {
     static final int CAMERA_REQUEST = 1;
     Button buttonTags;
@@ -23,7 +25,7 @@ public class NewPostActivity extends AppCompatActivity {
     ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView imageView;
-    private static final int PICK_IMAGE = 1;
+    private static final int PICK_IMAGE = 2;
     Uri imageUri;
 
     @Override
@@ -34,6 +36,8 @@ public class NewPostActivity extends AppCompatActivity {
         mainLayout = findViewById(R.id.MainLayout);
 
         buttonTags = findViewById(R.id.buttonTags);
+
+        imageView = findViewById(R.id.postPicture);
 
         buttonTags.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +92,18 @@ public class NewPostActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
+        } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                //bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                //image = stream.toByteArray();
+                //profilePicIV.setImageDrawable(d);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

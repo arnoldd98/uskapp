@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser()!=null){
-            startActivity(new Intent(LoginActivity.this,ProfileActivity.class));
+            startActivity(new Intent(LoginActivity.this,NewPostActivity.class));
         }
 
     }
@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //go to homepage
-                    startActivity(new Intent(LoginActivity.this,ProfileActivity.class));
+                    startActivity(new Intent(LoginActivity.this,NewPostActivity.class));
                     finish();
                 }
                 else{
