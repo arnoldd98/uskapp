@@ -38,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
@@ -45,12 +46,15 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
-    Bitmap bmp,bitmap;
+    private ArrayList<Bitmap> profileBitmaps;
+    private Bitmap bitmap;
     String name;
 
-    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data) {
+    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
+            , ArrayList<Bitmap> profileBitmaps) {
         this.post_data = post_data;
         this.activity = activity;
+        this.profileBitmaps =profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
         this.post_click_listener = new AdapterView.OnItemClickListener() {
             @Override
@@ -70,7 +74,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     @NonNull
     @Override
-    public MainRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -99,41 +103,15 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             holder.question_author_name.setText("Anonymous");
         }
         else {
-            String userID = post.getUserID();
-            StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            imageRef.getBytes(2048*2048)
-                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                            //profilePicIV.setImageBitmap(bitmap);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    //profilePicIV.setImageResource(R.drawable.ic_launcher_foreground);
-                    e.printStackTrace();
-                }
-            });
 
-            if (bmp != null) {
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
-                        holder.profile_image_view.getHeight(), false));
+            if(profileBitmaps.size() ==post_data.size()){
+                Bitmap bitmap = profileBitmaps.get(position);
+                int current = position;
+                holder.profile_image_view.setImageBitmap(bitmap);
+                //holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
+                //        holder.profile_image_view.getHeight(), false));
             }
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
-                    .child(userID);
-            userRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    name = snapshot.child("name").getValue(String.class);
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(activity, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
             holder.question_author_name.setText(name);
 
 
@@ -216,8 +194,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
 
     }
-
-
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
         public ConstraintLayout card_container;
@@ -255,5 +231,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             card_view_context = postView.getContext();
         }
     }
+
 }
 
