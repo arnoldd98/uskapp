@@ -1,22 +1,20 @@
 package com.example.uskapp;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.ArrayList;
 
-public class User implements Parcelable {
+public class User implements Observer {
     public String name;
     public String email;
+    //private String userId;
     private int rank;
     private int exp;
     private int total_posts;
     private int karma;
     private int total_answers;
-    private int userId;
-    private byte[] profilePic;
-    static int count;
+    private ArrayList<String> postFollowing = new ArrayList<String>();
+    private ArrayList<String> postPosted = new ArrayList<String>();
+    private ArrayList<String> subjectsEnrolled = new ArrayList<String>();
 
 
     public User(String name,String email){
@@ -27,46 +25,8 @@ public class User implements Parcelable {
         this.total_posts=0;
         this.karma=0;
         this.total_answers=0;
-        this.userId=count;
-        this.count+=1;
-        this.profilePic=null;
+        //this.userId=userId;
     }
-    public User(String name,String email,byte[] profilePic){
-        this.name = name;
-        this.email = email;
-        this.rank=0;
-        this.exp=0;
-        this.total_posts=0;
-        this.karma=0;
-        this.total_answers=0;
-        this.profilePic=profilePic;
-        this.userId=count;
-        this.count+=1;
-    }
-
-    protected User(Parcel in) {
-        name = in.readString();
-        email = in.readString();
-        rank = in.readInt();
-        exp = in.readInt();
-        total_posts = in.readInt();
-        karma = in.readInt();
-        total_answers = in.readInt();
-        userId = in.readInt();
-        profilePic = in.createByteArray();
-    }
-
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
 
     public String getName() {
         return name;
@@ -82,32 +42,6 @@ public class User implements Parcelable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public byte[] getProfilePic() {
-        return profilePic;
-    }
-
-    public void setProfilePic(byte[] profilePic) {
-        this.profilePic = profilePic;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(name);
-        parcel.writeString(email);
-        parcel.writeInt(rank);
-        parcel.writeInt(exp);
-        parcel.writeInt(total_posts);
-        parcel.writeInt(karma);
-        parcel.writeInt(total_answers);
-        parcel.writeInt(userId);
-        parcel.writeByteArray(profilePic);
     }
 
     public int getRank() {
@@ -150,5 +84,42 @@ public class User implements Parcelable {
         this.total_answers = total_answers;
     }
 
+    public ArrayList<String> getPostFollowing() {
+        return postFollowing;
+    }
 
+    public void setPostFollowing(ArrayList<String> postFollowing) {
+        this.postFollowing = postFollowing;
+    }
+
+    public ArrayList<String> getPostPosted() {
+        return postPosted;
+    }
+
+    public void setPostPosted(ArrayList<String> postPosted) {
+        this.postPosted = postPosted;
+    }
+
+    public ArrayList<String> getSubjectsEnrolled() {
+        return subjectsEnrolled;
+    }
+
+    public void setSubjectsEnrolled(ArrayList<String> subjectsEnrolled) {
+        this.subjectsEnrolled = subjectsEnrolled;
+    }
+
+    public void addSubjectsEnrolled(String subjectName){
+        this.subjectsEnrolled.add(subjectName);
+    }
+
+    public void addPostPosted(String newPostID){
+        this.postPosted.add(newPostID);
+    }
+    public void addPostFollowing(String newPostID){
+        this.postFollowing.add(newPostID);
+    }
+    @Override
+    public void update(String updates) {
+        // what to update whenever the post u are following updates
+    }
 }

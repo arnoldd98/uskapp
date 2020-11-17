@@ -66,9 +66,9 @@ public class PostFocusActivity extends AppCompatActivity {
 
         // get answers to question in view from Firebase
         answerPosts = new ArrayList<>();
-        User custom_user = new User("Jeb", "JJJ", null);
+        User custom_user = new User("Jeb", "JJJ");
         for (int i=0; i<5; i++) {
-            answerPosts.add(new AnswerPost(custom_user, false, "This is a sample answer", null));
+            //answerPosts.add(new AnswerPost(custom_user, false, "This is a sample answer", null));
         }
 
         answer_recyclerview = (RecyclerView) findViewById(R.id.answer_recycler_view);

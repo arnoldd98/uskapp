@@ -52,6 +52,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             holder.answer_author_name.setText("Anonymous");
         }
         else {
+            /*
             byte[] byte_array_pic = answer.getUser().getProfilePic();
             if (byte_array_pic != null) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(byte_array_pic, 0, byte_array_pic.length);
@@ -59,6 +60,8 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                         holder.answerer_profile_imageview.getHeight(), false));
             }
             holder.answer_author_name.setText(answer.getUser().getName());
+
+             */
         }
 
         if (answer.getTimestamp() != null) holder.answer_post_timestamp.setText(answer.getTimestamp());
@@ -70,6 +73,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(holder.clickable_to_images_layout.getHeight(),
                 holder.clickable_to_images_layout.getHeight());
         int image_count = 0;
+        /*
         if (answer.getImages() != null) {
             for (byte[] image : answer.getImages()) {
                 ImageView image_view = new ImageView(holder.answer_card_context);
@@ -96,6 +100,8 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
         } else {
             holder.answer_container_layout.removeView(holder.clickable_to_images_layout);
         }
+
+         */
     }
 
 
