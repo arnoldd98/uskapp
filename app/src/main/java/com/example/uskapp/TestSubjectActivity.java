@@ -7,23 +7,33 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
 public class TestSubjectActivity extends AppCompatActivity {
+    TextView currentTopic;
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
     ArrayList<QuestionPost> posts_list= new ArrayList<QuestionPost>();
+    ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
     Query query;
     MainRecyclerViewAdapter viewAdapter;
     @Override
@@ -33,6 +43,8 @@ public class TestSubjectActivity extends AppCompatActivity {
 
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
+        currentTopic = findViewById(R.id.current_topic_textview);
+        currentTopic.setText("50.001");
 
         //subject activity this activity displays all the content inside the specific subject
         //query to display only Question posts with matching subject name
@@ -55,8 +67,20 @@ public class TestSubjectActivity extends AppCompatActivity {
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
                         QuestionPost qnPost = new QuestionPost(userID,postID,text,timestamp,subject,toggle_anonymity);
-
                         posts_list.add(qnPost);
+
+                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+                                .child(userID);
+                        imageRef.getBytes(2048*2048)
+                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                        profileBitmaps.add(bitmap);
+                                        viewAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                        );
                     }
                 }
                 viewAdapter.notifyDataSetChanged();
@@ -90,7 +114,7 @@ public class TestSubjectActivity extends AppCompatActivity {
         main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
-        viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
+        viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps);
         main_recycler_view.setAdapter(viewAdapter);
     }
 

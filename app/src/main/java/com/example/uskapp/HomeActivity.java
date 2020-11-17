@@ -58,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
         main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
-        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
+        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this, posts_list,null);
         main_recycler_view.setAdapter(viewAdapter);
     }
 
