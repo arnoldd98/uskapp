@@ -8,11 +8,15 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import androidx.core.content.FileProvider;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,8 +48,8 @@ public class Utils {
         });
 
         Refer to PostFocusActivity for use case
-
      */
+
     public static void popUpImageOptions(final Activity activity, final PackageManager packageManager) {
         final Dialog bottomDialogue = new Dialog(activity, R.style.ImageDialogSheet);
         bottomDialogue.setContentView(R.layout.choose_image_options_view);
@@ -71,19 +75,19 @@ public class Utils {
                 if (camera_intent.resolveActivity(packageManager) != null) {
                     bottomDialogue.cancel();
 
-                    File out_image = null;
-                    try {
-                        out_image = createImageFile(activity);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (out_image != null) {
-                        image_uri = FileProvider.getUriForFile(activity, "com.example.android.provider", out_image);
-                        camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-                    }
-                    System.out.println("Image URI: " + image_uri);
-                    activity.startActivityForResult(camera_intent, CAMERA_REQUEST);
+                File out_image = null;
+                try {
+                    out_image = createImageFile(activity);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                if (out_image != null) {
+                    image_uri = FileProvider.getUriForFile(activity, "com.example.android.provider", out_image);
+                    camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+                }
+                System.out.println("Image URI: " + image_uri);
+                activity.startActivityForResult(camera_intent, CAMERA_REQUEST);
+            }
             }
         });
 
@@ -144,4 +148,16 @@ public class Utils {
 
     */
     //// END OF SELECTING IMAGE OPTIONS ////
+
+
+    //// Updating Navigation Bar state when back button is pressed ////
+    public static void updateNavigationBarState(int selectedId, BottomNavigationView bottomNavigationView) {
+        Menu menu = bottomNavigationView.getMenu();
+        for (int i = 0, size = menu.size(); i<size; i++) {
+            MenuItem item = menu.getItem(i);
+            item.setChecked(item.getItemId() == selectedId);
+        }
+    }
+    /// END ///
+
 }
