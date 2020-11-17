@@ -23,8 +23,7 @@ import java.util.ArrayList;
 public class TestSubjectActivity extends AppCompatActivity {
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
-    ArrayList<QuestionPost> posts_list;
-    DatabaseReference dataRef;
+    ArrayList<QuestionPost> posts_list= new ArrayList<QuestionPost>();
     Query query;
     MainRecyclerViewAdapter viewAdapter;
     @Override
@@ -36,6 +35,7 @@ public class TestSubjectActivity extends AppCompatActivity {
         setSupportActionBar(top_toolbar);
 
         //subject activity this activity displays all the content inside the specific subject
+        //query to display only Question posts with matching subject name
         query = FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .orderByChild("subject")
                 .equalTo("50.001");
@@ -47,7 +47,15 @@ public class TestSubjectActivity extends AppCompatActivity {
                 }
                 if(snapshot.exists()){
                     for(DataSnapshot s : snapshot.getChildren()){
-                        QuestionPost qnPost = s.getValue(QuestionPost.class);
+
+                        String userID = s.child("userID").getValue(String.class);
+                        String postID =s.child("postID").getValue(String.class);
+                        String text = s.child("text").getValue(String.class);
+                        String timestamp = s.child("timestamp").getValue(String.class);
+                        boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
+                        String subject = s.child("subject").getValue(String.class);
+                        QuestionPost qnPost = new QuestionPost(userID,postID,text,timestamp,subject,toggle_anonymity);
+
                         posts_list.add(qnPost);
                     }
                 }

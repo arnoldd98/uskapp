@@ -183,22 +183,21 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                             @Override
                             public void onSuccess(byte[] bytes) {
                                 bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                                //profilePicIV.setImageBitmap(bitmap);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //profilePicIV.setImageResource(R.drawable.ic_launcher_foreground);
                         e.printStackTrace();
                     }
                 });
+                if(bitmap != null){
+                    image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
+                            , image_view.getHeight(), false));
+                    image_view.setMaxHeight(holder.image_layout.getHeight());
 
-                //Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
-                image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
-                        , image_view.getHeight(), false));
-                image_view.setMaxHeight(holder.image_layout.getHeight());
+                    holder.image_layout.addView(image_view);
+                }
 
-                holder.image_layout.addView(image_view);
             }
         } else {
             ConstraintSet cs = new ConstraintSet();
