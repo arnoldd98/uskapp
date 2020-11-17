@@ -102,7 +102,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         //setting data to UI
-        profilePicIV = findViewById(R.id.postPicture);
+        profilePicIV = findViewById(R.id.userProfile);
         nameView = findViewById(R.id.nameTv);
         rankView = findViewById(R.id.rankTv);
         karmaView = findViewById(R.id.karmaTv);
