@@ -60,6 +60,7 @@ public class NewPostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 buttonPostAs.setText("Clicked");
+                anonymousOptions();
                 //anonymousOptions();
                 //Snackbar.make(findViewById(R.id.AnonymousOrNormal),Snackbar.LENGTH_SHORT).show();
             }
