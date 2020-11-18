@@ -35,4 +35,9 @@
         <item name="android:windowExitAnimation">@anim/nav_default_exit_anim</item>
     </style>
 
+    <style name="SlideDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_down_bottom</item>
+    </style>
+
 </resources>
