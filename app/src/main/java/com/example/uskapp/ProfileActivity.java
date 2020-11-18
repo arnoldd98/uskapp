@@ -87,7 +87,7 @@ public class ProfileActivity extends AppCompatActivity {
         //for the profile picture
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        imageRef.getBytes(1024*1024)
+        imageRef.getBytes(2048*2048)
                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
@@ -102,7 +102,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         //setting data to UI
-        profilePicIV = findViewById(R.id.postPicture);
+        profilePicIV = findViewById(R.id.userProfile);
         nameView = findViewById(R.id.nameTv);
         rankView = findViewById(R.id.rankTv);
         karmaView = findViewById(R.id.karmaTv);
