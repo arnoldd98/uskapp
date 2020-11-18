@@ -5,15 +5,22 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,14 +46,6 @@ public class Utils {
        Activity is responsible for dealing with activity result. Example for onActivityResult() below
 
        Inputs: activity (use ActivityName.this), package manager (call getPackageManager())
-       Example:
-            get_image_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.popUpImageOptions(PostFocusActivity.this, getPackageManager());
-            }
-        });
-
         Refer to PostFocusActivity for use case
      */
 
@@ -182,4 +181,26 @@ public class Utils {
         return bottomDialogue;
     }
     //// END OF CREATE BOTTOM DIALOG ////
+
+    //// Returns a programmatically created textview to show tag
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static TextView createTagView(Context context, String subject) {
+        TextView clickable_tag = new TextView(context);
+        clickable_tag.setText(subject);
+        clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.tag_rectangle));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
+                (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 8, 8);
+        clickable_tag.setLayoutParams(lp);
+        clickable_tag.setTextSize(12);
+        clickable_tag.setTextColor(Color.parseColor("#707070"));
+        clickable_tag.setPadding(20, 6, 20, 6);
+        clickable_tag.setClickable(true);
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(
+                android.R.attr.selectableItemBackground, outValue, true);
+        clickable_tag.setForeground(context.getDrawable(outValue.resourceId));
+
+        return clickable_tag;
+    }
 }

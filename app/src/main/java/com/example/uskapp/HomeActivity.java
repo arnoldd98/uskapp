@@ -117,7 +117,7 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.homeScreen:
                         break;
                     case R.id.addPost:
-                        Intent add_post_intent = new Intent(activity, FakeAddPostActivity.class);
+                        Intent add_post_intent = new Intent(activity, NewPostActivity.class);
                         Utils.updateNavigationBarState(R.id.homeScreen, bottom_navigation_view);
                         activity.startActivity(add_post_intent);
                         break;
