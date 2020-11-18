@@ -138,7 +138,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 test.add("Maybe");
                 RecyclerView tag_recycler = (RecyclerView) tag_options_dialog.findViewById(R.id.select_tag_recyclerview);
                 tag_recycler.setLayoutManager(new GridLayoutManager(this, 4));
-
                 tag_options_dialog.show();
                 break;
 

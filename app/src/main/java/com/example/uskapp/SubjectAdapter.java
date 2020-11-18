@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter {
+public class SubjectAdapter extends RecyclerView.Adapter {
 
     private ArrayList<String> subjectArrayList;
     private Context context;
 
-    public Adapter(Context context, ArrayList<String> subjectArrayList) {
+    public SubjectAdapter(Context context, ArrayList<String> subjectArrayList) {
         this.context = context;
         this.subjectArrayList = subjectArrayList;
     }
