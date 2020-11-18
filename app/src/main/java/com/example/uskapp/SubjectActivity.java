@@ -5,19 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -33,6 +28,7 @@ public class SubjectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject);
+        subjectTitle = new ArrayList<String>();
 
         //gets information from firebase and displays it
         mDatabase = FirebaseDatabase.getInstance().getReference("Subject");
@@ -60,10 +56,8 @@ public class SubjectActivity extends AppCompatActivity {
 
 
 
-            //connect bottons with their ids
-        recycler = findViewById(R.id.recyler1);
-
-        subjectTitle = new ArrayList<String>();
+        //connect bottons with their ids
+        recycler = findViewById(R.id.subjectRecyler);
 
         //creating recylcerview adapter
         adapter = new Adapter(this, subjectTitle);
