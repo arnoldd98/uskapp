@@ -142,7 +142,6 @@ public class PostFocusActivity extends AppCompatActivity {
                     view_added_image_selector.setVisibility(View.VISIBLE);
                 }
                 break;
-
         }
     }
 }

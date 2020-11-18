@@ -1,12 +1,18 @@
 package com.example.uskapp;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,6 +22,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,8 +35,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -38,13 +47,12 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton backToHome;
     ImageButton cameraButton;
     ImageButton galleryButton;
-    ConstraintLayout.LayoutParams layoutParams;
-    ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic,postPicture;
     private static final int PICK_IMAGE = 2;
     TextView postText;
     Uri imageUri;
+    RecyclerView tag_recycler_view;
 
 
     @Override
@@ -55,7 +63,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         mainLayout = findViewById(R.id.MainLayout);
         profilePic = findViewById(R.id.userProfileNewPost);
         postPicture = findViewById(R.id.postPhotoContent);
-        buttonTags = findViewById(R.id.buttonTags);
+        buttonTags = findViewById(R.id.select_tag_button);
         buttonTags.setOnClickListener(this);
         buttonPostAs = findViewById(R.id.buttonPostAs);
         buttonPostAs.setOnClickListener(this);
@@ -84,6 +92,9 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
         postText = findViewById(R.id.post);
         postText.setOnClickListener(this);
+
+        tag_recycler_view = (RecyclerView) findViewById(R.id.select_tag_recyclerview);
+        tag_recycler_view.setLayoutManager(new GridLayoutManager(this, 4));
 
 
 
@@ -118,7 +129,17 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this,HomeActivity.class));
                 break;
 
-            case R.id.buttonTags:
+            case R.id.select_tag_button:
+                Dialog tag_options_dialog = Utils.createBottomDialog(this, getPackageManager(), R.layout.tagmenu);
+
+                final ArrayList<String> test = new ArrayList<>();
+                test.add("Yes");
+                test.add("No");
+                test.add("Maybe");
+                RecyclerView tag_recycler = (RecyclerView) tag_options_dialog.findViewById(R.id.select_tag_recyclerview);
+                tag_recycler.setLayoutManager(new GridLayoutManager(this, 4));
+
+                tag_options_dialog.show();
                 break;
 
             case R.id.buttonPostAs:
