@@ -38,11 +38,14 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(top_toolbar);
 
         // get list of posts from Firebase
+        /*
         posts_list = new ArrayList<QuestionPost>();
         QuestionPost customPost = new QuestionPost(new User("Gru", "Gru", null), false, "Hello World!", new ArrayList<byte[]>());
         customPost.addTag(new Tag("Dumb"));
         customPost.addTag(new Tag("Shhhhhhhh"));
         posts_list.add(customPost);
+
+         */
 
         // set up main recycler view: linear layout manager to manage the order
         main_recycler_view = findViewById(R.id.main_menu_recycler_view);
@@ -55,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
         main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
-        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
+        MainRecyclerViewAdapter viewAdapter = new MainRecyclerViewAdapter(this, posts_list,null);
         main_recycler_view.setAdapter(viewAdapter);
     }
 

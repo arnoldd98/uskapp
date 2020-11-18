@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,18 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
@@ -33,10 +46,15 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
+    private ArrayList<Bitmap> profileBitmaps;
+    private Bitmap bitmap;
+    String name;
 
-    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data) {
+    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
+            , ArrayList<Bitmap> profileBitmaps) {
         this.post_data = post_data;
         this.activity = activity;
+        this.profileBitmaps =profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
         this.post_click_listener = new AdapterView.OnItemClickListener() {
             @Override
@@ -48,12 +66,15 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     @Override
     public int getItemCount() {
+        if(post_data==null){
+            return 0;
+        }
         return post_data.size();
     }
 
     @NonNull
     @Override
-    public MainRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -82,13 +103,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             holder.question_author_name.setText("Anonymous");
         }
         else {
-            byte[] byte_array_pic = post.getUser().getProfilePic();
-            if (byte_array_pic != null) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(byte_array_pic, 0, byte_array_pic.length);
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
+
+            if(profileBitmaps.size() ==post_data.size()){
+                Bitmap bitmap = profileBitmaps.get(position);
+                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
                         holder.profile_image_view.getHeight(), false));
             }
-            holder.question_author_name.setText(post.getUser().getName());
+
+            holder.question_author_name.setText(name);
+
+
         }
 
         if (post.getTimestamp() != null) holder.post_timestamp.setText(post.getTimestamp());
@@ -123,15 +147,33 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             }
         }
 
-        if (!post.getImages().isEmpty()) {
-            for (byte[] image : post.getImages()) {
+        if (!post.getPostImageIDs().isEmpty()) {
+            for (String imageID : post.getPostImageIDs()) {
                 ImageView image_view = new ImageView(holder.card_view_context);
-                Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
-                image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, image_view.getWidth()
-                        , image_view.getHeight(), false));
-                image_view.setMaxHeight(holder.image_layout.getHeight());
 
-                holder.image_layout.addView(image_view);
+                //firebase getting image
+                StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                imageRef.getBytes(2048*2048)
+                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                if(bitmap != null){
+                    image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
+                            , image_view.getHeight(), false));
+                    image_view.setMaxHeight(holder.image_layout.getHeight());
+
+                    holder.image_layout.addView(image_view);
+                }
+
             }
         } else {
             ConstraintSet cs = new ConstraintSet();
@@ -143,12 +185,13 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
 
-        if (post.getAnswersList() != null) {
-            holder.comment_indicator_textview.setText(post.getAnswersList().size() + " answers");
+        if (post.getAnswerPostIDs() != null) {
+            holder.comment_indicator_textview.setText(post.getAnswerPostIDs().size() + " answers");
         }
+
+
+
     }
-
-
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
         public ConstraintLayout card_container;
@@ -186,5 +229,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             card_view_context = postView.getContext();
         }
     }
+
 }
 
