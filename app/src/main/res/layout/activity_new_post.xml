@@ -36,6 +36,18 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userProfileNewPost"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPostAs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
+        tools:src="@tools:sample/avatars" />
+
     <TextView
         android:id="@+id/post"
         android:onClick="onClick"
@@ -52,18 +64,18 @@
 
     <Button
         android:id="@+id/buttonPostAs"
-        android:onClick="onClick"
         android:layout_width="80dp"
         android:layout_height="30dp"
-        android:layout_marginStart="57dp"
+        android:layout_marginStart="46dp"
         android:layout_marginTop="30dp"
         android:background="#0074CD"
+        android:onClick="onClick"
         android:padding="4sp"
         android:text="Post as:"
         android:textAlignment="textStart"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/userProfile"
+        app:layout_constraintStart_toEndOf="@+id/userProfileNewPost"
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
     <Button
@@ -83,28 +95,18 @@
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
     <EditText
-        android:id="@+id/textView5"
-        android:onClick="onClick"
+        android:id="@+id/textPostTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="15dp"
         android:hint="Type or post a question here."
-        android:padding="10sp"
+        android:onClick="onClick"
 
+        android:padding="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userProfile" />
-
-    <ImageView
-        android:id="@+id/userProfile"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="7dp"
-        android:src="@drawable/ic_baseline_photo_camera_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/userProfileNewPost" />
 
     <ImageButton
         android:id="@+id/picturesButton"
@@ -133,5 +135,14 @@
         android:scaleType="fitCenter"
         android:background="@color/colorPrimary"
         app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
+
+    <ImageView
+        android:id="@+id/postPhotoContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textPostTv"
+         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
