@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/homeScreen"
-        android:title="Home screen"
+    <item
+        android:id="@+id/subject"
         android:icon="@drawable/ic_baseline_dashboard_24"
-        />
+        android:title="Select subject"></item>
+    <item
+        android:id="@+id/homeScreen"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Home screen" />
 
     <item android:id="@+id/addPost"
         android:title="Add post"
         android:icon="@drawable/ic_baseline_add_box_24"/>
 
-    <item android:id="@+id/messages"
-        android:title="messages"
+    <item android:id="@+id/profile"
+        android:title="Profile"
         android:icon="@drawable/ic_baseline_person_outline_24"/>
+
 
 </menu>

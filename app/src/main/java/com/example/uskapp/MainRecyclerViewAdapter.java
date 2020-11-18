@@ -12,8 +12,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,7 +42,6 @@ import java.util.List;
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
     private List<QuestionPost> post_data;
     private LayoutInflater mInflater;
-    private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
     private Bitmap bitmap;
@@ -56,12 +53,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.activity = activity;
         this.profileBitmaps =profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
-        this.post_click_listener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // open up focus post activity
-            }
-        };
     }
 
     @Override
@@ -94,6 +85,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View view) {
                 Intent viewPostIntent = new Intent(activity, PostFocusActivity.class);
+                // putExtra post id so that ViewPostActivity is properly initialized
                 activity.startActivity(viewPostIntent);
             }
         });
@@ -126,7 +118,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 Context context = holder.tag_layout.getContext();
                 TextView clickable_tag = new TextView(context);
                 clickable_tag.setText(tag.tag_name);
-                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.rounded_rectangle));
+                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.tag_rectangle));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
                         (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 lp.setMargins(0, 0, 8, 8);

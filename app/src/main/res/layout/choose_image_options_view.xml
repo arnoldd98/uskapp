@@ -1,46 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/choose_image_options_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:background="@color/cardview_light_background"
-    android:orientation="vertical">
-
-    <HorizontalScrollView
-        android:id="@+id/gallery_top_images_scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:padding="5dp"></HorizontalScrollView>
+    android:orientation="vertical"
+    android:paddingTop="3dp"
+    android:paddingBottom="3dp">
 
     <LinearLayout
+        android:id="@+id/choose_from_gallery_selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:orientation="horizontal"
-        android:background="@drawable/top_border">
+        android:paddingLeft="2dp">
+
+        <ImageView
+            android:layout_width="7dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="2dp"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
 
         <TextView
             android:id="@+id/choose_from_gallery_textview"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:layout_weight="6.5"
+            android:fontFamily="@font/nunitosans_regular"
+            android:paddingLeft="5dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:text="Choose from Gallery..."
-            android:textColor="@color/design_default_color_primary_dark" />
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/open_camera_selectable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:orientation="horizontal"
-        android:background="@drawable/top_border">
+        android:paddingLeft="2dp">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="2dp"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
 
         <TextView
             android:id="@+id/open_camera_textview"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:layout_weight="6.5"
+            android:fontFamily="@font/nunitosans_regular"
+            android:paddingLeft="5dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:text="Open Camera..."
-            android:textColor="@color/design_default_color_primary_dark" />
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="16sp" />
     </LinearLayout>
 
 </LinearLayout>
