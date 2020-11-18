@@ -158,6 +158,28 @@ public class Utils {
             item.setChecked(item.getItemId() == selectedId);
         }
     }
-    /// END ///
+    //// END ////
 
+    //// CREATE BOTTOM DIALOG ////
+    /*
+        Inputs: activity (use ActivityName.this), package manager (call getPackageManager()),
+                ID of view to show in dialog (contentViewId)
+    */
+    public static Dialog createBottomDialog(final Activity activity, final PackageManager packageManager, int contentViewId) {
+        final Dialog bottomDialogue = new Dialog(activity, R.style.ImageDialogSheet);
+        bottomDialogue.setContentView(contentViewId);
+
+        WindowManager.LayoutParams dialog_params = new WindowManager.LayoutParams();
+        dialog_params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog_params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog_params.gravity = Gravity.BOTTOM;
+        dialog_params.windowAnimations = R.style.SlideDialogAnimation;
+        bottomDialogue.getWindow().setAttributes(dialog_params);
+        bottomDialogue.getWindow().setBackgroundDrawableResource(R.drawable.holo_gray_btn);
+
+        bottomDialogue.setCanceledOnTouchOutside(true);
+        bottomDialogue.setCancelable(true);
+        return bottomDialogue;
+    }
+    //// END OF CREATE BOTTOM DIALOG ////
 }
