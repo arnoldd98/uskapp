@@ -98,10 +98,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
             if(profileBitmaps.size() ==post_data.size()){
                 Bitmap bitmap = profileBitmaps.get(position);
-                int current = position;
-                holder.profile_image_view.setImageBitmap(bitmap);
-                //holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
-                //        holder.profile_image_view.getHeight(), false));
+                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
+                        holder.profile_image_view.getHeight(), false));
             }
 
             holder.question_author_name.setText(name);

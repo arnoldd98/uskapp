@@ -8,58 +8,82 @@
     android:orientation="vertical"
     tools:context=".NewPostActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:backgroundTint="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@color/colorPrimary"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
+            android:id="@+id/backToHome"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:adjustViewBounds="true"
+            android:background="#FFFFFF"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="2dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/back_icon"
+            tools:layout_editor_absoluteX="16dp" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#7C90FF"
-            android:gravity="right"
-            android:paddingTop="8dp"
-            android:paddingEnd="40dp"
-            android:text="New Post"
-            android:textSize="30sp" />
-    </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userProfileNewPost"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPostAs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/post"
+        android:onClick="onClick"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:fontFamily="@font/nunitosans_regular"
+        android:text="Post"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="@+id/top_toolbar"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonPostAs"
         android:layout_width="80dp"
         android:layout_height="30dp"
-        android:layout_marginTop="49dp"
-        android:layout_marginEnd="44dp"
+        android:layout_marginStart="46dp"
+        android:layout_marginTop="30dp"
         android:background="#0074CD"
+        android:onClick="onClick"
         android:padding="4sp"
         android:text="Post as:"
         android:textAlignment="textStart"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toStartOf="@id/buttonTags"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
+        app:layout_constraintStart_toEndOf="@+id/userProfileNewPost"
+        app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
     <Button
         android:id="@+id/buttonTags"
+        android:onClick="onClick"
         android:layout_width="80dp"
         android:layout_height="30dp"
-        android:layout_marginTop="49dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginTop="30dp"
         android:background="#0074CD"
         android:padding="4sp"
         android:text="Tags:"
@@ -67,35 +91,26 @@
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintStart_toEndOf="@+id/buttonPostAs"
+        app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
     <EditText
-        android:id="@+id/textView5"
+        android:id="@+id/textPostTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:padding="10sp"
+        android:layout_marginTop="15dp"
         android:hint="Type or post a question here."
+        android:onClick="onClick"
 
+        android:padding="10sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postPicture"
-        app:layout_constraintVertical_bias="0.002" />
-
-    <ImageView
-        android:id="@+id/postPicture"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="33dp"
-        android:src="@drawable/ic_baseline_photo_camera_24"
-        app:layout_constraintEnd_toStartOf="@+id/buttonPostAs"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/userProfileNewPost" />
 
     <ImageButton
         android:id="@+id/picturesButton"
+        android:onClick="onClick"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="260dp"
@@ -108,6 +123,7 @@
 
     <ImageButton
         android:id="@+id/cameraButton"
+        android:onClick="onClick"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
@@ -119,5 +135,14 @@
         android:scaleType="fitCenter"
         android:background="@color/colorPrimary"
         app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
+
+    <ImageView
+        android:id="@+id/postPhotoContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textPostTv"
+         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
