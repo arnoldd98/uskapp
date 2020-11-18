@@ -1,5 +1,6 @@
 package com.example.uskapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -122,6 +124,18 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.buttonPostAs:
+                Dialog u = Utils.createBottomDialog(this, getPackageManager(), R.layout.choose_anonymous_options_view);
+                LinearLayout ll = u.findViewById(R.id.choose_not_anonymous_option_layout);
+                u.show();
+                ll.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(intent, PICK_IMAGE);
+                    }
+                });
                 break;
         }
 
