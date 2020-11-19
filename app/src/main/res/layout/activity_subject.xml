@@ -8,7 +8,7 @@
     tools:context=".SubjectActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyler1"
+        android:id="@+id/subjectRecyler"
         android:layout_width="409dp"
         android:layout_height="729dp"
         app:layout_constraintEnd_toEndOf="parent"

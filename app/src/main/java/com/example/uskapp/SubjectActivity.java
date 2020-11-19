@@ -5,19 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -48,6 +43,7 @@ public class SubjectActivity extends AppCompatActivity {
                         String subject = s.getValue(String.class);
                         subjectTitle.add(subject);
                     }
+                    adapter.notifyDataSetChanged();
                 }
                 System.out.println(subjectTitle);
             }
@@ -59,9 +55,8 @@ public class SubjectActivity extends AppCompatActivity {
         });
 
 
-
             //connect bottons with their ids
-        recycler = findViewById(R.id.recyler1);
+        recycler = findViewById(R.id.subjectRecyler);
 
         subjectTitle = new ArrayList<String>();
 
@@ -75,4 +70,7 @@ public class SubjectActivity extends AppCompatActivity {
         recycler.setLayoutManager(new GridLayoutManager(this,2));
 
     }
+
+
+
 }
