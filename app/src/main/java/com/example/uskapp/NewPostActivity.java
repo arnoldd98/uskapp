@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -126,16 +127,37 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.buttonPostAs:
                 Dialog u = Utils.createBottomDialog(this, getPackageManager(), R.layout.choose_anonymous_options_view);
                 LinearLayout ll = u.findViewById(R.id.choose_not_anonymous_option_layout);
+                LinearLayout ll2 = u.findViewById(R.id.choose_anonymous_option_layout);
                 u.show();
                 ll.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(intent, PICK_IMAGE);
+                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        imageRef.getBytes(2048*2048)
+                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                        profilePic.setImageBitmap(bitmap);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                profilePic.setImageResource(R.drawable.ic_launcher_foreground);
+                                e.printStackTrace();
+                            }
+                        });
                     }
                 });
+                ll2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int id = getResources().getIdentifier("com.example.uskapp:drawable/"+"anonymous_icon.png",null,null);
+                        profilePic.setImageResource(id);
+                    }
+                });
+                ;
                 break;
         }
 
