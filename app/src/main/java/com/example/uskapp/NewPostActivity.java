@@ -1,5 +1,7 @@
 package com.example.uskapp;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,7 +24,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -32,7 +38,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener{
-    static final int CAMERA_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 1;
+    private static final int PICK_IMAGE = 2;
+    String name;
     Button buttonTags;
     Button buttonPostAs;
     ImageButton backToHome;
@@ -42,7 +50,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic,postPicture;
-    private static final int PICK_IMAGE = 2;
+
     TextView postText;
     Uri imageUri;
 
@@ -119,6 +127,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.buttonTags:
+                popUpImageOptions();
                 break;
 
             case R.id.buttonPostAs:
@@ -128,6 +137,20 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void post(){
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                name = snapshot.child("email").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         Date now = new Date();
         long timestamp = now.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.US);
@@ -137,7 +160,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String postID = userID+dateStr;
         String picID = postID + "pic";
-        QuestionPost newPost = new QuestionPost(userID,postID, postText.getText().toString(),
+        QuestionPost newPost = new QuestionPost(name,userID,postID, postText.getText().toString(),
                 dateStr,"subject",false);
 
 
@@ -190,7 +213,13 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             postPicture.setImageURI(imageUri);
         }
     }
+    public void popUpImageOptions() {
+        final Dialog bottomDialogue = new Dialog(this, R.style.ImageDialogSheet);
+        bottomDialogue.setContentView(R.layout.choose_image_options_view);
+        bottomDialogue.setCancelable(true);
+        bottomDialogue.show();
 
+    }
 }
 
 
