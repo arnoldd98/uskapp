@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -28,22 +29,31 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseNavigationActivity {
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
+    ImageButton choose_subject_button;
     ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
     ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
     MainRecyclerViewAdapter viewAdapter;
     Query query;
-    BottomNavigationView bottom_navigation_view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final Activity activity = this;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        final Activity activity = this;
 
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
+
+        choose_subject_button = (ImageButton) top_toolbar.findViewById(R.id.choose_subject_button);
+        choose_subject_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent select_subject_intent = new Intent(activity, SubjectActivity.class);
+                activity.startActivity(select_subject_intent);
+            }
+        });
 
         //subject activity this activity displays all the content inside the specific subject
         //query to display only Question posts with matching subject name
@@ -104,32 +114,16 @@ public class HomeActivity extends AppCompatActivity {
         // Set custom adapter to inflate the recycler view
         viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps);
         main_recycler_view.setAdapter(viewAdapter);
+    }
 
-        bottom_navigation_view = (BottomNavigationView) findViewById(R.id.bottom_navigation_view);
-        bottom_navigation_view.setSelectedItemId(R.id.homeScreen);
-        bottom_navigation_view.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+    @Override
+    protected int getCurrentNavMenuId() {
+        return R.id.nav_home_screen;
+    }
 
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.subject:
-                        break;
-                    case R.id.homeScreen:
-                        break;
-                    case R.id.addPost:
-                        Intent add_post_intent = new Intent(activity, NewPostActivity.class);
-                        Utils.updateNavigationBarState(R.id.homeScreen, bottom_navigation_view);
-                        activity.startActivity(add_post_intent);
-                        break;
-                    case R.id.profile:
-                        Intent profile_intent = new Intent(activity, ProfileActivity.class);
-                        Utils.updateNavigationBarState(R.id.homeScreen, bottom_navigation_view);
-                        activity.startActivity(profile_intent);
-                        break;
-                }
-                return true;
-            }
-        });
+    @Override
+    protected int getCurrentContentViewId() {
+        return R.layout.activity_home;
     }
 
     @Override
@@ -137,6 +131,4 @@ public class HomeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.top_toolbar_menu, menu);
         return true;
     }
-
-
 }

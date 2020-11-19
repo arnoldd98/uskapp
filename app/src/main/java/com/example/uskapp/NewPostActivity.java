@@ -43,7 +43,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener{
-    static final int CAMERA_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 1;
+    private static final int PICK_IMAGE = 2;
+
     Button buttonTags;
     Button buttonPostAs;
     ImageButton backToHome;
@@ -53,7 +55,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic,postPicture;
-    private static final int PICK_IMAGE = 2;
     TextView postText;
     Uri imageUri;
     Context new_post_context;
