@@ -183,7 +183,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 ll2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        int id = getResources().getIdentifier("com.example.uskapp:drawable/"+"anonymous_icon.png",null,null);
+                        int id = getResources().getIdentifier("com.example.uskapp:mipmap/"+"anonymous_icon",null,null);
                         profilePic.setImageResource(id);
                     }
                 });
