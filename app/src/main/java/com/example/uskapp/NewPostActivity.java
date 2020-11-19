@@ -63,7 +63,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         mainLayout = findViewById(R.id.MainLayout);
         profilePic = findViewById(R.id.userProfileNewPost);
         postPicture = findViewById(R.id.postPhotoContent);
-        buttonTags = findViewById(R.id.buttonTags);
+        buttonTags = findViewById(R.id.select_tag_button);
         buttonTags.setOnClickListener(this);
         buttonPostAs = findViewById(R.id.buttonPostAs);
         buttonPostAs.setOnClickListener(this);
@@ -108,6 +108,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+
                 profilePic.setImageResource(R.drawable.ic_launcher_foreground);
                 e.printStackTrace();
             }
@@ -126,7 +127,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this,HomeActivity.class));
                 break;
 
-            case R.id.buttonTags:
+            case R.id.select_tag_button:
                 popUpImageOptions();
                 break;
 
@@ -142,7 +143,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                name = snapshot.child("email").getValue(String.class);
+                name = snapshot.child("name").getValue(String.class);
             }
 
             @Override
@@ -153,7 +154,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
         Date now = new Date();
         long timestamp = now.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
         String dateStr = sdf.format(timestamp);
         // need get from the tag but need implement tag system first
         //String subject = subjectTextView.getText().toString();

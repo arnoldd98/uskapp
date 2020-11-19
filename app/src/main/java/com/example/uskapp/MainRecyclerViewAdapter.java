@@ -131,7 +131,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 Context context = holder.tag_layout.getContext();
                 TextView clickable_tag = new TextView(context);
                 clickable_tag.setText(tag.tag_name);
-                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.rounded_rectangle));
+                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.tag_rectangle));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
                         (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 lp.setMargins(0, 0, 8, 8);
