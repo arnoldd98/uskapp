@@ -3,7 +3,6 @@ package com.example.uskapp;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -16,6 +15,7 @@ import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
@@ -39,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,13 +49,14 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton backToHome;
     ImageButton cameraButton;
     ImageButton galleryButton;
+    ConstraintLayout.LayoutParams layoutParams;
+    ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic,postPicture;
     private static final int PICK_IMAGE = 2;
     TextView postText;
     Uri imageUri;
     Context new_post_context;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,12 +147,24 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 tag_recycler_view.setLayoutManager(
                         new FlexboxLayoutManager(new_post_context));
                 tag_recycler_view.addItemDecoration(new DividerItemDecoration(new_post_context,
-                                DividerItemDecoration.HORIZONTAL));
+                        DividerItemDecoration.HORIZONTAL));
                 tag_recycler_view.setAdapter(new SubjectAdapter(new_post_context, test, true));
                 tag_options_dialog.show();
                 break;
 
             case R.id.buttonPostAs:
+                Dialog u = Utils.createBottomDialog(this, getPackageManager(), R.layout.choose_anonymous_options_view);
+                LinearLayout ll = u.findViewById(R.id.choose_not_anonymous_option_layout);
+                u.show();
+                ll.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(intent, PICK_IMAGE);
+                    }
+                });
                 break;
         }
 

@@ -11,7 +11,7 @@
     android:paddingBottom="3dp">
 
     <LinearLayout
-        android:id="@+id/choose_from_gallery_selectable_layout"
+        android:id="@+id/choose_not_anonymous_option_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="2dp"
-            app:srcCompat="@android:drawable/ic_menu_gallery" />
+            app:srcCompat="@drawable/eye_icon" />
 
         <TextView
             android:id="@+id/choose_from_gallery_textview"
@@ -41,7 +41,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/open_camera_selectable_layout"
+        android:id="@+id/choose_anonymous_option_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -54,7 +54,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="2dp"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
+            app:srcCompat="@drawable/anonymous_icon" />
 
         <TextView
             android:id="@+id/open_camera_textview"
