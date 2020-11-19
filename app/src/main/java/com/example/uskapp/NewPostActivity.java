@@ -1,6 +1,7 @@
 package com.example.uskapp;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,7 +9,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,7 +23,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,11 +39,14 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener{
-    static final int CAMERA_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 1;
+    private static final int PICK_IMAGE = 2;
+
     Button buttonTags;
     Button buttonPostAs;
     ImageButton backToHome;
@@ -45,20 +56,21 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic,postPicture;
-    private static final int PICK_IMAGE = 2;
     TextView postText;
     Uri imageUri;
-
+    Context new_post_context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
+        new_post_context = this;
+
         //anonymousOrNot = findViewById(AnonymousOrNormal);
         mainLayout = findViewById(R.id.MainLayout);
         profilePic = findViewById(R.id.userProfileNewPost);
         postPicture = findViewById(R.id.postPhotoContent);
-        buttonTags = findViewById(R.id.buttonTags);
+        buttonTags = findViewById(R.id.select_tag_button);
         buttonTags.setOnClickListener(this);
         buttonPostAs = findViewById(R.id.buttonPostAs);
         buttonPostAs.setOnClickListener(this);
@@ -121,7 +133,25 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this,HomeActivity.class));
                 break;
 
-            case R.id.buttonTags:
+            case R.id.select_tag_button:
+                Dialog tag_options_dialog = Utils.createBottomDialog(this, getPackageManager(), R.layout.tagmenu);
+
+                final ArrayList<String> test = new ArrayList<>();
+                test.add("Yes");
+                test.add("No");
+                test.add("Maybe");
+                RecyclerView tag_recycler_view = tag_options_dialog.findViewById(R.id.select_tag_recyclerview);
+
+                // Use Flexbox Layout Manager (https://github.com/google/flexbox-layout)
+                FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(new_post_context);
+                layout_manager.setJustifyContent(JustifyContent.FLEX_END);
+
+                tag_recycler_view.setLayoutManager(
+                        new FlexboxLayoutManager(new_post_context));
+                tag_recycler_view.addItemDecoration(new DividerItemDecoration(new_post_context,
+                        DividerItemDecoration.HORIZONTAL));
+                tag_recycler_view.setAdapter(new SubjectAdapter(new_post_context, test, true));
+                tag_options_dialog.show();
                 break;
 
             case R.id.buttonPostAs:
