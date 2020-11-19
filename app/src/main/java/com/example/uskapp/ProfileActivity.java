@@ -37,12 +37,11 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseNavigationActivity {
     private String TAG = "PROFILE";
     ImageView profilePicIV;
     TextView nameView, rankView, karmaView;
     ProgressBar expBar;
-    BottomNavigationView bottomNavView;
     Button signOutBtn;
     private DatabaseReference mDatabase;
     private StorageReference mStorageRef;
@@ -54,7 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
 
         //gets information from firebase and displays it
         mDatabase = FirebaseDatabase.getInstance().getReference("Users")
@@ -107,7 +105,6 @@ public class ProfileActivity extends AppCompatActivity {
         rankView = findViewById(R.id.rankTv);
         karmaView = findViewById(R.id.karmaTv);
         expBar = findViewById(R.id.expProgressBar);
-        bottomNavView = findViewById(R.id.bottom_navigation_view);
         signOutBtn = findViewById(R.id.signOutBtn);
         expBar.setMax(100);
         expBar.setProgress(50);
@@ -125,13 +122,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                return false;
-            }
-        });
-
         profilePicIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,7 +134,15 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected int getCurrentNavMenuId() {
+        return R.id.nav_profile;
+    }
 
+    @Override
+    protected int getCurrentContentViewId() {
+        return R.layout.activity_profile;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

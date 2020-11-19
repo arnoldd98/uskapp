@@ -48,7 +48,7 @@ public class FakeAddPostActivity extends AppCompatActivity {
         nextActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(FakeAddPostActivity.this, TestSubjectActivity.class);
+                Intent intent = new Intent(FakeAddPostActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
