@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -33,19 +35,23 @@ public class HomeActivity extends BaseNavigationActivity {
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
     ImageButton choose_subject_button;
+    TextView currentTopic;
     ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
     ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
     MainRecyclerViewAdapter viewAdapter;
     Query query;
+    DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Activity activity = this;
+        //setContentView(R.layout.activity_home);
 
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
-
+        currentTopic = findViewById(R.id.current_topic_textview);
+        currentTopic.setText("Feed");
         choose_subject_button = (ImageButton) top_toolbar.findViewById(R.id.choose_subject_button);
         choose_subject_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,10 +63,9 @@ public class HomeActivity extends BaseNavigationActivity {
 
         //subject activity this activity displays all the content inside the specific subject
         //query to display only Question posts with matching subject name
-        query = FirebaseDatabase.getInstance().getReference("QuestionPost")
-                .orderByChild("subject")
-                .equalTo("50.001");
-        query.addValueEventListener(new ValueEventListener() {
+
+        mDatabase = FirebaseDatabase.getInstance().getReference("QuestionPost");
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(posts_list!= null){
@@ -68,14 +73,14 @@ public class HomeActivity extends BaseNavigationActivity {
                 }
                 if(snapshot.exists()){
                     for(DataSnapshot s : snapshot.getChildren()){
-
+                        String name = s.child("name").getValue(String.class);
                         String userID = s.child("userID").getValue(String.class);
                         String postID =s.child("postID").getValue(String.class);
                         String text = s.child("text").getValue(String.class);
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
-                        QuestionPost qnPost = new QuestionPost(userID,postID,text,timestamp,subject,toggle_anonymity);
+                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
                         posts_list.add(qnPost);
 
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
