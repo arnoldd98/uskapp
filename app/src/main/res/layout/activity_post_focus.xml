@@ -64,6 +64,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
+        android:background="@drawable/top_border"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,20 +94,48 @@
 
         <ImageButton
             android:id="@+id/get_image_button"
-            android:layout_gravity="bottom"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="bottom"
             android:src="@android:drawable/ic_menu_gallery" />
 
         <ImageButton
             android:id="@+id/send_answer_button"
-            android:layout_gravity="bottom"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="bottom"
             android:src="@android:drawable/ic_menu_send"
             app:layout_constraintDimensionRatio="1" />
 
+        <ImageView
+            android:id="@+id/replyImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/back_icon1" />
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/view_added_image_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/holo_gray_btn"
+        android:backgroundTint="@color/colorLightBlueTagButton"
+        android:clickable="true"
+        android:fontFamily="@font/nunitosans_semibold"
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingLeft="8dp"
+        android:paddingTop="2dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="2dp"
+        android:text="View Added Image"
+        android:textColor="@color/colorPrimaryDark"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/answer_recycler_view"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,7 @@
     android:paddingBottom="3dp">
 
     <LinearLayout
-        android:id="@+id/choose_from_gallery_selectable_layout"
+        android:id="@+id/choose_not_anonymous_option_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -24,24 +24,24 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="2dp"
-            app:srcCompat="@android:drawable/ic_menu_gallery" />
+            app:srcCompat="@mipmap/eye_icon" />
 
         <TextView
             android:id="@+id/choose_from_gallery_textview"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="6.5"
             android:fontFamily="@font/nunitosans_regular"
             android:paddingLeft="5dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:text="Choose from Gallery..."
+            android:text="User"
             android:textColor="@color/design_default_color_on_secondary"
             android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/open_camera_selectable_layout"
+        android:id="@+id/choose_anonymous_option_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -50,22 +50,22 @@
         android:paddingLeft="2dp">
 
         <ImageView
-            android:layout_width="0dp"
+            android:layout_width="7dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="2dp"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
+            app:srcCompat="@mipmap/anonymous_icon" />
 
         <TextView
             android:id="@+id/open_camera_textview"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="6.5"
             android:fontFamily="@font/nunitosans_regular"
             android:paddingLeft="5dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:text="Open Camera..."
+            android:text="Anonymous"
             android:textColor="@color/design_default_color_on_secondary"
             android:textSize="16sp" />
     </LinearLayout>

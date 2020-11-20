@@ -48,6 +48,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
     private Bitmap bitmap;
+    private int otherPosition;
     String name;
 
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
@@ -88,12 +89,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @SuppressLint({"ResourceAsColor", "ResourceType"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        otherPosition = position;
         QuestionPost post = post_data.get(position);
-
         holder.card_container.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+                Post postToSend = post_data.get(otherPosition);
+                String postIDToSend = postToSend.getPostID();
                 Intent viewPostIntent = new Intent(activity, PostFocusActivity.class);
+                viewPostIntent.putExtra("postID",postIDToSend);
                 activity.startActivity(viewPostIntent);
             }
         });
@@ -105,12 +110,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         else {
 
             if(profileBitmaps.size() ==post_data.size()){
-                Bitmap bitmap = profileBitmaps.get(position);
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
+                Bitmap bmp = profileBitmaps.get(position);
+                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
                         holder.profile_image_view.getHeight(), false));
             }
 
-            holder.question_author_name.setText(name);
+            holder.question_author_name.setText(post.getName());
 
 
         }
@@ -126,7 +131,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 Context context = holder.tag_layout.getContext();
                 TextView clickable_tag = new TextView(context);
                 clickable_tag.setText(tag.tag_name);
-                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.rounded_rectangle));
+                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.tag_rectangle));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
                         (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 lp.setMargins(0, 0, 8, 8);

@@ -1,8 +1,11 @@
 package com.example.uskapp;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,7 +25,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -32,7 +39,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener{
-    static final int CAMERA_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 1;
+    private static final int PICK_IMAGE = 2;
+    String name;
     Button buttonTags;
     Button buttonPostAs;
     ImageButton backToHome;
@@ -42,7 +51,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic,postPicture;
-    private static final int PICK_IMAGE = 2;
+
     TextView postText;
     Uri imageUri;
 
@@ -55,7 +64,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         mainLayout = findViewById(R.id.MainLayout);
         profilePic = findViewById(R.id.userProfileNewPost);
         postPicture = findViewById(R.id.postPhotoContent);
-        buttonTags = findViewById(R.id.buttonTags);
+        buttonTags = findViewById(R.id.select_tag_button);
         buttonTags.setOnClickListener(this);
         buttonPostAs = findViewById(R.id.buttonPostAs);
         buttonPostAs.setOnClickListener(this);
@@ -100,6 +109,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+
                 profilePic.setImageResource(R.drawable.ic_launcher_foreground);
                 e.printStackTrace();
             }
@@ -118,26 +128,75 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this,HomeActivity.class));
                 break;
 
-            case R.id.buttonTags:
+            case R.id.select_tag_button:
+                popUpImageOptions();
                 break;
 
             case R.id.buttonPostAs:
+
+                Dialog u = Utils.createBottomDialog(this, getPackageManager(), R.layout.choose_anonymous_options_view);
+                LinearLayout ll = u.findViewById(R.id.choose_not_anonymous_option_layout);
+                LinearLayout ll2 = u.findViewById(R.id.choose_anonymous_option_layout);
+                u.show();
+                ll.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        imageRef.getBytes(2048*2048)
+                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                        profilePic.setImageBitmap(bitmap);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                profilePic.setImageResource(R.drawable.ic_launcher_foreground);
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                });
+                ll2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int id = getResources().getIdentifier("com.example.uskapp:mipmap/"+"anonymous_icon",null,null);
+                        profilePic.setImageResource(id);
+                    }
+                });
+                ;
                 break;
         }
 
     }
 
     private void post(){
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                name = snapshot.child("name").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         Date now = new Date();
         long timestamp = now.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
         String dateStr = sdf.format(timestamp);
         // need get from the tag but need implement tag system first
         //String subject = subjectTextView.getText().toString();
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String postID = userID+dateStr;
         String picID = postID + "pic";
-        QuestionPost newPost = new QuestionPost(userID,postID, postText.getText().toString(),
+        QuestionPost newPost = new QuestionPost(name,userID,postID, postText.getText().toString(),
                 dateStr,"subject",false);
 
 
@@ -190,7 +249,13 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             postPicture.setImageURI(imageUri);
         }
     }
+    public void popUpImageOptions() {
+        final Dialog bottomDialogue = new Dialog(this, R.style.ImageDialogSheet);
+        bottomDialogue.setContentView(R.layout.choose_image_options_view);
+        bottomDialogue.setCancelable(true);
+        bottomDialogue.show();
 
+    }
 }
 
 

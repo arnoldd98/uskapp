@@ -122,7 +122,7 @@
             android:fontFamily="@font/nunitosans_regular"
             android:text="25 ups"
             android:textColor="@color/cardview_dark_background"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -152,7 +152,7 @@
             android:fontFamily="@font/nunitosans_regular"
             android:text="10 answers"
             android:textColor="@color/cardview_dark_background"
-            android:textSize="12sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout" />
     </LinearLayout>
 

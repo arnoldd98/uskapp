@@ -7,12 +7,14 @@ public class QuestionPost extends Post implements Subject{
     //private ArrayList<AnswerPost> answers_list;
     private ArrayList<Tag> tags_list;
     ArrayList<Observer> followersOfPost = new ArrayList<>();
-    public QuestionPost(String userID, String postID, String text, String timestamp, String subject,
-                        boolean toggle_anonymity) {
-        super(userID, postID,text, timestamp, subject, toggle_anonymity);
+
+    public QuestionPost(String name, String userID, String postID, String text, String timestamp,
+                        String subject, boolean toggle_anonymity) {
+        super(name,userID, postID,text, timestamp, subject, toggle_anonymity);
         //answers_list = new ArrayList<AnswerPost>();
         tags_list = new ArrayList<Tag>();
     }
+
 
     public void addTag(Tag tag) {
         tags_list.add(tag);
@@ -30,7 +32,7 @@ public class QuestionPost extends Post implements Subject{
     public void setAnswerPostIDs(ArrayList<String> answerPostIDs) {
         this.answerPostIDs = answerPostIDs;
     }
-    
+
     public void addAnswerPostID(String answerPostID){
         this.answerPostIDs.add(answerPostID);
     }

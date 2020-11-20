@@ -79,7 +79,7 @@
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
     <Button
-        android:id="@+id/buttonTags"
+        android:id="@+id/select_tag_button"
         android:onClick="onClick"
         android:layout_width="80dp"
         android:layout_height="30dp"
@@ -119,7 +119,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:scaleType="fitCenter"
         android:background="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
+        app:srcCompat="@drawable/ic_baseline_bookmarks_24" />
 
     <ImageButton
         android:id="@+id/cameraButton"
