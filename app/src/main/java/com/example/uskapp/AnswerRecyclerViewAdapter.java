@@ -11,11 +11,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.w3c.dom.Text;
 
@@ -25,10 +30,12 @@ import java.util.List;
 public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecyclerViewAdapter.ViewHolder> {
     private List<AnswerPost> answer_data;
     private ArrayList<Bitmap> answerProfileBitmaps;
+    private Context ctx;
 
-    public AnswerRecyclerViewAdapter(List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps) {
+    public AnswerRecyclerViewAdapter(Context ctx, List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps) {
         this.answer_data = answer_data;
         this.answerProfileBitmaps=answerProfileBitmaps;
+        this.ctx = ctx;
     }
 
     @Override
@@ -53,7 +60,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
         AnswerPost answer = answer_data.get(position);
 
         if (answer.toggle_anonymity){
@@ -79,6 +86,40 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
 
         holder.up_answer_btn.setText(answer.getUpvotes() + " ups");
         holder.answer_tv.setText(answer.getText());
+
+        //upvoting button
+        // checks if valid
+        // updates AnswerPost data
+        holder.up_answer_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AnswerPost post = answer_data.get(position);
+                Toast.makeText(ctx, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                boolean valid=true;
+                for(String upvoteIDs : post.getUsersWhoUpVoted()){
+                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                        valid=false;
+                    }
+                }
+
+                if(valid){
+                    post.increaseUpVote();
+                    int i = post.getUpvotes();
+                    String id = answer_data.get(position).getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("AnswerPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("AnswerPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
+                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                } else {
+                    Toast.makeText(ctx, "already voted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
 
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(holder.clickable_to_images_layout1.getHeight(),

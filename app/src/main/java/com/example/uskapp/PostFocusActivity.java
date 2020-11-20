@@ -98,7 +98,7 @@ public class PostFocusActivity extends AppCompatActivity {
         LinearLayoutManager linear_layout_manager = new LinearLayoutManager(this);
         linear_layout_manager.setStackFromEnd(false);
         answer_recyclerview.setLayoutManager(linear_layout_manager);
-        answerAdapter = new AnswerRecyclerViewAdapter(answerPostArrayList,answerProfilePhotos);
+        answerAdapter = new AnswerRecyclerViewAdapter(this,answerPostArrayList,answerProfilePhotos);
         answer_recyclerview.setAdapter(answerAdapter);
 
         //getting name of current user
@@ -201,7 +201,7 @@ public class PostFocusActivity extends AppCompatActivity {
                 long timestamp = now.getTime();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
                 String dateStr = sdf.format(timestamp);
-                String subject = "50.001";
+                String subject = currentPost.getSubject();
                 String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String postID = userID+dateStr;
                 // in the case where duplicate id sent
@@ -212,17 +212,17 @@ public class PostFocusActivity extends AppCompatActivity {
                 String answer_text = user_answer_edit_text.getText().toString();
 
                 AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,false);
-
+                //adds a new answer post
                 FirebaseDatabase.getInstance().getReference("AnswerPost")
                         .child(postID).setValue(ansPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             //adding the reply post to currentpost arraylist
-                            currentPost.addAnswerPostID(replyPostID);
+                            //currentPost.addAnswerPostID(replyPostID);
                             //getRepliesFromFirebase();
                             //answerAdapter.notifyDataSetChanged();
-                            //currentPost.addAnswerPostID(replyPostID);
+                            currentPost.addAnswerPostID(replyPostID);
                             updateCurrentPost();
                             Toast.makeText(PostFocusActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                         } else {
@@ -257,6 +257,7 @@ public class PostFocusActivity extends AppCompatActivity {
         });
 
         // upvote click
+        //checks if valid then updates the question post data
         upVoteIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -356,7 +357,6 @@ public class PostFocusActivity extends AppCompatActivity {
                                                       public void onSuccess(byte[] bytes) {
                                                           Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                           answerProfilePhotos.add(bitmap);
-                                                          //answerAdapter.notifyDataSetChanged();
                                                       }
                                                   }
                             );
@@ -383,8 +383,6 @@ public class PostFocusActivity extends AppCompatActivity {
                     overridePendingTransition(0, 0);
                     startActivity(getIntent());
                     overridePendingTransition(0, 0);
-                    //getInfo();
-                    //answerAdapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(PostFocusActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                 }
