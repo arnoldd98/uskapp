@@ -86,12 +86,10 @@ public class HomeActivity extends BaseNavigationActivity {
 
                         QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
                         posts_list.add(qnPost);
-                        int i = 0;
                         for(DataSnapshot id : arraySnapAnsID.getChildren()){
                             String value = id.getValue(String.class);
                             qnPost.addAnswerPostID(value);
                         }
-                        int j=0;
                         for(DataSnapshot id : arraySnapVoteID.getChildren()){
                             String value = id.getValue(String.class);
                             qnPost.addUserUpvote(value);

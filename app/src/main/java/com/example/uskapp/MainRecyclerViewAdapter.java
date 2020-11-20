@@ -111,8 +111,14 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
             if(profileBitmaps.size() ==post_data.size()){
                 Bitmap bmp = profileBitmaps.get(position);
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
-                        holder.profile_image_view.getHeight(), false));
+                //bitmap tends not to be properly loaded
+                try{
+                    holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
+                            holder.profile_image_view.getHeight(), false));
+                } catch (Exception e){
+                    holder.profile_image_view.setImageResource(R.drawable.ic_launcher_foreground);
+                }
+
             }
 
             holder.question_author_name.setText(post.getName());

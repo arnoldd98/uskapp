@@ -61,10 +61,16 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             holder.answer_author_name_tv.setText("Anonymous");
         }
         else {
-            if(answerProfileBitmaps.size() ==answer_data.size()){
+            if(answerProfileBitmaps.size() == answer_data.size()){
                 Bitmap bitmap = answerProfileBitmaps.get(position);
-                holder.answerer_profile_iv.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.answerer_profile_iv.getWidth(),
-                        holder.answerer_profile_iv.getHeight(), false));
+                //bitmap tends to not be properly loaded
+                try{
+                    holder.answerer_profile_iv.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.answerer_profile_iv.getWidth(),
+                            holder.answerer_profile_iv.getHeight(), false));
+                } catch (Exception e){
+                    holder.answerer_profile_iv.setImageResource(R.drawable.ic_launcher_foreground);
+                }
+;
             }
             holder.answer_author_name_tv.setText(answer.getName());
         }

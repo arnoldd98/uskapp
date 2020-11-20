@@ -53,21 +53,20 @@ public class PostFocusActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1;
     private static final int PICK_IMAGE = 2;
     RecyclerView answer_recyclerview;
-    //static ArrayList<AnswerPost> answerPosts;
-    //ConstraintLayout qnPostLayout;
     EditText user_answer_edit_text;
     ImageButton send_answer_button,get_image_button,back_to_main_button;
-    ImageView upVoteIv;
+    ImageView upVoteIv,profilePicIv,starIv,replyIv;
+    AnswerRecyclerViewAdapter answerAdapter;
+    TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
     Context context;
+
     String currentPostID,name,replyPostID;
     Uri imageUri;
     QuestionPost currentPost;
     ArrayList<AnswerPost> answerPostArrayList = new ArrayList<AnswerPost>();
     ArrayList<String> answerPostIDs = new ArrayList<String>();
     ArrayList<Bitmap> answerProfilePhotos = new ArrayList<Bitmap>();
-    AnswerRecyclerViewAdapter answerAdapter;
-    ImageView profilePicIv,starIv,replyIv;
-    TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,17 +133,17 @@ public class PostFocusActivity extends AppCompatActivity {
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
                             boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
-
-                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
                             DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
                             DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
-                            int i = 0;
+
+                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                            answerPostIDs.clear();
                             for(DataSnapshot id : arraySnapAnsID.getChildren()){
                                 String value = id.getValue(String.class);
                                 answerPostIDs.add(value);
                             }
                             currentPost.setAnswerPostIDs(answerPostIDs);
-                            int j=0;
+
                             ArrayList<String> upVoteIds = new ArrayList<String>();
                             for(DataSnapshot id : arraySnapVoteID.getChildren()){
                                 String value = id.getValue(String.class);
@@ -173,7 +172,7 @@ public class PostFocusActivity extends AppCompatActivity {
                         }
                     }
                     //GETTING DATA OF THE REPLIES WHICH WILL BE PASSED INTO THE ADAPTER
-                    if(answerPostIDs!= null ){
+                    if(currentPost.getAnswerPostIDs()!= null ){
                         getRepliesFromFirebase();
                     }
                     answerAdapter.notifyDataSetChanged();
@@ -220,7 +219,7 @@ public class PostFocusActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             //adding the reply post to currentpost arraylist
-                            answerPostIDs.add(replyPostID);
+                            currentPost.addAnswerPostID(replyPostID);
                             //getRepliesFromFirebase();
                             //answerAdapter.notifyDataSetChanged();
                             //currentPost.addAnswerPostID(replyPostID);
@@ -333,7 +332,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
     private void getRepliesFromFirebase(){
         answerProfilePhotos.clear();
-        for (String id : answerPostIDs ){
+        for (String id : currentPost.getAnswerPostIDs() ){
             DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("AnswerPost")
                     .child(id);
             postRef.addValueEventListener(new ValueEventListener() {
@@ -373,7 +372,7 @@ public class PostFocusActivity extends AppCompatActivity {
     }
 
     public void updateCurrentPost(){
-        currentPost.setAnswerPostIDs(answerPostIDs);
+        currentPost.setAnswerPostIDs(answerPostIDs); //maybe need comment out
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(currentPostID).setValue(currentPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
