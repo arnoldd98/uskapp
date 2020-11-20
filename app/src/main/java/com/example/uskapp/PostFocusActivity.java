@@ -54,10 +54,10 @@ public class PostFocusActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 2;
     RecyclerView answer_recyclerview;
     //static ArrayList<AnswerPost> answerPosts;
-    ImageButton back_to_main_button;
     //ConstraintLayout qnPostLayout;
     EditText user_answer_edit_text;
-    ImageButton send_answer_button,get_image_button;
+    ImageButton send_answer_button,get_image_button,back_to_main_button;
+    ImageView upVoteIv;
     Context context;
     String currentPostID,name,replyPostID;
     Uri imageUri;
@@ -82,6 +82,7 @@ public class PostFocusActivity extends AppCompatActivity {
         nameTv = (TextView)qnPostLayout.findViewById(R.id.question_author_name);
         postTextTv = (TextView)qnPostLayout.findViewById(R.id.question_textview);
         upVoteTv = (TextView)qnPostLayout.findViewById(R.id.ups_indicator_textview);
+        upVoteIv = (ImageView)qnPostLayout.findViewById(R.id.ups_indicator_imageview);
         commentTv = (TextView)qnPostLayout.findViewById(R.id.comment_indicator__textview);
 
         // initialize back button, on click it returns back to the home activity
@@ -134,12 +135,22 @@ public class PostFocusActivity extends AppCompatActivity {
                             boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
 
-                            DataSnapshot arraySnap = s.child("answerPostIDs");
+                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                            DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
+                            DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
                             int i = 0;
-                            for(DataSnapshot id : arraySnap.getChildren()){
+                            for(DataSnapshot id : arraySnapAnsID.getChildren()){
                                 String value = id.getValue(String.class);
                                 answerPostIDs.add(value);
                             }
+                            currentPost.setAnswerPostIDs(answerPostIDs);
+                            int j=0;
+                            ArrayList<String> upVoteIds = new ArrayList<String>();
+                            for(DataSnapshot id : arraySnapVoteID.getChildren()){
+                                String value = id.getValue(String.class);
+                                currentPost.addUserUpvote(value);
+                            }
+                            //currentPost.
 
                             StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                                     .child(userID);
@@ -152,13 +163,13 @@ public class PostFocusActivity extends AppCompatActivity {
                                                               }
                                                           }
                                     );
-                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
+
 
                             timeStampTv.setText(timestamp);
                             nameTv.setText(name);
                             postTextTv.setText(text);
                             upVoteTv.setText(String.valueOf(upvotes));
-                            commentTv.setText(String.valueOf(answerPostArrayList.size()));
+                            commentTv.setText(String.valueOf(currentPost.getAnswerPostIDs().size()));
                         }
                     }
                     //GETTING DATA OF THE REPLIES WHICH WILL BE PASSED INTO THE ADAPTER
@@ -243,6 +254,35 @@ public class PostFocusActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 popUpImageOptions(context);
+            }
+        });
+
+        // upvote click
+        upVoteIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean valid=true;
+                for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
+                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                        valid=false;
+                    }
+                }
+
+                if(valid){
+                    currentPost.increaseUpVote();
+                    int i = currentPost.getUpvotes();
+                    String id = currentPost.getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
+                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                } else {
+                    Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
