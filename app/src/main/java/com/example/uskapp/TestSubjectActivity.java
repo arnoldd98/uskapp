@@ -41,9 +41,6 @@ public class TestSubjectActivity extends AppCompatActivity {
     ArrayList<QuestionPost> searchPosts = new ArrayList<QuestionPost>();
     Query query;
     MainRecyclerViewAdapter viewAdapter,searchAdapter;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +53,6 @@ public class TestSubjectActivity extends AppCompatActivity {
         currentTopic.setText(getIntent().getStringExtra("indsubject"));
         searchAdapter = new MainRecyclerViewAdapter(this,searchPosts,searchProfileBitmaps);
 
-
         //subject activity this activity displays all the content inside the specific subject
         //query to display only Question posts with matching subject name
         query = FirebaseDatabase.getInstance().getReference("QuestionPost")
@@ -68,16 +64,17 @@ public class TestSubjectActivity extends AppCompatActivity {
                 if(posts_list!= null){
                     posts_list.clear();
                 }
+
                 if(snapshot.exists()){
                     for(DataSnapshot s : snapshot.getChildren()){
-
+                        String name = s.child("name").getValue(String.class);
                         String userID = s.child("userID").getValue(String.class);
                         String postID =s.child("postID").getValue(String.class);
                         String text = s.child("text").getValue(String.class);
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
-                        QuestionPost qnPost = new QuestionPost(userID,postID,text,timestamp,subject,toggle_anonymity);
+                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
                         posts_list.add(qnPost);
 
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
