@@ -110,8 +110,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         else {
 
             if(profileBitmaps.size() ==post_data.size()){
-                Bitmap bitmap = profileBitmaps.get(position);
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
+                Bitmap bmp = profileBitmaps.get(position);
+                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
                         holder.profile_image_view.getHeight(), false));
             }
 
