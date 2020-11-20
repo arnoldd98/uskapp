@@ -12,6 +12,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,9 +44,11 @@ import java.util.List;
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
     private List<QuestionPost> post_data;
     private LayoutInflater mInflater;
+    private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
     private Bitmap bitmap;
+    private int otherPosition;
     String name;
 
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
@@ -53,6 +57,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.activity = activity;
         this.profileBitmaps =profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
+        this.post_click_listener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // open up focus post activity
+            }
+        };
     }
 
     @Override
@@ -79,13 +89,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @SuppressLint({"ResourceAsColor", "ResourceType"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        otherPosition = position;
         QuestionPost post = post_data.get(position);
-
         holder.card_container.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+                Post postToSend = post_data.get(otherPosition);
+                String postIDToSend = postToSend.getPostID();
                 Intent viewPostIntent = new Intent(activity, PostFocusActivity.class);
-                // putExtra post id so that ViewPostActivity is properly initialized
+                viewPostIntent.putExtra("postID",postIDToSend);
                 activity.startActivity(viewPostIntent);
             }
         });
@@ -97,12 +110,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         else {
 
             if(profileBitmaps.size() ==post_data.size()){
-                Bitmap bitmap = profileBitmaps.get(position);
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
+                Bitmap bmp = profileBitmaps.get(position);
+                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
                         holder.profile_image_view.getHeight(), false));
             }
 
-            holder.question_author_name.setText(name);
+            holder.question_author_name.setText(post.getName());
 
 
         }

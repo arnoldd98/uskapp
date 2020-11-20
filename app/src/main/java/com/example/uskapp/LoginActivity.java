@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //go to homepage
-                    startActivity(new Intent(LoginActivity.this,ProfileActivity.class));
+                    startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     finish();
                 }
                 else{

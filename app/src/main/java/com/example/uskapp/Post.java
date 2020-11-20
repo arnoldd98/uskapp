@@ -8,7 +8,7 @@ public abstract class Post{
     private String userID;
     private String postID;
     private ArrayList<String> postImageIDs =new ArrayList<String>();
-
+    private String name;
     public boolean toggle_anonymity;
     private String text;
     private int upvotes;
@@ -16,8 +16,9 @@ public abstract class Post{
     private String subject; // subject of post eg. 50.001
 
 
-    public Post(String userID, String postID, String text, String timestamp, String subject,
+    public Post(String name,String userID, String postID, String text, String timestamp, String subject,
                 boolean toggle_anonymity) {
+        this.name = name;
         this.userID = userID;
         this.postID=postID;
         this.toggle_anonymity = toggle_anonymity;
@@ -25,6 +26,10 @@ public abstract class Post{
         this.upvotes = 0;
         this.timestamp = timestamp;
         this.subject = subject;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getUserID() {
