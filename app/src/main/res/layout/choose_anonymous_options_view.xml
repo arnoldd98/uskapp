@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="2dp"
-            app:srcCompat="@mipmap/eye_icon" />
+            app:srcCompat="@drawable/eye_icon" />
 
         <TextView
             android:id="@+id/choose_from_gallery_textview"
@@ -54,7 +54,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="2dp"
-            app:srcCompat="@mipmap/anonymous_icon" />
+            app:srcCompat="@drawable/anonymous_icon" />
 
         <TextView
             android:id="@+id/open_camera_textview"

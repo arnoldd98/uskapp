@@ -80,9 +80,20 @@ public class HomeActivity extends BaseNavigationActivity {
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
-                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
-                        posts_list.add(qnPost);
+                        int upvotes  = s.child("upvotes").getValue(Integer.class);
+                        DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
+                        DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
 
+                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                        posts_list.add(qnPost);
+                        for(DataSnapshot id : arraySnapAnsID.getChildren()){
+                            String value = id.getValue(String.class);
+                            qnPost.addAnswerPostID(value);
+                        }
+                        for(DataSnapshot id : arraySnapVoteID.getChildren()){
+                            String value = id.getValue(String.class);
+                            qnPost.addUserUpvote(value);
+                        }
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                                 .child(userID);
                         imageRef.getBytes(2048*2048)

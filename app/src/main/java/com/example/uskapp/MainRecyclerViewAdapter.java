@@ -34,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -48,8 +49,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
     private Bitmap bitmap;
-    private int otherPosition;
-    String name;
 
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
             , ArrayList<Bitmap> profileBitmaps) {
@@ -88,14 +87,15 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint({"ResourceAsColor", "ResourceType"})
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        otherPosition = position;
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+
         QuestionPost post = post_data.get(position);
         holder.card_container.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Post postToSend = post_data.get(otherPosition);
+
+                Post postToSend = post_data.get(position);
                 String postIDToSend = postToSend.getPostID();
                 Intent viewPostIntent = new Intent(activity, PostFocusActivity.class);
                 viewPostIntent.putExtra("postID",postIDToSend);
@@ -111,8 +111,14 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
             if(profileBitmaps.size() ==post_data.size()){
                 Bitmap bmp = profileBitmaps.get(position);
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
-                        holder.profile_image_view.getHeight(), false));
+                //bitmap tends not to be properly loaded
+                try{
+                    holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
+                            holder.profile_image_view.getHeight(), false));
+                } catch (Exception e){
+                    holder.profile_image_view.setImageResource(R.drawable.ic_launcher_foreground);
+                }
+
             }
 
             holder.question_author_name.setText(post.getName());
@@ -189,6 +195,37 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
 
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
+        //upvote button
+        holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Post post = post_data.get(position);
+                Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                boolean valid=true;
+                for(String upvoteIDs : post.getUsersWhoUpVoted()){
+                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                        valid=false;
+                    }
+                }
+
+                if(valid){
+                    post.increaseUpVote();
+                    int i = post.getUpvotes();
+                    String id = post_data.get(position).getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
+                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                } else {
+                    Toast.makeText(activity, "already voted", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
 
         if (post.getAnswerPostIDs() != null) {
             holder.comment_indicator_textview.setText(post.getAnswerPostIDs().size() + " answers");
