@@ -15,6 +15,13 @@ public class QuestionPost extends Post implements Subject{
         tags_list = new ArrayList<Tag>();
     }
 
+    public QuestionPost(String name, String userID, String postID, String text, String timestamp,
+                        String subject, boolean toggle_anonymity,int upvotes) {
+        super(name,userID, postID,text, timestamp, subject, toggle_anonymity,upvotes);
+        //answers_list = new ArrayList<AnswerPost>();
+        tags_list = new ArrayList<Tag>();
+    }
+
 
     public void addTag(Tag tag) {
         tags_list.add(tag);

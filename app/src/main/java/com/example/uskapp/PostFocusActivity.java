@@ -53,21 +53,20 @@ public class PostFocusActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1;
     private static final int PICK_IMAGE = 2;
     RecyclerView answer_recyclerview;
-    //static ArrayList<AnswerPost> answerPosts;
-    ImageButton back_to_main_button;
-    //ConstraintLayout qnPostLayout;
     EditText user_answer_edit_text;
-    ImageButton send_answer_button,get_image_button;
+    ImageButton send_answer_button,get_image_button,back_to_main_button;
+    ImageView upVoteIv,profilePicIv,starIv,replyIv;
+    AnswerRecyclerViewAdapter answerAdapter;
+    TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
     Context context;
+
     String currentPostID,name,replyPostID;
     Uri imageUri;
     QuestionPost currentPost;
     ArrayList<AnswerPost> answerPostArrayList = new ArrayList<AnswerPost>();
     ArrayList<String> answerPostIDs = new ArrayList<String>();
     ArrayList<Bitmap> answerProfilePhotos = new ArrayList<Bitmap>();
-    AnswerRecyclerViewAdapter answerAdapter;
-    ImageView profilePicIv,starIv,replyIv;
-    TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +81,7 @@ public class PostFocusActivity extends AppCompatActivity {
         nameTv = (TextView)qnPostLayout.findViewById(R.id.question_author_name);
         postTextTv = (TextView)qnPostLayout.findViewById(R.id.question_textview);
         upVoteTv = (TextView)qnPostLayout.findViewById(R.id.ups_indicator_textview);
+        upVoteIv = (ImageView)qnPostLayout.findViewById(R.id.ups_indicator_imageview);
         commentTv = (TextView)qnPostLayout.findViewById(R.id.comment_indicator__textview);
 
         // initialize back button, on click it returns back to the home activity
@@ -98,7 +98,7 @@ public class PostFocusActivity extends AppCompatActivity {
         LinearLayoutManager linear_layout_manager = new LinearLayoutManager(this);
         linear_layout_manager.setStackFromEnd(false);
         answer_recyclerview.setLayoutManager(linear_layout_manager);
-        answerAdapter = new AnswerRecyclerViewAdapter(answerPostArrayList,answerProfilePhotos);
+        answerAdapter = new AnswerRecyclerViewAdapter(this,answerPostArrayList,answerProfilePhotos);
         answer_recyclerview.setAdapter(answerAdapter);
 
         //getting name of current user
@@ -133,13 +133,23 @@ public class PostFocusActivity extends AppCompatActivity {
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
                             boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
+                            DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
+                            DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
 
-                            DataSnapshot arraySnap = s.child("answerPostIDs");
-                            int i = 0;
-                            for(DataSnapshot id : arraySnap.getChildren()){
+                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                            answerPostIDs.clear();
+                            for(DataSnapshot id : arraySnapAnsID.getChildren()){
                                 String value = id.getValue(String.class);
                                 answerPostIDs.add(value);
                             }
+                            currentPost.setAnswerPostIDs(answerPostIDs);
+
+                            ArrayList<String> upVoteIds = new ArrayList<String>();
+                            for(DataSnapshot id : arraySnapVoteID.getChildren()){
+                                String value = id.getValue(String.class);
+                                currentPost.addUserUpvote(value);
+                            }
+                            //currentPost.
 
                             StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                                     .child(userID);
@@ -152,17 +162,17 @@ public class PostFocusActivity extends AppCompatActivity {
                                                               }
                                                           }
                                     );
-                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
+
 
                             timeStampTv.setText(timestamp);
                             nameTv.setText(name);
                             postTextTv.setText(text);
                             upVoteTv.setText(String.valueOf(upvotes));
-                            commentTv.setText(String.valueOf(answerPostArrayList.size()));
+                            commentTv.setText(String.valueOf(currentPost.getAnswerPostIDs().size()));
                         }
                     }
                     //GETTING DATA OF THE REPLIES WHICH WILL BE PASSED INTO THE ADAPTER
-                    if(answerPostIDs!= null ){
+                    if(currentPost.getAnswerPostIDs()!= null ){
                         getRepliesFromFirebase();
                     }
                     answerAdapter.notifyDataSetChanged();
@@ -191,7 +201,7 @@ public class PostFocusActivity extends AppCompatActivity {
                 long timestamp = now.getTime();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
                 String dateStr = sdf.format(timestamp);
-                String subject = "50.001";
+                String subject = currentPost.getSubject();
                 String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String postID = userID+dateStr;
                 // in the case where duplicate id sent
@@ -202,17 +212,17 @@ public class PostFocusActivity extends AppCompatActivity {
                 String answer_text = user_answer_edit_text.getText().toString();
 
                 AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,false);
-
+                //adds a new answer post
                 FirebaseDatabase.getInstance().getReference("AnswerPost")
                         .child(postID).setValue(ansPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             //adding the reply post to currentpost arraylist
-                            answerPostIDs.add(replyPostID);
+                            //currentPost.addAnswerPostID(replyPostID);
                             //getRepliesFromFirebase();
                             //answerAdapter.notifyDataSetChanged();
-                            //currentPost.addAnswerPostID(replyPostID);
+                            currentPost.addAnswerPostID(replyPostID);
                             updateCurrentPost();
                             Toast.makeText(PostFocusActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                         } else {
@@ -243,6 +253,36 @@ public class PostFocusActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 popUpImageOptions(context);
+            }
+        });
+
+        // upvote click
+        //checks if valid then updates the question post data
+        upVoteIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean valid=true;
+                for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
+                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                        valid=false;
+                    }
+                }
+
+                if(valid){
+                    currentPost.increaseUpVote();
+                    int i = currentPost.getUpvotes();
+                    String id = currentPost.getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
+                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                } else {
+                    Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -293,7 +333,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
     private void getRepliesFromFirebase(){
         answerProfilePhotos.clear();
-        for (String id : answerPostIDs ){
+        for (String id : currentPost.getAnswerPostIDs() ){
             DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("AnswerPost")
                     .child(id);
             postRef.addValueEventListener(new ValueEventListener() {
@@ -317,7 +357,6 @@ public class PostFocusActivity extends AppCompatActivity {
                                                       public void onSuccess(byte[] bytes) {
                                                           Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                           answerProfilePhotos.add(bitmap);
-                                                          //answerAdapter.notifyDataSetChanged();
                                                       }
                                                   }
                             );
@@ -333,7 +372,7 @@ public class PostFocusActivity extends AppCompatActivity {
     }
 
     public void updateCurrentPost(){
-        currentPost.setAnswerPostIDs(answerPostIDs);
+        currentPost.setAnswerPostIDs(answerPostIDs); //maybe need comment out
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(currentPostID).setValue(currentPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -344,8 +383,6 @@ public class PostFocusActivity extends AppCompatActivity {
                     overridePendingTransition(0, 0);
                     startActivity(getIntent());
                     overridePendingTransition(0, 0);
-                    //getInfo();
-                    //answerAdapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(PostFocusActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                 }
