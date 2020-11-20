@@ -41,6 +41,9 @@ public class TestSubjectActivity extends AppCompatActivity {
     ArrayList<QuestionPost> searchPosts = new ArrayList<QuestionPost>();
     Query query;
     MainRecyclerViewAdapter viewAdapter,searchAdapter;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +53,15 @@ public class TestSubjectActivity extends AppCompatActivity {
         setSupportActionBar(top_toolbar);
         search =(SearchView)top_toolbar.findViewById(R.id.search_posts);
         currentTopic = findViewById(R.id.current_topic_textview);
-        currentTopic.setText("50.001");
+        currentTopic.setText(getIntent().getStringExtra("indsubject"));
         searchAdapter = new MainRecyclerViewAdapter(this,searchPosts,searchProfileBitmaps);
+
 
         //subject activity this activity displays all the content inside the specific subject
         //query to display only Question posts with matching subject name
         query = FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .orderByChild("subject")
-                .equalTo("50.001");
+                .equalTo(getIntent().getStringExtra("indsubject"));
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -1,15 +1,16 @@
 package com.example.uskapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import java.util.ArrayList;
 
@@ -33,13 +34,25 @@ public class Adapter extends RecyclerView.Adapter {
         return viewHolder;
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ViewHolder viewHolder = (ViewHolder) holder;
+        final ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.textView.setText(subjectArrayList.get(position));
         viewHolder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
+
+
+        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, viewHolder.textView.getText().toString(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context,TestSubjectActivity.class);
+                intent.putExtra("indsubject", viewHolder.textView.getText().toString());
+                context.startActivity(intent);
+
+            }
+        });
     }
+
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -48,14 +61,14 @@ public class Adapter extends RecyclerView.Adapter {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
+            imageView = itemView.findViewById(R.id.subjectView);
             textView = itemView.findViewById(R.id.textView);
         }
     }
+
     @Override
     public int getItemCount() {
         return subjectArrayList.size();
-
     }
 
 }
