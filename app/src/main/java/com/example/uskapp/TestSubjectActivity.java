@@ -34,13 +34,10 @@ public class TestSubjectActivity extends AppCompatActivity {
     TextView currentTopic;
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
-    SearchView search;
     ArrayList<QuestionPost> posts_list= new ArrayList<QuestionPost>();
     ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
-    ArrayList<Bitmap> searchProfileBitmaps = new ArrayList<Bitmap>();
-    ArrayList<QuestionPost> searchPosts = new ArrayList<QuestionPost>();
     Query query;
-    MainRecyclerViewAdapter viewAdapter,searchAdapter;
+    MainRecyclerViewAdapter viewAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,10 +45,9 @@ public class TestSubjectActivity extends AppCompatActivity {
 
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
-        search =(SearchView)top_toolbar.findViewById(R.id.search_posts);
         currentTopic = findViewById(R.id.current_topic_textview);
         currentTopic.setText("50.001");
-        searchAdapter = new MainRecyclerViewAdapter(this,searchPosts,searchProfileBitmaps);
+
 
         //subject activity this activity displays all the content inside the specific subject
         //query to display only Question posts with matching subject name
@@ -66,14 +62,15 @@ public class TestSubjectActivity extends AppCompatActivity {
                 }
                 if(snapshot.exists()){
                     for(DataSnapshot s : snapshot.getChildren()){
-
+                        String name = s.child("name").getValue(String.class);
                         String userID = s.child("userID").getValue(String.class);
                         String postID =s.child("postID").getValue(String.class);
                         String text = s.child("text").getValue(String.class);
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
-                        QuestionPost qnPost = new QuestionPost(userID,postID,text,timestamp,subject,toggle_anonymity);
+                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
+
                         posts_list.add(qnPost);
 
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
@@ -139,51 +136,5 @@ public class TestSubjectActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (search != null){
-            search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    return false;
-                }
 
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    Toast.makeText(TestSubjectActivity.this,"works",Toast.LENGTH_SHORT).show();
-                    search(s);
-                    return true;
-                }
-            });
-        }
-
-    }
-    private void search(String str) {
-
-        for(QuestionPost p : posts_list){
-            if(p.getText().toLowerCase().contains(str.toLowerCase())){
-                searchPosts.add(p);
-            }
-        }
-        for(QuestionPost p : searchPosts){
-            String userID = p.getUserID();
-
-            StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-                    .child(userID);
-            imageRef.getBytes(2048*2048)
-                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                              @Override
-                                              public void onSuccess(byte[] bytes) {
-                                                  Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                                                  searchProfileBitmaps.add(bitmap);
-                                                  searchAdapter.notifyDataSetChanged();
-                                              }
-                                          }
-                    );
-        }
-        main_recycler_view.setAdapter(searchAdapter);
-        searchAdapter.notifyDataSetChanged();
-
-    }
 }

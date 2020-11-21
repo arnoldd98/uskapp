@@ -20,7 +20,7 @@ public class SubjectActivity extends AppCompatActivity {
 
 
     RecyclerView recycler;
-    Adapter adapter;
+    SubjectAdapter adapter;
     ArrayList<String> subjectTitle;
     private DatabaseReference mDatabase;
 
@@ -64,7 +64,7 @@ public class SubjectActivity extends AppCompatActivity {
         recycler = findViewById(R.id.subjectRecyler);
 
         //creating recylcerview adapter
-        adapter = new Adapter(this, subjectTitle);
+        adapter = new SubjectAdapter(this, subjectTitle);
 
         //setting the adapter
         recycler.setAdapter(adapter);

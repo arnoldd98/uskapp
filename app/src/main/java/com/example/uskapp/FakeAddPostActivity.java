@@ -48,7 +48,7 @@ public class FakeAddPostActivity extends AppCompatActivity {
         nextActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(FakeAddPostActivity.this, TestSubjectActivity.class);
+                Intent intent = new Intent(FakeAddPostActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
@@ -59,16 +59,18 @@ public class FakeAddPostActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Date now = new Date();
                 long timestamp = now.getTime();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.US);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
                 String dateStr = sdf.format(timestamp);
-
+                String name = "no reply tester";
                 String subject = subjectTextView.getText().toString();
                 String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 String postID = userID+dateStr;
                 String picID = postID + "pic";
-                QuestionPost newPost = new QuestionPost(userID,postID, text.getText().toString(),
+                QuestionPost newPost = new QuestionPost(name,userID,postID, text.getText().toString(),
                         dateStr,subject,false);
-
+                //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:41:58");
+                //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:42:03");
+                //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:42:06");
 
                 FirebaseDatabase.getInstance().getReference("QuestionPost")
                         .child(postID).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {

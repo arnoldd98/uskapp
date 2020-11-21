@@ -8,7 +8,9 @@ public abstract class Post{
     private String userID;
     private String postID;
     private ArrayList<String> postImageIDs =new ArrayList<String>();
-
+    private ArrayList<String> usersWhoUpVoted = new ArrayList<String>(); // keeps track of the ids of user
+    //prevents double voting
+    private String name;
     public boolean toggle_anonymity;
     private String text;
     private int upvotes;
@@ -16,8 +18,9 @@ public abstract class Post{
     private String subject; // subject of post eg. 50.001
 
 
-    public Post(String userID, String postID, String text, String timestamp, String subject,
-                boolean toggle_anonymity) {
+    public Post(String name,String userID, String postID, String text, String timestamp, String subject,
+                     boolean toggle_anonymity) {
+        this.name = name;
         this.userID = userID;
         this.postID=postID;
         this.toggle_anonymity = toggle_anonymity;
@@ -25,6 +28,23 @@ public abstract class Post{
         this.upvotes = 0;
         this.timestamp = timestamp;
         this.subject = subject;
+    }
+
+    public Post(String name,String userID, String postID, String text, String timestamp, String subject,
+                boolean toggle_anonymity, int upvotes) {
+        this.name = name;
+        this.userID = userID;
+        this.postID=postID;
+        this.toggle_anonymity = toggle_anonymity;
+        this.text = text;
+        this.upvotes = 0;
+        this.timestamp = timestamp;
+        this.subject = subject;
+        this.upvotes = upvotes;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getUserID() {
@@ -62,6 +82,13 @@ public abstract class Post{
         this.upvotes = upvotes;
     }
 
+    public ArrayList<String> getUsersWhoUpVoted() {
+        return usersWhoUpVoted;
+    }
+
+    public void addUserUpvote(String userID){
+        this.usersWhoUpVoted.add(userID);
+    }
 
     public String getSubject() {
         return subject;
@@ -74,6 +101,10 @@ public abstract class Post{
 
     public int getUpvotes() {
         return upvotes;
+    }
+
+    public void increaseUpVote(){
+        this.upvotes+=1;
     }
 
     public String getTimestamp() {
