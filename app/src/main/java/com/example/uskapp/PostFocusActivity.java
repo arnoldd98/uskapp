@@ -12,10 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.TypedValue;
@@ -59,6 +62,7 @@ public class PostFocusActivity extends AppCompatActivity {
     ImageView upVoteIv,profilePicIv,replyIv;
     ToggleButton favourite_button;
     AnswerRecyclerViewAdapter answerAdapter;
+    TextView view_added_image_selector;
     TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
     Context context;
 
@@ -74,6 +78,10 @@ public class PostFocusActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_focus);
         context = this;
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         View qnPostLayout = findViewById(R.id.post_card_view);
         currentPostID = getIntent().getStringExtra("postID");
 
@@ -160,11 +168,12 @@ public class PostFocusActivity extends AppCompatActivity {
                                                               @Override
                                                               public void onSuccess(byte[] bytes) {
                                                                   Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                                                                  profilePicIv.setImageBitmap(bitmap);
+                                                                  RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                                                                  roundBitmap.setCircular(true);
+                                                                  profilePicIv.setImageDrawable(roundBitmap);
                                                               }
                                                           }
                                     );
-
 
                             timeStampTv.setText(timestamp);
                             nameTv.setText(name);
@@ -185,17 +194,12 @@ public class PostFocusActivity extends AppCompatActivity {
                     Toast.makeText(context, "db failed", Toast.LENGTH_SHORT).show();
                 }
             });
-
         }
 
-
-
-
-
-        //UI FOR REPLYING
+        // UI FOR REPLYING
         user_answer_edit_text = (EditText) findViewById(R.id.user_answer_edittext);
         send_answer_button = (ImageButton) findViewById(R.id.send_answer_button);
-        //SENDS A REPLY
+        // SENDS A REPLY
         send_answer_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -249,17 +253,28 @@ public class PostFocusActivity extends AppCompatActivity {
                 }
             }
         });
-        replyIv = findViewById(R.id.replyImageView);
+
+        view_added_image_selector = (TextView) findViewById(R.id.view_added_image_indicator);
+        view_added_image_selector.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent view_pic_intent = new Intent(context, ViewImageActivity.class);
+                view_pic_intent.putExtra("ImageUri", imageUri);
+                context.startActivity(view_pic_intent);
+
+            }
+        });
+
         get_image_button = (ImageButton) findViewById(R.id.get_image_button);
         get_image_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popUpImageOptions(context);
+                Utils.popUpImageOptions(PostFocusActivity.this, getPackageManager());
             }
         });
 
         // upvote click
-        //checks if valid then updates the question post data
+        // checks if valid then updates the question post data
         upVoteIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -289,48 +304,17 @@ public class PostFocusActivity extends AppCompatActivity {
         });
     }
 
-
     // set animations for transition between HomeActivity and PostFocusActivity
-    /*
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-*/
+
     @Override
     public void startActivity(Intent intent, @Nullable Bundle options) {
         super.startActivity(intent, options);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
-    public void popUpImageOptions(Context context) {
-        final Dialog bottomDialogue = new Dialog(context, R.style.ImageDialogSheet);
-        bottomDialogue.setContentView(R.layout.choose_image_options_view);
-        bottomDialogue.setCancelable(true);
-        bottomDialogue.show();
-
-        TextView galleryBtn = (TextView)bottomDialogue.findViewById(R.id.choose_from_gallery_textview);
-        TextView cameraBtn = (TextView)bottomDialogue.findViewById(R.id.open_camera_textview);
-
-        galleryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, PICK_IMAGE);
-            }
-        });
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                }
-            }
-        });
     }
 
     private void getRepliesFromFirebase(){
@@ -391,18 +375,17 @@ public class PostFocusActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            imageUri = data.getData();
-            replyIv.setImageURI(imageUri);
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            replyIv.setImageBitmap(imageBitmap);
+            imageUri = Utils.getImageUri();
+            view_added_image_selector.setVisibility(View.VISIBLE);
         } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            view_added_image_selector.setVisibility(View.VISIBLE);
             imageUri = data.getData();
-            replyIv.setImageURI(imageUri);
+            System.out.println("Gallery image uri: " + imageUri);
         }
     }
 }

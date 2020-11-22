@@ -123,10 +123,11 @@
     <EditText
         android:id="@+id/textPostTv"
         android:layout_width="match_parent"
-        android:minHeight="25dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:hint="Type or post a question here."
+        android:maxHeight="300dp"
+        android:minHeight="25dp"
         android:onClick="onClick"
         android:padding="10sp"
         app:layout_constraintEnd_toEndOf="parent"

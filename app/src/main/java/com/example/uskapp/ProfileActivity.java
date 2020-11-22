@@ -166,8 +166,6 @@ public class ProfileActivity extends BaseNavigationActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-                        roundBitmap.setCircular(true);
                         profilePicIV.setImageBitmap(bitmap);
                     }
                 }).addOnCanceledListener(new OnCanceledListener() {

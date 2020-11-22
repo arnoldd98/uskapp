@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class NewPostActivity extends AppCompatActivity implements View.OnClickListener{
+public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int CAMERA_REQUEST = 1;
     private static final int PICK_IMAGE = 2;
     String name;
@@ -105,8 +105,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         postText = findViewById(R.id.post);
         postText.setOnClickListener(this);
 
-
-
         // setting users profile photo
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -125,7 +123,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
         });
-
     }
 
     @Override
@@ -133,6 +130,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         switch (view.getId()){
             case R.id.post:
                 post();
+                startActivity(new Intent(this, HomeActivity.class));
                 break;
 
             case R.id.backToHome:

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +26,16 @@ import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,11 +43,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
     private List<QuestionPost> post_data;
@@ -60,12 +67,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.activity = activity;
         this.profileBitmaps =profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
-        this.post_click_listener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // open up focus post activity
-            }
-        };
     }
 
     @Override
@@ -192,10 +193,10 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             }
         } else {
             ConstraintSet cs = new ConstraintSet();
-            cs.clone(holder.card_container);
+            cs.clone(holder.constraint_layout_container);
             cs.connect(R.id.tag_horizontal_linear_layout, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 8);
-            holder.card_container.removeView(holder.image_layout);
-            cs.applyTo(holder.card_container);
+            holder.constraint_layout_container.removeView(holder.image_layout);
+            cs.applyTo(holder.constraint_layout_container);
         }
 
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
@@ -237,8 +238,30 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            String subscribed = "Successfully subscribed!";
+                            if (!task.isSuccessful()) {
+                                subscribed = "Failed to subscribe";
+                            }
+                            Log.d(TAG, subscribed);
+                            Toast.makeText(activity, subscribed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
                 } else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            String unsubscribed = "Successfully unsubscribed!";
+                            if (!task.isSuccessful()) {
+                                unsubscribed = "Failed to unsubscribe";
+                            }
+                            Log.d(TAG, unsubscribed);
+                            Toast.makeText(activity, unsubscribed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
                 }
             }
@@ -248,7 +271,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     }
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public ConstraintLayout card_container;
+        public CardView card_container;
+        public ConstraintLayout constraint_layout_container;
         public ImageView profile_image_view;
         public TextView question_author_name;
         public TextView post_timestamp;
@@ -267,7 +291,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         public ViewHolder(View postView) {
             super(postView);
-            card_container = (ConstraintLayout) postView.findViewById(R.id.card_container);
+            card_container = (CardView) postView.findViewById(R.id.card_container);
+            constraint_layout_container = (ConstraintLayout) postView.findViewById(R.id.constraint_layout_container);
             profile_image_view = (ImageView) postView.findViewById(R.id.profile_imageview);
             question_author_name = (TextView) postView.findViewById(R.id.question_author_name);
             post_timestamp = (TextView) postView.findViewById(R.id.post_timestamp);

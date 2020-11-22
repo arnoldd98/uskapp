@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -47,7 +48,9 @@ public class HomeActivity extends BaseNavigationActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Activity activity = this;
-        //setContentView(R.layout.activity_home);
+
+        // hides bottom navigation view when keyboard is called
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
@@ -124,10 +127,6 @@ public class HomeActivity extends BaseNavigationActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         main_recycler_view.setLayoutManager(linearLayoutManager);
 
-        // Add DividerItemDecoration to divide between cards in the RecyclerView
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(main_recycler_view.getContext(),
-                linearLayoutManager.getOrientation());
-        main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
         viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps);

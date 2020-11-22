@@ -1,177 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:elevation="3dp"
-    android:layout_marginTop="6dp"
-    android:background="@color/colorLightGrayPost"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:backgroundTint="@color/colorLightGrayPost"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginTop="8dp"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="10dp"
+    android:clickable="true">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/constraint_layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/profile_imageview"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        app:layout_constraintEnd_toStartOf="@+id/question_author_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/circular" />
-
-    <TextView
-        android:id="@+id/question_author_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="12dp"
-        android:fontFamily="@font/gotham"
-        android:text="Name"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/post_timestamp"
-        app:layout_constraintStart_toEndOf="@+id/profile_imageview"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/post_timestamp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="2dp"
-        android:fontFamily="@font/nunitosans_regular"
-        android:text="Time"
-        android:textAlignment="viewStart"
-        android:textColor="@color/cardview_dark_background"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/question_textview"
-        app:layout_constraintStart_toEndOf="@+id/profile_imageview"
-        app:layout_constraintTop_toBottomOf="@+id/question_author_name" />
-
-    <TextView
-        android:id="@+id/question_textview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="30dp"
-        android:fontFamily="@font/nunitosans_semibold"
-        android:text="What are some recommended algorithm to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_timestamp" />
-
-    <Toolbar
-        android:id="@+id/options_menu_toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/question_card_dropdown_menu" />
-
-    <LinearLayout
-        android:id="@+id/tag_horizontal_linear_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/image_horizontal_linear_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question_textview"></LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/image_horizontal_linear_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout"
-        app:layout_constraintBottom_toTopOf="@id/ups_indicator_layout"/>
-
-    <LinearLayout
-        android:id="@+id/ups_indicator_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="5dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
-
-        <ImageView
-            android:id="@+id/ups_indicator_imageview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            app:srcCompat="@android:drawable/arrow_up_float" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_imageview"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintEnd_toStartOf="@+id/question_author_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/ups_indicator_textview"
+            android:id="@+id/question_author_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:fontFamily="@font/nunitosans_regular"
-            android:text="25 ups"
-            android:textColor="@color/cardview_dark_background"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/comment_indicator__layout"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="5dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
-        app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
-
-        <ImageView
-            android:id="@+id/comment_indicator_imageview"
-            android:layout_width="19dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/gotham"
+            android:text="Name"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/post_timestamp"
+            app:layout_constraintStart_toEndOf="@+id/profile_imageview"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/comment_indicator__textview"
+            android:id="@+id/post_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2dp"
             android:fontFamily="@font/nunitosans_regular"
-            android:text="10 answers"
+            android:text="Time"
+            android:textAlignment="viewStart"
             android:textColor="@color/cardview_dark_background"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout" />
-    </LinearLayout>
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/question_textview"
+            app:layout_constraintStart_toEndOf="@+id/profile_imageview"
+            app:layout_constraintTop_toBottomOf="@+id/question_author_name" />
 
-    <ToggleButton
-        android:id="@+id/star_question_button"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:textOn=""
-        android:textOff=""
-        android:background="@drawable/star_unselected"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question_textview"
-        app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/question_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
+            android:fontFamily="@font/nunitosans_semibold"
+            android:text="What are some recommended algorithm to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/post_timestamp" />
+
+        <Toolbar
+            android:id="@+id/options_menu_toolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/question_card_dropdown_menu" />
+
+        <LinearLayout
+            android:id="@+id/tag_horizontal_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            app:layout_constraintBottom_toTopOf="@+id/image_horizontal_linear_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/question_textview"></LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/image_horizontal_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/ups_indicator_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout" />
+
+        <LinearLayout
+            android:id="@+id/ups_indicator_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
+
+            <ImageView
+                android:id="@+id/ups_indicator_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@android:drawable/arrow_up_float" />
+
+            <TextView
+                android:id="@+id/ups_indicator_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:fontFamily="@font/nunitosans_regular"
+                android:text="25 ups"
+                android:textColor="@color/cardview_dark_background"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/comment_indicator__layout"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
+            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
+
+            <ImageView
+                android:id="@+id/comment_indicator_imageview"
+                android:layout_width="19dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@android:drawable/ic_menu_edit" />
+
+            <TextView
+                android:id="@+id/comment_indicator__textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:fontFamily="@font/nunitosans_regular"
+                android:text="10 answers"
+                android:textColor="@color/cardview_dark_background"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout" />
+        </LinearLayout>
+
+        <ToggleButton
+            android:id="@+id/star_question_button"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/star_unselected"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/question_textview"
+            app:layout_constraintVertical_bias="0.0" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
