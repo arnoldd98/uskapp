@@ -163,7 +163,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             }
         }
         //if there are
-        if (post.getPostImageID()!=null) {
+        if (post.getPostImageIDs().size()!=0) {
 
             ImageView image_view = new ImageView(holder.card_view_context);
 

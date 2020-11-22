@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public abstract class Post{
     private String userID;
     private String postID;
-    private String postImageID;
+    private ArrayList<String> postImageIDs = new ArrayList<>();
     private ArrayList<String> usersWhoUpVoted = new ArrayList<String>(); // keeps track of the ids of user
     //prevents double voting
     private String name;
@@ -55,12 +55,16 @@ public abstract class Post{
         return postID;
     }
 
-    public String getPostImageID() {
-        return postImageID;
+    public ArrayList<String> getPostImageIDs() {
+        return postImageIDs;
     }
 
-    public void setPostImageID(String postImageID) {
-        this.postImageID = postImageID;
+    public void setPostImageIDs(ArrayList<String> postImageIDs) {
+        this.postImageIDs = postImageIDs;
+    }
+
+    public void addPostImageIDs(String id){
+        this.postImageIDs.add(id);
     }
 
     public boolean isToggle_anonymity() {
