@@ -290,6 +290,8 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             imageUri = data.getData();
             postPicture.setImageURI(imageUri);
+            postPicture.getLayoutParams().width = 400;
+            postPicture.getLayoutParams().height = 400;
         }
     }
     public void popUpImageOptions() {
