@@ -35,7 +35,7 @@
                 android:layout_marginTop="40dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                 />
 
             <TextView
                 android:id="@+id/nameTv"
@@ -82,11 +82,13 @@
 
     <Button
         android:id="@+id/signOutBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="247dp"
+        android:layout_height="45dp"
         android:layout_marginBottom="104dp"
         android:backgroundTint="#ff5050"
         android:text="Sign Out"
+        android:textColor="#fff"
+        android:background="@drawable/solid_red_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintCircleRadius="40dp"
         app:layout_constraintEnd_toEndOf="parent"
