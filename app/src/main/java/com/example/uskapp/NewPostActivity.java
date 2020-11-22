@@ -210,7 +210,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(View view) {
                         isAnonymous=true;
                         int id = getResources().getIdentifier("com.example.uskapp:mipmap/"+"anonymous_icon",null,null);
-                        profilePic.setImageResource(R.drawable.anonymous_icon);
+                        profilePic.setImageResource(R.mipmap.anonymous_icon);
                     }
                 });
                 ;
