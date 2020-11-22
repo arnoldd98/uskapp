@@ -51,6 +51,7 @@ import java.util.Locale;
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int CAMERA_REQUEST = 1;
     private static final int PICK_IMAGE = 2;
+    boolean isAnonymous=false;
     String name;
     Button buttonTags;
     Button buttonPostAs;
@@ -167,6 +168,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 ll.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        isAnonymous=false;
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                         imageRef.getBytes(2048*2048)
@@ -188,8 +190,9 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 ll2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        isAnonymous=true;
                         int id = getResources().getIdentifier("com.example.uskapp:mipmap/"+"anonymous_icon",null,null);
-                        profilePic.setImageResource(id);
+                        profilePic.setImageResource(R.drawable.anonymous_icon);
                     }
                 });
                 ;
@@ -239,8 +242,15 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String postID = userID+dateStr;
         String picID = postID + "pic";
-        QuestionPost newPost = new QuestionPost(name,userID,postID, postText.getText().toString(),
-                dateStr,"subject",false);
+        QuestionPost newPost;
+        if(isAnonymous){
+            newPost = new QuestionPost(name,userID,postID, postText.getText().toString(),
+                    dateStr,"subject",false);
+        } else {
+            newPost = new QuestionPost(name,userID,postID, postText.getText().toString(),
+                    dateStr,"subject",true);
+        }
+
 
 
         FirebaseDatabase.getInstance().getReference("QuestionPost")
