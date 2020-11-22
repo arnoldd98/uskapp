@@ -83,7 +83,8 @@ public class ProfileActivity extends BaseNavigationActivity {
             }
         });
         //for the profile picture
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+
+        final StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         imageRef.getBytes(2048*2048)
                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {

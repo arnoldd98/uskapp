@@ -2,11 +2,11 @@ package com.example.uskapp;
 
 import java.util.ArrayList;
 
-public class QuestionPost extends Post implements Subject{
+public class QuestionPost extends Post{
     private ArrayList<String> answerPostIDs = new ArrayList<String>(); // array lists need be created IDS added later on thru method
     //private ArrayList<AnswerPost> answers_list;
     private ArrayList<Tag> tags_list;
-    ArrayList<Observer> followersOfPost = new ArrayList<>();
+    private ArrayList<String> post_followers = new ArrayList<>();
 
     public QuestionPost(String name, String userID, String postID, String text, String timestamp,
                         String subject, boolean toggle_anonymity) {
@@ -49,20 +49,5 @@ public class QuestionPost extends Post implements Subject{
     }
 
 
-    @Override
-    public void register(Observer o) {
-        followersOfPost.add(o);
-    }
 
-    @Override
-    public void unregister(Observer o) {
-        followersOfPost.remove(o);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (Observer o : followersOfPost){
-            o.update("updates blah blah");
-        }
-    }
 }

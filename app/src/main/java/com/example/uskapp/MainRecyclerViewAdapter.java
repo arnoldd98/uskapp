@@ -14,10 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -49,6 +52,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
     private Bitmap bitmap;
+    private LocalUser local_user = LocalUser.getCurrentUser();
 
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
             , ArrayList<Bitmap> profileBitmaps) {
@@ -87,9 +91,9 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint({"ResourceAsColor", "ResourceType"})
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
-        QuestionPost post = post_data.get(position);
+        final QuestionPost post = post_data.get(position);
         holder.card_container.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -227,10 +231,18 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         });
 
-        if (post.getAnswerPostIDs() != null) {
-            holder.comment_indicator_textview.setText(post.getAnswerPostIDs().size() + " answers");
-        }
 
+        // set on click listener on star button to toggle if post should be favourited by user
+        holder.favourite_question_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
+                } else {
+                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
+                }
+            }
+        });
 
 
     }
@@ -249,6 +261,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         public TextView ups_indicator_textview;
         public LinearLayout comment_indicator_layout;
         public TextView comment_indicator_textview;
+        public ToggleButton favourite_question_button;
 
         public Context card_view_context;
 
@@ -267,6 +280,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             ups_indicator_textview = (TextView) postView.findViewById(R.id.ups_indicator_textview);
             comment_indicator_layout = (LinearLayout) postView.findViewById(R.id.comment_indicator__layout);
             comment_indicator_textview = (TextView) postView.findViewById(R.id.comment_indicator__textview);
+            favourite_question_button = (ToggleButton) postView.findViewById(R.id.star_question_button);
 
             card_view_context = postView.getContext();
         }

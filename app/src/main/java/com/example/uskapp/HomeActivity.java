@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,6 +108,7 @@ public class HomeActivity extends BaseNavigationActivity {
                                                       }
                                 );
                     }
+
                 }
                 viewAdapter.notifyDataSetChanged();
             }
@@ -145,6 +147,9 @@ public class HomeActivity extends BaseNavigationActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_toolbar_menu, menu);
+        final MenuItem search_item = menu.findItem(R.id.search_posts);
+        SearchView search_view = (android.widget.SearchView) search_item.getActionView();
+        search_view.setMaxWidth(android.R.attr.maxWidth);
         return true;
     }
 }

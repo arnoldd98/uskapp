@@ -16,8 +16,10 @@ public class User implements Observer {
     private ArrayList<String> postPosted = new ArrayList<String>();
     private ArrayList<String> subjectsEnrolled = new ArrayList<String>();
 
+    public User() {
+    }
 
-    public User(String name,String email){
+    public User(String name, String email){
         this.name = name;
         this.email = email;
         this.rank=0;

@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,7 +56,8 @@ public class PostFocusActivity extends AppCompatActivity {
     RecyclerView answer_recyclerview;
     EditText user_answer_edit_text;
     ImageButton send_answer_button,get_image_button,back_to_main_button;
-    ImageView upVoteIv,profilePicIv,starIv,replyIv;
+    ImageView upVoteIv,profilePicIv,replyIv;
+    ToggleButton favourite_button;
     AnswerRecyclerViewAdapter answerAdapter;
     TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
     Context context;
@@ -76,7 +78,7 @@ public class PostFocusActivity extends AppCompatActivity {
         currentPostID = getIntent().getStringExtra("postID");
 
         profilePicIv = (ImageView)qnPostLayout.findViewById(R.id.profile_imageview);
-        starIv = (ImageView)qnPostLayout.findViewById(R.id.star_question_button);
+        favourite_button = (ToggleButton)qnPostLayout.findViewById(R.id.star_question_button);
         timeStampTv = (TextView)qnPostLayout.findViewById(R.id.post_timestamp);
         nameTv = (TextView)qnPostLayout.findViewById(R.id.question_author_name);
         postTextTv = (TextView)qnPostLayout.findViewById(R.id.question_textview);

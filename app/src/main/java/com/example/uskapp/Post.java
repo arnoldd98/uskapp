@@ -110,4 +110,5 @@ public abstract class Post{
     public String getTimestamp() {
         return timestamp;
     }
+
 }
