@@ -47,6 +47,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int CAMERA_REQUEST = 1;
@@ -62,8 +63,9 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic,postPicture;
-
     TextView postText;
+    EditText textOfPost;
+    
     Uri imageUri;
     Context new_post_context;
 
@@ -76,6 +78,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         mainLayout = findViewById(R.id.MainLayout);
         profilePic = findViewById(R.id.userProfileNewPost);
         postPicture = findViewById(R.id.postPhotoContent);
+        textOfPost = findViewById(R.id.textPostTv);
         buttonTags = findViewById(R.id.select_tag_button);
         buttonTags.setOnClickListener(this);
         buttonPostAs = findViewById(R.id.buttonPostAs);
@@ -103,6 +106,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         backToHome = findViewById(R.id.backToHome);
         backToHome.setOnClickListener(this);
 
+        //is the text view for posting
         postText = findViewById(R.id.post);
         postText.setOnClickListener(this);
 
@@ -122,6 +126,20 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
                 profilePic.setImageResource(R.drawable.ic_launcher_foreground);
                 e.printStackTrace();
+            }
+        });
+        //getting name
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                name = snapshot.child("name").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -219,23 +237,13 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void post(){
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                name = snapshot.child("name").getValue(String.class);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
 
         Date now = new Date();
         long timestamp = now.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss",Locale.ENGLISH);
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
         String dateStr = sdf.format(timestamp);
         // need get from the tag but need implement tag system first
         //String subject = subjectTextView.getText().toString();
@@ -243,15 +251,30 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         String postID = userID+dateStr;
         String picID = postID + "pic";
         QuestionPost newPost;
-        if(isAnonymous){
-            newPost = new QuestionPost(name,userID,postID, postText.getText().toString(),
-                    dateStr,"subject",false);
+        if(!isAnonymous){
+            newPost = new QuestionPost(name,userID,postID, textOfPost.getText().toString(),
+                    dateStr,"50.001",false);
         } else {
-            newPost = new QuestionPost(name,userID,postID, postText.getText().toString(),
-                    dateStr,"subject",true);
+            newPost = new QuestionPost(name,userID,postID, textOfPost.getText().toString(),
+                    dateStr,"50.001",true);
         }
 
-
+        //if there is a picture
+        if(imageUri!= null){
+            newPost.setPostImageID(picID);
+            StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                    .child(picID);
+            imageRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(NewPostActivity.this, "success upload image", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(NewPostActivity.this, "failed upload image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
 
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(postID).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -265,20 +288,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                .child(picID);
-        if(imageUri != null ){
-            imageRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(NewPostActivity.this, "success upload image", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(NewPostActivity.this, "failed upload image", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
     }
 
     private void dispatchTakePictureIntent() {

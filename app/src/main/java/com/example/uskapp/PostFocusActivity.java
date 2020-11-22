@@ -65,6 +65,7 @@ public class PostFocusActivity extends AppCompatActivity {
     TextView view_added_image_selector;
     TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
     Context context;
+    LinearLayout horizontalImageLayout, horizontalTagLayout;
 
     String currentPostID,name,replyPostID;
     Uri imageUri;
@@ -84,6 +85,9 @@ public class PostFocusActivity extends AppCompatActivity {
 
         View qnPostLayout = findViewById(R.id.post_card_view);
         currentPostID = getIntent().getStringExtra("postID");
+
+        horizontalImageLayout = (LinearLayout)qnPostLayout.findViewById(R.id.image_horizontal_linear_layout);
+        horizontalTagLayout = (LinearLayout)qnPostLayout.findViewById(R.id.tag_horizontal_linear_layout);
 
         profilePicIv = (ImageView)qnPostLayout.findViewById(R.id.profile_imageview);
         favourite_button = (ToggleButton)qnPostLayout.findViewById(R.id.star_question_button);
@@ -137,6 +141,7 @@ public class PostFocusActivity extends AppCompatActivity {
                         for(DataSnapshot s : snapshot.getChildren()){
                             String name = s.child("name").getValue(String.class);
                             String userID = s.child("userID").getValue(String.class);
+                            String postImageID = s.child("postImageID").getValue(String.class);
                             String postID =s.child("postID").getValue(String.class);
                             String text = s.child("text").getValue(String.class);
                             String timestamp = s.child("timestamp").getValue(String.class);
@@ -174,6 +179,21 @@ public class PostFocusActivity extends AppCompatActivity {
                                                               }
                                                           }
                                     );
+
+                            StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                                    .child(postImageID);
+                            postImageRef.getBytes(2048*2048)
+                                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                        @Override
+                                        public void onSuccess(byte[] bytes) {
+                                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                            ImageView qnImageView = new ImageView(PostFocusActivity.this);
+                                            qnImageView.setImageBitmap(bitmap);
+                                            qnImageView.setMaxHeight(100);
+                                            qnImageView.setMaxWidth(100);
+                                            horizontalImageLayout.addView(qnImageView);
+                                        }
+                                    });
 
                             timeStampTv.setText(timestamp);
                             nameTv.setText(name);

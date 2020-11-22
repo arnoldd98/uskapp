@@ -162,35 +162,34 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 holder.tag_layout.addView(clickable_tag);
             }
         }
+        //if there are
+        if (post.getPostImageID()!=null) {
 
-        if (!post.getPostImageIDs().isEmpty()) {
-            for (String imageID : post.getPostImageIDs()) {
-                ImageView image_view = new ImageView(holder.card_view_context);
+            ImageView image_view = new ImageView(holder.card_view_context);
 
-                //firebase getting image
-                StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                imageRef.getBytes(2048*2048)
-                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] bytes) {
-                                bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                if(bitmap != null){
-                    image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
-                            , image_view.getHeight(), false));
-                    image_view.setMaxHeight(holder.image_layout.getHeight());
-
-                    holder.image_layout.addView(image_view);
+            //firebase getting image
+            StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            imageRef.getBytes(2048*2048)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
                 }
+            });
+            if(bitmap != null){
+                image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
+                        , image_view.getHeight(), false));
+                image_view.setMaxHeight(holder.image_layout.getHeight());
 
+                holder.image_layout.addView(image_view);
             }
+
         } else {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(holder.constraint_layout_container);
