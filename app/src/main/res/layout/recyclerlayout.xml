@@ -3,14 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/subjectveiw"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     tools:context=".SubjectActivity">
 
     <ImageButton
-        android:id="@+id/imageView"
+        android:id="@+id/subjectView"
         android:layout_width="155dp"
         android:layout_height="155dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_background" />
@@ -22,6 +24,6 @@
         android:layout_marginStart="19dp"
         android:layout_marginTop="28dp"
         android:text="TextView"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintStart_toStartOf="@+id/subjectView"
+        app:layout_constraintTop_toTopOf="@+id/subjectView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

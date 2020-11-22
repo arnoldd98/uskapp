@@ -86,7 +86,7 @@ public class SubjectAdapter extends RecyclerView.Adapter {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
+            imageView = itemView.findViewById(R.id.subjectView);
             textView = itemView.findViewById(R.id.textView);
         }
     }
