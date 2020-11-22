@@ -198,7 +198,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             holder.constraint_layout_container.removeView(holder.image_layout);
             cs.applyTo(holder.constraint_layout_container);
         }
-
+        holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
         //upvote button
         holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
