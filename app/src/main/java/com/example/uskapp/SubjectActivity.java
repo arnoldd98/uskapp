@@ -54,6 +54,10 @@ public class SubjectActivity extends AppCompatActivity {
             }
         });
 
+//        subjectTitle.add("a");
+//        subjectTitle.add("b");
+        System.out.println("hahah:" + subjectTitle);
+
 
 
         //connect bottons with their ids

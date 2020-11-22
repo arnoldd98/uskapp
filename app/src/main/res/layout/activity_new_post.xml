@@ -48,6 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
         tools:src="@tools:sample/avatars" />
 
+
     <TextView
         android:id="@+id/post"
         android:onClick="onClick"
@@ -57,10 +58,13 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:fontFamily="@font/nunitosans_regular"
+        android:textColor="#fff"
         android:text="Post"
         android:textSize="25dp"
         app:layout_constraintEnd_toEndOf="@+id/top_toolbar"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 
     <Button
         android:id="@+id/buttonPostAs"
@@ -68,9 +72,9 @@
         android:layout_height="30dp"
         android:layout_marginStart="46dp"
         android:layout_marginTop="30dp"
-        android:background="#0074CD"
+        android:background="@color/colorPrimary"
         android:onClick="onClick"
-        android:padding="4sp"
+        android:padding="5sp"
         android:text="Post as:"
         android:textAlignment="textStart"
         android:textAllCaps="false"
@@ -84,8 +88,8 @@
         android:layout_width="80dp"
         android:layout_height="30dp"
         android:layout_marginTop="30dp"
-        android:background="#0074CD"
-        android:padding="4sp"
+        android:background="@color/colorPrimary"
+        android:padding="5sp"
         android:text="Tags:"
         android:textAlignment="textStart"
         android:textAllCaps="false"
@@ -94,47 +98,82 @@
         app:layout_constraintStart_toEndOf="@+id/buttonPostAs"
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="21dp"
+        android:layout_height="12dp"
+        android:layout_marginEnd="5dp"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonPostAs"
+        app:layout_constraintEnd_toEndOf="@+id/buttonPostAs"
+        app:layout_constraintTop_toTopOf="@+id/buttonPostAs"
+        app:srcCompat="@drawable/triangle" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="21dp"
+        android:layout_height="12dp"
+        android:layout_marginEnd="5dp"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/select_tag_button"
+        app:layout_constraintEnd_toEndOf="@+id/select_tag_button"
+        app:layout_constraintTop_toTopOf="@+id/select_tag_button"
+        app:srcCompat="@drawable/triangle" />
+
     <EditText
         android:id="@+id/textPostTv"
         android:layout_width="match_parent"
+        android:minHeight="25dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:hint="Type or post a question here."
         android:onClick="onClick"
-
         android:padding="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userProfileNewPost" />
 
-    <ImageButton
-        android:id="@+id/picturesButton"
-        android:onClick="onClick"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="260dp"
-        android:layout_marginBottom="40dp"
+    <View
+        android:id="@+id/myRectangleView"
+        android:layout_width="411dp"
+        android:layout_height="63dp"
+        android:background="@drawable/rectangle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:scaleType="fitCenter"
-        android:background="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_baseline_bookmarks_24" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/picturesButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="272dp"
+        android:adjustViewBounds="true"
+        android:backgroundTint="#fff"
+        android:onClick="onClick"
+        android:padding="2dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/myRectangleView"
+        app:srcCompat="@drawable/image" />
 
     <ImageButton
         android:id="@+id/cameraButton"
-        android:onClick="onClick"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="40dp"
+        android:adjustViewBounds="true"
+        android:backgroundTint="#fff"
+        android:onClick="onClick"
+        android:padding="2dp"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/picturesButton"
-        app:layout_constraintHorizontal_bias="0.218"
+        app:layout_constraintHorizontal_bias="0.209"
         app:layout_constraintStart_toStartOf="parent"
-        android:scaleType="fitCenter"
-        android:background="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
+        app:layout_constraintTop_toTopOf="@+id/myRectangleView"
+        app:srcCompat="@drawable/camera" />
 
     <ImageView
         android:id="@+id/postPhotoContent"
@@ -144,5 +183,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textPostTv"
          />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
