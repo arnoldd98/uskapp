@@ -273,17 +273,17 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
     private void dispatchTakePictureIntent() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
-        }
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            imageUri = data.getData();
-            postPicture.setImageURI(imageUri);
+            Bundle extras  = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageBitmap = Bitmap.createScaledBitmap(imageBitmap,400,400,true);
+            postPicture.setImageBitmap(imageBitmap);
             //Bundle extras = data.getExtras();
             //Bitmap imageBitmap = (Bitmap) extras.get("data");
             //postPicture.setImageBitmap(imageBitmap);
