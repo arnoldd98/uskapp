@@ -59,12 +59,14 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton backToHome;
     ImageButton cameraButton;
     ImageButton galleryButton;
+    LinearLayout pictureLayout;
     ConstraintLayout.LayoutParams layoutParams;
     ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
-    ImageView profilePic,postPicture;
+    ImageView profilePic;
     TextView postText;
     EditText textOfPost;
+    ArrayList<Uri> imageUriArray = new ArrayList<Uri>();
     
     Uri imageUri;
     Context new_post_context;
@@ -76,8 +78,8 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         new_post_context = this;
         //anonymousOrNot = findViewById(AnonymousOrNormal);
         mainLayout = findViewById(R.id.MainLayout);
+        pictureLayout = findViewById(R.id.picturePostHorizontalLayout);
         profilePic = findViewById(R.id.userProfileNewPost);
-        postPicture = findViewById(R.id.postPhotoContent);
         textOfPost = findViewById(R.id.textPostTv);
         buttonTags = findViewById(R.id.select_tag_button);
         buttonTags.setOnClickListener(this);
@@ -260,11 +262,12 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         //if there is a picture
-        if(imageUri!= null){
-            newPost.setPostImageID(picID);
+        int i=0;
+        for(Uri u : imageUriArray){
+            newPost.addPostImageIDs(picID+i);
             StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                    .child(picID);
-            imageRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener() {
+                    .child(picID+i);
+            imageRef.putFile(u).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if(task.isSuccessful()){
@@ -274,8 +277,10 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             });
+            i++;
         }
 
+        //creates the post
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(postID).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -301,16 +306,29 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras  = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
+          
+            ImageView imagePost = new ImageView(NewPostActivity.this);
+            imagePost.setImageURI(imageUri);
+            imagePost.setImageBitmap(imageBitmap);
+
+            imagePost.setMaxHeight(400);
+            imagePost.setMaxWidth(400);
+            pictureLayout.addView(imagePost);
+            //postPicture.setImageURI(imageUri);
+
             imageBitmap = Bitmap.createScaledBitmap(imageBitmap,400,400,true);
-            postPicture.setImageBitmap(imageBitmap);
-            //Bundle extras = data.getExtras();
-            //Bitmap imageBitmap = (Bitmap) extras.get("data");
             //postPicture.setImageBitmap(imageBitmap);
+
         } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             imageUri = data.getData();
-            postPicture.setImageURI(imageUri);
-            postPicture.getLayoutParams().width = 400;
-            postPicture.getLayoutParams().height = 400;
+
+            imageUriArray.add(imageUri);
+            ImageView imagePost = new ImageView(NewPostActivity.this);
+            imagePost.setImageURI(imageUri);
+            imagePost.setMaxHeight(400);
+            imagePost.setMaxWidth(400);
+            pictureLayout.addView(imagePost);
+
         }
     }
     public void popUpImageOptions() {

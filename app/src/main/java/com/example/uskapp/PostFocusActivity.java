@@ -36,6 +36,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -141,7 +142,7 @@ public class PostFocusActivity extends AppCompatActivity {
                         for(DataSnapshot s : snapshot.getChildren()){
                             String name = s.child("name").getValue(String.class);
                             String userID = s.child("userID").getValue(String.class);
-                            String postImageID = s.child("postImageID").getValue(String.class);
+                            //String postImageID = s.child("postImageID").getValue(String.class);
                             String postID =s.child("postID").getValue(String.class);
                             String text = s.child("text").getValue(String.class);
                             String timestamp = s.child("timestamp").getValue(String.class);
@@ -150,8 +151,10 @@ public class PostFocusActivity extends AppCompatActivity {
                             String subject = s.child("subject").getValue(String.class);
                             DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
                             DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
+                            DataSnapshot arraySnapPicID = s.child("postImageIDs");
 
                             currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                           // currentPost.setPostImageID(postImageID);
                             answerPostIDs.clear();
                             for(DataSnapshot id : arraySnapAnsID.getChildren()){
                                 String value = id.getValue(String.class);
@@ -180,20 +183,32 @@ public class PostFocusActivity extends AppCompatActivity {
                                                           }
                                     );
 
-                            StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                                    .child(postImageID);
-                            postImageRef.getBytes(2048*2048)
-                                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                        @Override
-                                        public void onSuccess(byte[] bytes) {
-                                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                                            ImageView qnImageView = new ImageView(PostFocusActivity.this);
-                                            qnImageView.setImageBitmap(bitmap);
-                                            qnImageView.setMaxHeight(100);
-                                            qnImageView.setMaxWidth(100);
-                                            horizontalImageLayout.addView(qnImageView);
-                                        }
-                                    });
+                            ArrayList<String> picIDArray = new ArrayList<String>();
+                            for(DataSnapshot snap : arraySnapPicID.getChildren()){
+                                picIDArray.add(snap.getValue(String.class));
+                            }
+                            for(String picID : picIDArray){
+                                StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                                        .child(picID);
+                                postImageRef.getBytes(2048*2048)
+                                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                            @Override
+                                            public void onSuccess(byte[] bytes) {
+                                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                ImageView qnImageView = new ImageView(PostFocusActivity.this);
+                                                qnImageView.setImageBitmap(bitmap);
+                                                qnImageView.setMaxHeight(100);
+                                                qnImageView.setMaxWidth(100);
+                                                horizontalImageLayout.addView(qnImageView);
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(context, "picture error", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
 
                             timeStampTv.setText(timestamp);
                             nameTv.setText(name);
