@@ -42,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -306,6 +307,8 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras  = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            imageUriArray.add(getImageUri(new_post_context,imageBitmap));
           
             ImageView imagePost = new ImageView(NewPostActivity.this);
             imagePost.setImageURI(imageUri);
@@ -325,6 +328,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             imageUriArray.add(imageUri);
             ImageView imagePost = new ImageView(NewPostActivity.this);
             imagePost.setImageURI(imageUri);
+
             imagePost.setMaxHeight(400);
             imagePost.setMaxWidth(400);
             pictureLayout.addView(imagePost);
@@ -336,6 +340,13 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         bottomDialogue.setContentView(R.layout.choose_image_options_view);
         bottomDialogue.setCancelable(true);
         bottomDialogue.show();
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 }
 
