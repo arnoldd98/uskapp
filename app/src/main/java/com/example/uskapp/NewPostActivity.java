@@ -323,16 +323,21 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             //postPicture.setImageBitmap(imageBitmap);
 
         } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+
             imageUri = data.getData();
-
-            imageUriArray.add(imageUri);
-            ImageView imagePost = new ImageView(NewPostActivity.this);
-            imagePost.setImageURI(imageUri);
-
-            imagePost.setMaxHeight(400);
-            imagePost.setMaxWidth(400);
-            pictureLayout.addView(imagePost);
-
+            try {
+                Bitmap bitmapv2 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                bitmapv2 = Bitmap.createScaledBitmap(bitmapv2,400,400,true);
+                imageUriArray.add(getImageUri(new_post_context,bitmapv2));
+                ImageView imagePost = new ImageView(NewPostActivity.this);
+                imagePost.setImageURI(imageUri);
+                imagePost.setImageBitmap(bitmapv2);
+                imagePost.setMaxHeight(400);
+                imagePost.setMaxWidth(400);
+                pictureLayout.addView(imagePost);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     public void popUpImageOptions() {
