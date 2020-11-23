@@ -84,7 +84,7 @@ public class ProfileActivity extends BaseNavigationActivity {
         });
         //for the profile picture
 
-        final StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         imageRef.getBytes(2048*2048)
                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -96,7 +96,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                profilePicIV.setImageResource(R.drawable.ic_launcher_foreground);
+                profilePicIV.setImageResource(R.drawable.bunny2);
                 e.printStackTrace();
             }
         });
@@ -133,6 +133,8 @@ public class ProfileActivity extends BaseNavigationActivity {
                 startActivityForResult(intent, PICK_IMAGE);
             }
         });
+
+
     }
 
     @Override
