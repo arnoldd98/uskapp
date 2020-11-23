@@ -187,6 +187,7 @@ public class PostFocusActivity extends AppCompatActivity {
                             for(DataSnapshot snap : arraySnapPicID.getChildren()){
                                 picIDArray.add(snap.getValue(String.class));
                             }
+                            currentPost.setPostImageIDs(picIDArray);
                             for(String picID : picIDArray){
                                 StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
                                         .child(picID);
@@ -393,6 +394,7 @@ public class PostFocusActivity extends AppCompatActivity {
     }
 
     public void updateCurrentPost(){
+        //currentPost.setPostImageIDs();
         currentPost.setAnswerPostIDs(answerPostIDs); //maybe need comment out
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(currentPostID).setValue(currentPost).addOnCompleteListener(new OnCompleteListener<Void>() {
