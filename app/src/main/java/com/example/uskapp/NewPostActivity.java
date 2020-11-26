@@ -307,7 +307,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras  = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
+            imageBitmap = Bitmap.createScaledBitmap(imageBitmap,400,400,true);
             imageUriArray.add(getImageUri(new_post_context,imageBitmap));
           
             ImageView imagePost = new ImageView(NewPostActivity.this);
@@ -318,8 +318,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             imagePost.setMaxWidth(400);
             pictureLayout.addView(imagePost);
             //postPicture.setImageURI(imageUri);
-
-            imageBitmap = Bitmap.createScaledBitmap(imageBitmap,400,400,true);
             //postPicture.setImageBitmap(imageBitmap);
 
         } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
