@@ -290,12 +290,15 @@ public class PostFocusActivity extends AppCompatActivity {
             }
         });
 
+        // click to check image added
         view_added_image_selector = (TextView) findViewById(R.id.view_added_image_indicator);
         view_added_image_selector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent view_pic_intent = new Intent(context, ViewImageActivity.class);
                 view_pic_intent.putExtra("ImageUri", imageUri);
+
+                view_pic_intent.putExtra("PostText", user_answer_edit_text.getText().toString());
                 context.startActivity(view_pic_intent);
 
             }

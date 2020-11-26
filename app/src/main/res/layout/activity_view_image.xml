@@ -1,42 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/image_focus_container_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/design_default_color_on_secondary"
     android:orientation="vertical"
-    android:background="@color/cardview_light_background"
     tools:context=".ViewImageActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/top_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#FFFFFF"
-        android:backgroundTint="@color/colorPrimary"
-        android:gravity="top"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:id="@+id/back_to_main_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="#FFFFFF"
-            android:backgroundTint="@color/colorPrimary"
-            app:srcCompat="@drawable/back_icon"
-            tools:layout_editor_absoluteX="16dp" />
-    </androidx.appcompat.widget.Toolbar>
-
-    <ImageView
+    <com.ortiz.touchview.TouchImageView
         android:id="@+id/focused_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|center_vertical"
         tools:layout_editor_absoluteX="132dp"
         tools:layout_editor_absoluteY="277dp"
-        tools:srcCompat="@tools:sample/avatars" />
-</LinearLayout>
+        tools:srcCompat="@tools:sample/avatars"></com.ortiz.touchview.TouchImageView>
+
+    <LinearLayout
+        android:id="@+id/show_associated_post_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/top_border"
+        android:backgroundTint="@color/common_google_signin_btn_text_dark_default"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/associated_post_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/nunitosans_regular"
+            android:paddingLeft="10dp"
+            android:paddingTop="8dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="8dp"
+            android:text="Sample Post here"
+            android:textAlignment="textStart"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/exit_image_focus_button"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/back_icon1"
+        android:backgroundTint="@color/common_google_signin_btn_text_dark_default"
+        android:text="Button"
+        android:visibility="invisible" />
+
+</RelativeLayout>
