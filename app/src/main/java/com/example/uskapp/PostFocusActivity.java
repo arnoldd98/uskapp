@@ -35,6 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,7 +68,8 @@ public class PostFocusActivity extends AppCompatActivity {
     TextView view_added_image_selector;
     TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
     Context context;
-    LinearLayout horizontalImageLayout, horizontalTagLayout;
+    LinearLayout horizontalImageLayout;
+    RecyclerView tag_recyclerview;
 
     String currentPostID,name,replyPostID;
     Uri imageUri;
@@ -74,6 +77,7 @@ public class PostFocusActivity extends AppCompatActivity {
     ArrayList<AnswerPost> answerPostArrayList = new ArrayList<AnswerPost>();
     ArrayList<String> answerPostIDs = new ArrayList<String>();
     ArrayList<Bitmap> answerProfilePhotos = new ArrayList<Bitmap>();
+    ArrayList<Tag> tagsList = new ArrayList<Tag>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +92,7 @@ public class PostFocusActivity extends AppCompatActivity {
         currentPostID = getIntent().getStringExtra("postID");
 
         horizontalImageLayout = (LinearLayout)qnPostLayout.findViewById(R.id.image_horizontal_linear_layout);
-        horizontalTagLayout = (LinearLayout)qnPostLayout.findViewById(R.id.tag_horizontal_linear_layout);
+        tag_recyclerview = (RecyclerView) qnPostLayout.findViewById(R.id.question_tag_recyclerview);
 
         profilePicIv = (ImageView)qnPostLayout.findViewById(R.id.profile_imageview);
         favourite_button = (ToggleButton)qnPostLayout.findViewById(R.id.star_question_button);
@@ -149,11 +153,16 @@ public class PostFocusActivity extends AppCompatActivity {
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
                             boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
+                            DataSnapshot arraySnapTagsID = s.child("tags_list");
+                            for (DataSnapshot id : arraySnapTagsID.getChildren()) {
+                                String value = id.child("tagName").getValue(String.class);
+                                tagsList.add(new Tag(value));
+                            }
                             DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
                             DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
                             DataSnapshot arraySnapPicID = s.child("postImageIDs");
 
-                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,tagsList,toggle_anonymity,upvotes);
                            // currentPost.setPostImageID(postImageID);
                             answerPostIDs.clear();
                             for(DataSnapshot id : arraySnapAnsID.getChildren()){
@@ -230,6 +239,15 @@ public class PostFocusActivity extends AppCompatActivity {
                     Toast.makeText(context, "db failed", Toast.LENGTH_SHORT).show();
                 }
             });
+        }
+
+        // set recyclerview showing tags of post under question text
+        if (tagsList != null) {
+            FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(this);
+            layout_manager.setJustifyContent(JustifyContent.FLEX_START);
+            tag_recyclerview.setLayoutManager(layout_manager);
+            TagAdapter tag_adapter = new TagAdapter(this, tagsList);
+            tag_recyclerview.setAdapter(tag_adapter);
         }
 
         // UI FOR REPLYING

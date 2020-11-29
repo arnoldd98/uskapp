@@ -126,9 +126,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                     String tag_name = tag.getTagName().toLowerCase();
                     boolean contain_tag = false;
                     for (String word : words) {
-                        word = word.substring(1).toLowerCase();
-                        System.out.println("Word: " + word);
-                        System.out.println("Tag name: " + tag_name);
+                        word = word.substring(1).replaceAll("\\p{Punct}", "");
                         if (word.equals(tag_name)) {
                             contain_tag = true;
                         }
@@ -138,20 +136,21 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
 
-                // check for new tag entered under #... format, and adds it to tag list
-                // tag does not exist
+                // check for new tag entered under #... format, cleans it up and adds it to tag list
                 for (String word : words) {
                     // is the last word a hashtag
                     if (word.startsWith("#") && word.equals(words[words.length - 1])) {
                         if (word.substring(1).equals("")) return;
-                        Tag new_tag = new Tag(word.substring(1));
+                        if (word.charAt(word.length() - 1) == '#') continue;
+                        Tag new_tag = new Tag(word.substring(1).replaceAll("\\p{Punct}", ""));
                         if (!associated_tags_list.contains(new_tag)) {
                             associated_tags_list.add(new_tag);
                         }
                     }
                     if (word.startsWith("#")) {
                         if (word.substring(1).equals("")) return;
-                        Tag new_tag = new Tag(word.substring(1));
+                        if (word.charAt(word.length() - 1) == '#') continue;
+                        Tag new_tag = new Tag(word.substring(1).replaceAll("\\p{Punct}", ""));
                         char last_char = s.charAt(s.length() - 1);
                         if (!associated_tags_list.contains(new_tag) && Character.isWhitespace(last_char)) {
                             associated_tags_list.add(new_tag);
@@ -168,7 +167,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         });
 
         // update drop down spinner with current available list of subjects from firebase server
-        String[] subjects = new String[local.getSubjectList().size()];
         ArrayAdapter<String> subject_select_adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, local.getSubjectList());
         select_subject_spinner.setAdapter(subject_select_adapter);

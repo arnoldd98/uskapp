@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,7 +13,6 @@
     android:clickable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/constraint_layout_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -85,12 +85,12 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/question_tag_recyclerview"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="22dp"
             android:orientation="horizontal"
             android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/image_horizontal_linear_layout"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/question_textview"></androidx.recyclerview.widget.RecyclerView>
 
@@ -102,7 +102,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/ups_indicator_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/question_tag_recyclerview" />
 
         <LinearLayout
             android:id="@+id/ups_indicator_layout"
@@ -113,7 +113,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
+            app:layout_constraintTop_toBottomOf="@id/question_tag_recyclerview">
 
             <ImageView
                 android:id="@+id/ups_indicator_imageview"
@@ -143,7 +143,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
-            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
+            app:layout_constraintTop_toBottomOf="@id/question_tag_recyclerview">
 
             <ImageView
                 android:id="@+id/comment_indicator_imageview"

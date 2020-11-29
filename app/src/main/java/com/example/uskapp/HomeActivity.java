@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomeActivity extends BaseNavigationActivity {
     RecyclerView main_recycler_view;
@@ -84,9 +86,12 @@ public class HomeActivity extends BaseNavigationActivity {
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
-
-                        // TO BE UPDATED
+                        DataSnapshot arraySnapTagsID = s.child("tagsList");
                         ArrayList<Tag> tags = new ArrayList<Tag>();
+                        for (DataSnapshot id : arraySnapTagsID.getChildren()) {
+                            String value = id.child("tagName").getValue(String.class);
+                            tags.add(new Tag(value));
+                        }
 
                         int upvotes  = s.child("upvotes").getValue(Integer.class);
                         DataSnapshot arraySnapAnsID = s.child("answerPostIDs");

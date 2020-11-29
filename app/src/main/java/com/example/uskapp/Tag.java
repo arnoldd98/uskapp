@@ -20,4 +20,9 @@ public class Tag {
         if (obj.getClass() != Tag.class) return false;
         return ((Tag) obj).getTagName().equals(this.getTagName());
     }
+
+    @Override
+    public String toString() {
+        return tag_name;
+    }
 }

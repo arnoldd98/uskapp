@@ -137,16 +137,17 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         else holder.post_timestamp.setText("Missing timestamp");
 
         holder.question_textview.setText(post.getText());
-
         // set recyclerview showing tags of post under question text
         if (post.getTagsList() != null) {
             FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(activity);
             layout_manager.setJustifyContent(JustifyContent.FLEX_START);
             holder.tag_recyclerview.setLayoutManager(layout_manager);
-            holder.tag_recyclerview.setAdapter(new TagAdapter(activity, post.getTagsList()));
+            TagAdapter tag_adapter = new TagAdapter(activity, post.getTagsList());
+            holder.tag_recyclerview.setAdapter(tag_adapter);
         } else {
             holder.card_container.removeView(holder.tag_recyclerview);
         }
+
         //if there are
         if (post.getPostImageIDs().size()!=0) {
 
@@ -178,7 +179,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         } else {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(holder.constraint_layout_container);
-            cs.connect(R.id.tag_horizontal_linear_layout, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 8);
+            cs.connect(R.id.tag_recyclerview, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 8);
             holder.constraint_layout_container.removeView(holder.image_layout);
             cs.applyTo(holder.constraint_layout_container);
         }
