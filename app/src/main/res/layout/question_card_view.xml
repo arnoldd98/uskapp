@@ -83,8 +83,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/question_card_dropdown_menu" />
 
-        <LinearLayout
-            android:id="@+id/tag_horizontal_linear_layout"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/question_tag_recyclerview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="22dp"
@@ -92,7 +92,7 @@
             android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/image_horizontal_linear_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question_textview"></LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/question_textview"></androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:id="@+id/image_horizontal_linear_layout"

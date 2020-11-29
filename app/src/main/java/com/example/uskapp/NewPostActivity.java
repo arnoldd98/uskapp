@@ -6,25 +6,28 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -53,9 +56,12 @@ import java.util.TimeZone;
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int CAMERA_REQUEST = 1;
     private static final int PICK_IMAGE = 2;
+
     boolean isAnonymous=false;
+    String current_subject;
     String name;
-    Button buttonTags;
+
+    Spinner select_subject_spinner;
     Button buttonPostAs;
     ImageButton backToHome;
     ImageButton cameraButton;
@@ -66,8 +72,12 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ConstraintLayout mainLayout;
     ImageView profilePic;
     TextView postText;
-    EditText textOfPost;
+    EditText post_edit_text;
+    RecyclerView tag_recyclerview;
+
+    ArrayList<Tag> associated_tags_list = new ArrayList<Tag>();
     ArrayList<Uri> imageUriArray = new ArrayList<Uri>();
+
     
     Uri imageUri;
     Context new_post_context;
@@ -81,11 +91,100 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         mainLayout = findViewById(R.id.MainLayout);
         pictureLayout = findViewById(R.id.picturePostHorizontalLayout);
         profilePic = findViewById(R.id.userProfileNewPost);
-        textOfPost = findViewById(R.id.textPostTv);
-        buttonTags = findViewById(R.id.select_tag_button);
-        buttonTags.setOnClickListener(this);
-        buttonPostAs = findViewById(R.id.buttonPostAs);
+        post_edit_text = findViewById(R.id.textPostTv);
+        select_subject_spinner = findViewById(R.id.select_subject_spinner);
+        buttonPostAs = findViewById(R.id.buttonPos);
         buttonPostAs.setOnClickListener(this);
+
+        // Initialize singleton LocalUser to use local data fetched from firebase
+        LocalUser local = LocalUser.getCurrentUser();
+
+
+        // Initialize tag_recyclerview with FlexboxLayout and TagAdapter
+        tag_recyclerview = findViewById(R.id.tag_recyclerview);
+        FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(new_post_context);
+        layout_manager.setJustifyContent(JustifyContent.FLEX_START);
+        tag_recyclerview.setLayoutManager(layout_manager);
+        final TagAdapter tag_adapter = new TagAdapter(new_post_context, associated_tags_list);
+        tag_recyclerview.setAdapter(tag_adapter);
+
+        // Listener to post_edit_text which checks for any hashtags entered by the user
+        // and adjusts the list of tags accordingly
+        post_edit_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = s.toString();
+                String[] words = text.split("\\s+");
+
+                ArrayList<Tag> prev_tags_list = (ArrayList<Tag>) associated_tags_list.clone();
+
+                for (Tag tag : prev_tags_list) {
+                    String tag_name = tag.getTagName().toLowerCase();
+                    boolean contain_tag = false;
+                    for (String word : words) {
+                        word = word.substring(1).toLowerCase();
+                        System.out.println("Word: " + word);
+                        System.out.println("Tag name: " + tag_name);
+                        if (word.equals(tag_name)) {
+                            contain_tag = true;
+                        }
+                    }
+                    if (!contain_tag) {
+                        associated_tags_list.remove(tag);
+                    }
+                }
+
+                // check for new tag entered under #... format, and adds it to tag list
+                // tag does not exist
+                for (String word : words) {
+                    // is the last word a hashtag
+                    if (word.startsWith("#") && word.equals(words[words.length - 1])) {
+                        if (word.substring(1).equals("")) return;
+                        Tag new_tag = new Tag(word.substring(1));
+                        if (!associated_tags_list.contains(new_tag)) {
+                            associated_tags_list.add(new_tag);
+                        }
+                    }
+                    if (word.startsWith("#")) {
+                        if (word.substring(1).equals("")) return;
+                        Tag new_tag = new Tag(word.substring(1));
+                        char last_char = s.charAt(s.length() - 1);
+                        if (!associated_tags_list.contains(new_tag) && Character.isWhitespace(last_char)) {
+                            associated_tags_list.add(new_tag);
+                        }
+                    }
+                }
+
+                tag_adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        // update drop down spinner with current available list of subjects from firebase server
+        String[] subjects = new String[local.getSubjectList().size()];
+        ArrayAdapter<String> subject_select_adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, local.getSubjectList());
+        select_subject_spinner.setAdapter(subject_select_adapter);
+        select_subject_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                current_subject = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                current_subject = parent.getItemAtPosition(0).toString();
+            }
+        });
+
+
         cameraButton = findViewById(R.id.cameraButton);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +212,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         postText = findViewById(R.id.post);
         postText.setOnClickListener(this);
 
+
         // setting users profile photo
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -131,6 +231,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
         });
+
         //getting name
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -142,10 +243,10 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
+
 
     @Override
     public void onClick(View view) {
@@ -159,28 +260,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(this,HomeActivity.class));
                 break;
 
-            case R.id.select_tag_button:
-                Dialog tag_options_dialog = Utils.createBottomDialog(this, getPackageManager(), R.layout.tagmenu);
-
-                final ArrayList<String> test = new ArrayList<>();
-                test.add("Yes");
-                test.add("No");
-                test.add("Maybe");
-                RecyclerView tag_recycler_view = tag_options_dialog.findViewById(R.id.select_tag_recyclerview);
-
-                // Use Flexbox Layout Manager (https://github.com/google/flexbox-layout)
-                FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(new_post_context);
-                layout_manager.setJustifyContent(JustifyContent.FLEX_END);
-
-                tag_recycler_view.setLayoutManager(
-                        new FlexboxLayoutManager(new_post_context));
-                tag_recycler_view.addItemDecoration(new DividerItemDecoration(new_post_context,
-                        DividerItemDecoration.HORIZONTAL));
-                tag_recycler_view.setAdapter(new SubjectAdapter(new_post_context, test, true));
-                tag_options_dialog.show();
-                break;
-
-            case R.id.buttonPostAs:
+            case R.id.buttonPos:
 
                 Dialog u = Utils.createBottomDialog(this, getPackageManager(), R.layout.choose_anonymous_options_view);
                 LinearLayout ll = u.findViewById(R.id.choose_not_anonymous_option_layout);
@@ -241,8 +321,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
     private void post(){
 
-
-
         Date now = new Date();
         long timestamp = now.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss",Locale.ENGLISH);
@@ -254,12 +332,15 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         String postID = userID+dateStr;
         String picID = postID + "pic";
         QuestionPost newPost;
+
+        String question_text = post_edit_text.getText().toString().replace("#" ,"");
+
         if(!isAnonymous){
-            newPost = new QuestionPost(name,userID,postID, textOfPost.getText().toString(),
-                    dateStr,"50.001",false);
+            newPost = new QuestionPost(name,userID,postID, question_text,
+                    dateStr,current_subject, associated_tags_list,false);
         } else {
-            newPost = new QuestionPost(name,userID,postID, textOfPost.getText().toString(),
-                    dateStr,"50.001",true);
+            newPost = new QuestionPost(name,userID,postID, question_text,
+                    dateStr,current_subject, associated_tags_list,true);
         }
 
         //if there is a picture
@@ -351,6 +432,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
+
 }
 
 

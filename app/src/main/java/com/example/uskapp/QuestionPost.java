@@ -9,14 +9,13 @@ public class QuestionPost extends Post{
     private ArrayList<String> post_followers = new ArrayList<>();
 
     public QuestionPost(String name, String userID, String postID, String text, String timestamp,
-                        String subject, boolean toggle_anonymity) {
+                        String subject, ArrayList<Tag> tags_list, boolean toggle_anonymity) {
         super(name,userID, postID,text, timestamp, subject, toggle_anonymity);
-        //answers_list = new ArrayList<AnswerPost>();
-        tags_list = new ArrayList<Tag>();
+        this.tags_list = tags_list;
     }
 
     public QuestionPost(String name, String userID, String postID, String text, String timestamp,
-                        String subject, boolean toggle_anonymity,int upvotes) {
+                        String subject, ArrayList<Tag> tags_list, boolean toggle_anonymity,int upvotes) {
         super(name,userID, postID,text, timestamp, subject, toggle_anonymity,upvotes);
         //answers_list = new ArrayList<AnswerPost>();
         tags_list = new ArrayList<Tag>();

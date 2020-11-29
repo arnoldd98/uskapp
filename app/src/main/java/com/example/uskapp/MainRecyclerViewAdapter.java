@@ -32,6 +32,8 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -136,31 +138,14 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         holder.question_textview.setText(post.getText());
 
+        // set recyclerview showing tags of post under question text
         if (post.getTagsList() != null) {
-            for (Tag tag : post.getTagsList()) {
-                // programmatically create button for each tag and add to horizontal linear layout
-                Context context = holder.tag_layout.getContext();
-                TextView clickable_tag = new TextView(context);
-                clickable_tag.setText(tag.tag_name);
-                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.tag_rectangle));
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
-                        (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(0, 0, 8, 8);
-                clickable_tag.setLayoutParams(lp);
-                clickable_tag.setTextSize(12);
-                clickable_tag.setTextColor(Color.parseColor("#707070"));
-                clickable_tag.setPadding(20, 6, 20, 6);
-                clickable_tag.setClickable(true);
-                TypedValue outValue = new TypedValue();
-                context.getTheme().resolveAttribute(
-                        android.R.attr.selectableItemBackground, outValue, true);
-                clickable_tag.setForeground(context.getDrawable(outValue.resourceId));
-
-
-                // add functionality to search for posts with selected tag when tag button is clicked
-
-                holder.tag_layout.addView(clickable_tag);
-            }
+            FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(activity);
+            layout_manager.setJustifyContent(JustifyContent.FLEX_START);
+            holder.tag_recyclerview.setLayoutManager(layout_manager);
+            holder.tag_recyclerview.setAdapter(new TagAdapter(activity, post.getTagsList()));
+        } else {
+            holder.card_container.removeView(holder.tag_recyclerview);
         }
         //if there are
         if (post.getPostImageIDs().size()!=0) {
@@ -277,7 +262,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         public TextView post_timestamp;
         public TextView question_textview;
         public Toolbar options_menu_toolbar;
-        public LinearLayout tag_layout;
+        public RecyclerView tag_recyclerview;
         public LinearLayout image_layout;
         public LinearLayout ups_indicator_layout;
         public ImageView ups_indicator_image;
@@ -297,7 +282,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             post_timestamp = (TextView) postView.findViewById(R.id.post_timestamp);
             question_textview = (TextView) postView.findViewById(R.id.question_textview);
             options_menu_toolbar = (Toolbar) postView.findViewById(R.id.options_menu_toolbar);
-            tag_layout = (LinearLayout) postView.findViewById(R.id.tag_horizontal_linear_layout);
+            tag_recyclerview = (RecyclerView) postView.findViewById(R.id.question_tag_recyclerview);
             image_layout = (LinearLayout) postView.findViewById(R.id.image_horizontal_linear_layout);
             ups_indicator_layout = (LinearLayout) postView.findViewById(R.id.ups_indicator_layout);
             ups_indicator_image = (ImageView) postView.findViewById(R.id.ups_indicator_imageview);

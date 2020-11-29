@@ -22,6 +22,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -67,7 +68,7 @@ public class FakeAddPostActivity extends AppCompatActivity {
                 String postID = userID+dateStr;
                 String picID = postID + "pic";
                 QuestionPost newPost = new QuestionPost(name,userID,postID, text.getText().toString(),
-                        dateStr,subject,false);
+                        dateStr,subject, new ArrayList<Tag>(), false);
                 //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:41:58");
                 //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:42:03");
                 //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:42:06");
