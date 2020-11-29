@@ -18,9 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -30,11 +33,13 @@ import java.util.List;
 public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecyclerViewAdapter.ViewHolder> {
     private List<AnswerPost> answer_data;
     private ArrayList<Bitmap> answerProfileBitmaps;
+    private ArrayList<Bitmap> ArrayListAnswerImages;
     private Context ctx;
 
-    public AnswerRecyclerViewAdapter(Context ctx, List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps) {
+    public AnswerRecyclerViewAdapter(Context ctx, List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps, ArrayList<Bitmap> ArrayListAnswerImages) {
         this.answer_data = answer_data;
         this.answerProfileBitmaps=answerProfileBitmaps;
+        this.ArrayListAnswerImages = ArrayListAnswerImages;
         this.ctx = ctx;
     }
 
@@ -63,22 +68,22 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
         AnswerPost answer = answer_data.get(position);
 
-        if (answer.toggle_anonymity){
+        if (answer.toggle_anonymity==true){
             holder.answerer_profile_iv.setImageResource(R.drawable.image);
             holder.answer_author_name_tv.setText("Anonymous");
         }
         else {
-            if(answerProfileBitmaps.size() == answer_data.size()){
+            //loading of replier's profile pic
+
+            //bitmap tends to not be properly loaded
+            try{
                 Bitmap bitmap = answerProfileBitmaps.get(position);
-                //bitmap tends to not be properly loaded
-                try{
-                    holder.answerer_profile_iv.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.answerer_profile_iv.getWidth(),
-                            holder.answerer_profile_iv.getHeight(), false));
-                } catch (Exception e){
-                    holder.answerer_profile_iv.setImageResource(R.drawable.ic_launcher_foreground);
-                }
-;
+                holder.answerer_profile_iv.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.answerer_profile_iv.getWidth(),
+                        holder.answerer_profile_iv.getHeight(), false));
+            } catch (Exception e){
+                holder.answerer_profile_iv.setImageResource(R.drawable.ic_launcher_foreground);
             }
+
             holder.answer_author_name_tv.setText(answer.getName());
         }
 
@@ -86,6 +91,18 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
 
         holder.up_answer_btn.setText(answer.getUpvotes() + " ups");
         holder.answer_tv.setText(answer.getText());
+
+        if(ArrayListAnswerImages != null){
+            ImageView imageView = new ImageView(ctx);
+            try {
+                imageView.setImageBitmap(ArrayListAnswerImages.get(position));
+                holder.clickable_to_images_layout1.addView(imageView);
+            } catch (Exception e){
+
+            }
+        }
+
+
 
         //upvoting button
         // checks if valid
