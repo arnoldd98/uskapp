@@ -78,6 +78,8 @@ public class PostFocusActivity extends AppCompatActivity {
     ArrayList<String> answerPostIDs = new ArrayList<String>();
     ArrayList<Bitmap> answerProfilePhotos = new ArrayList<Bitmap>();
     ArrayList<Tag> tagsList = new ArrayList<Tag>();
+    ArrayList<Bitmap> answerPictures = new ArrayList<>();
+    ArrayList<Bitmap> currentReplyPictures = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +119,7 @@ public class PostFocusActivity extends AppCompatActivity {
         LinearLayoutManager linear_layout_manager = new LinearLayoutManager(this);
         linear_layout_manager.setStackFromEnd(false);
         answer_recyclerview.setLayoutManager(linear_layout_manager);
-        answerAdapter = new AnswerRecyclerViewAdapter(this,answerPostArrayList,answerProfilePhotos);
+        answerAdapter = new AnswerRecyclerViewAdapter(this,answerPostArrayList,answerProfilePhotos,answerPictures);
         answer_recyclerview.setAdapter(answerAdapter);
 
         //getting name of current user
@@ -151,9 +153,10 @@ public class PostFocusActivity extends AppCompatActivity {
                             String text = s.child("text").getValue(String.class);
                             String timestamp = s.child("timestamp").getValue(String.class);
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
-                            boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
+                            final boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
                             DataSnapshot arraySnapTagsID = s.child("tags_list");
+
                             for (DataSnapshot id : arraySnapTagsID.getChildren()) {
                                 String value = id.child("tagName").getValue(String.class);
                                 tagsList.add(new Tag(value));
@@ -187,7 +190,13 @@ public class PostFocusActivity extends AppCompatActivity {
                                                                   Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                                   RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                                                                   roundBitmap.setCircular(true);
-                                                                  profilePicIv.setImageDrawable(roundBitmap);
+                                                                  if(toggle_anonymity==false){
+                                                                      profilePicIv.setImageDrawable(roundBitmap);
+                                                                  }
+                                                                  else {
+                                                                      profilePicIv.setImageResource(R.drawable.anonymous_icon);
+                                                                  }
+
                                                               }
                                                           }
                                     );
@@ -206,9 +215,10 @@ public class PostFocusActivity extends AppCompatActivity {
                                             public void onSuccess(byte[] bytes) {
                                                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                 ImageView qnImageView = new ImageView(PostFocusActivity.this);
-                                                qnImageView.setImageBitmap(bitmap);
-                                                qnImageView.setMaxHeight(100);
-                                                qnImageView.setMaxWidth(100);
+                                                qnImageView.setScaleType(ImageView.ScaleType.CENTER);
+                                                qnImageView.setMaxHeight(400);
+                                                qnImageView.setMaxWidth(400);
+                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,400,400,true));
                                                 horizontalImageLayout.addView(qnImageView);
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
@@ -221,7 +231,12 @@ public class PostFocusActivity extends AppCompatActivity {
 
 
                             timeStampTv.setText(timestamp);
-                            nameTv.setText(name);
+                            if(toggle_anonymity==false){
+                                nameTv.setText(name);
+                            } else {
+                                nameTv.setText("Anonymous");
+                            }
+
                             postTextTv.setText(text);
                             upVoteTv.setText(String.valueOf(upvotes));
                             commentTv.setText(String.valueOf(currentPost.getAnswerPostIDs().size()));
@@ -272,16 +287,14 @@ public class PostFocusActivity extends AppCompatActivity {
                 String answer_text = user_answer_edit_text.getText().toString();
 
                 AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,false);
+
+                ansPost.setPicId(picID);
                 //adds a new answer post
                 FirebaseDatabase.getInstance().getReference("AnswerPost")
                         .child(postID).setValue(ansPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            //adding the reply post to currentpost arraylist
-                            //currentPost.addAnswerPostID(replyPostID);
-                            //getRepliesFromFirebase();
-                            //answerAdapter.notifyDataSetChanged();
                             currentPost.addAnswerPostID(replyPostID);
                             updateCurrentPost();
                             Toast.makeText(PostFocusActivity.this, "Success!", Toast.LENGTH_SHORT).show();
@@ -290,7 +303,7 @@ public class PostFocusActivity extends AppCompatActivity {
                         }
                     }
                 });
-
+                //adding answer picture to firebase
                 StorageReference imageRef = FirebaseStorage.getInstance().getReference("AnswerPictures")
                         .child(picID);
                 if(imageUri != null ){
@@ -373,7 +386,7 @@ public class PostFocusActivity extends AppCompatActivity {
         super.startActivity(intent, options);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-
+    //getting reply data and storing it in an array
     private void getRepliesFromFirebase(){
         answerProfilePhotos.clear();
         for (String id : currentPost.getAnswerPostIDs() ){
@@ -389,20 +402,41 @@ public class PostFocusActivity extends AppCompatActivity {
                     String timestamp = snapshot.child("timestamp").getValue(String.class);
                     boolean toggle_anonymity = snapshot.child("toggle_anonymity").getValue(Boolean.class);
                     String subject = snapshot.child("subject").getValue(String.class);
-                    AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
-                    answerPostArrayList.add(currentReply);
+                    String picId = snapshot.child("picId").getValue(String.class);
 
-                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+
+
+                    AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
+                    currentReply.setPicId(picId);
+                    answerPostArrayList.add(currentReply);
+                    //getting profile pictures
+                    StorageReference profileRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                             .child(userID);
-                    imageRef.getBytes(2048*2048)
+                    profileRef.getBytes(2048*2048)
                             .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                                       @Override
                                                       public void onSuccess(byte[] bytes) {
                                                           Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                           answerProfilePhotos.add(bitmap);
+                                                          answerAdapter.notifyDataSetChanged();
                                                       }
                                                   }
                             );
+
+                    //getting reply pictures
+                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("AnswerPictures")
+                            .child(picId);
+                    imageRef.getBytes(2048*2048)
+                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                      @Override
+                                                      public void onSuccess(byte[] bytes) {
+                                                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                          answerPictures.add(bitmap);
+                                                          answerAdapter.notifyDataSetChanged();
+                                                      }
+                                                  }
+                            );
+
                     answerAdapter.notifyDataSetChanged();
                 }
 
@@ -412,6 +446,7 @@ public class PostFocusActivity extends AppCompatActivity {
                 }
             });
         }
+        answerAdapter.notifyDataSetChanged();
     }
 
     public void updateCurrentPost(){
