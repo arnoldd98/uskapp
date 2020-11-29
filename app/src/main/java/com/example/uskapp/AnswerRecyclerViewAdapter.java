@@ -94,10 +94,9 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             @Override
             public void onClick(View view) {
                 AnswerPost post = answer_data.get(position);
-                Toast.makeText(ctx, String.valueOf(position), Toast.LENGTH_SHORT).show();
                 boolean valid=true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
-                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                         valid=false;
                     }
                 }
