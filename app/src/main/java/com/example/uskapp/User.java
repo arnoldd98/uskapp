@@ -26,6 +26,14 @@ public class User implements Observer {
         //this.userId=userId;
     }
 
+    public User(String name, String email, int karma, int total_posts, int total_answers){
+        this.name=name;
+        this.email=email;
+        this.karma=karma;
+        this.total_posts=total_posts;
+        this.total_answers=total_answers;
+    }
+
     public String getName() {
         return name;
     }
