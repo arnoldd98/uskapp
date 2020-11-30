@@ -74,6 +74,7 @@
                 android:layout_height="38dp"
                 android:layout_marginStart="80dp"
                 android:layout_marginTop="10dp"
+                android:progressTint="#ffeb3b"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toBottomOf="@+id/nameTv" />
         </androidx.constraintlayout.widget.ConstraintLayout>

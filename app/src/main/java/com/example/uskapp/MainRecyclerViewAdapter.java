@@ -200,6 +200,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
                 if(valid){
                     post.increaseUpVote();
+                    givePosterKarma(post.getUserID());
                     int i = post.getUpvotes();
                     String id = post_data.get(position).getPostID();
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
@@ -296,5 +297,23 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
     }
 
+
+    private void givePosterKarma(String posterID){
+        final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(posterID);
+        posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int karma = snapshot.child("karma").getValue(Integer.class);
+                karma +=1;
+                posterRef.child("karma").setValue(karma);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }
 

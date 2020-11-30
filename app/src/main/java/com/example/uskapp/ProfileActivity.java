@@ -7,8 +7,10 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -62,14 +64,16 @@ public class ProfileActivity extends BaseNavigationActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 name = snapshot.child("email").getValue(String.class);
-                rank = snapshot.child("rank").getValue(Integer.class);
-                exp = snapshot.child("exp").getValue(Integer.class);
                 karma = snapshot.child("karma").getValue(Integer.class);
 
                 nameView.setText(name);
-                rankView.setText(String.valueOf(rank));
                 karmaView.setText(String.valueOf(karma));
+                String rank = convertKaramaToRank(karma);
+                int exp = convertKaramaToExp(karma);
+                rankView.setText(String.valueOf(rank));
                 expBar.setProgress(exp);
+                expBar.setMax(100);
+                expBar.setProgressBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#ffeb3b")));
             }
 
             @Override
@@ -107,8 +111,8 @@ public class ProfileActivity extends BaseNavigationActivity {
         karmaView = findViewById(R.id.karmaTv);
         expBar = findViewById(R.id.expProgressBar);
         signOutBtn = findViewById(R.id.signOutBtn);
-        expBar.setMax(100);
-        expBar.setProgress(50);
+        //expBar.setMax(100);
+        //expBar.setProgress(50);
 
 
         signOutBtn.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +139,38 @@ public class ProfileActivity extends BaseNavigationActivity {
         });
 
 
+    }
+
+    private String convertKaramaToRank(int karma) {
+        if(karma <=10){
+            return "noob";
+        } else if (karma<=20){
+            return "average joe";
+        } else if (karma <= 50){
+            return "boss";
+        } else if (karma <=100){
+            return  "Big Boss";
+        } else if (karma <=200){
+            return "god level";
+        } else {
+            return "arnold level";
+        }
+    }
+
+    private int convertKaramaToExp(int karma) {
+        if(karma <=10){
+            return (int)(100*karma/10);
+        } else if (karma<=20){
+            return (int)(100*(karma-10)/(20-10));
+        } else if (karma <= 50){
+            return (int)(100*(karma-20)/(50-20));
+        } else if (karma <=100){
+            return  (int)(100*(karma-50)/(100-50));
+        } else if (karma <=200){
+            return (int)(100*(karma-100)/(200-100));
+        } else {
+            return 100;
+        }
     }
 
     @Override
