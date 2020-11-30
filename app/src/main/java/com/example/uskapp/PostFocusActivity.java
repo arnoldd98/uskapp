@@ -408,7 +408,7 @@ public class PostFocusActivity extends AppCompatActivity {
     }
     //getting reply data and storing it in an array
     private void getRepliesFromFirebase(){
-        answerProfilePhotos.clear();
+        //answerProfilePhotos.clear();
         for (String id : currentPost.getAnswerPostIDs() ){
             DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("AnswerPost")
                     .child(id);
@@ -420,15 +420,25 @@ public class PostFocusActivity extends AppCompatActivity {
                     String postID =snapshot.child("postID").getValue(String.class);
                     String text = snapshot.child("text").getValue(String.class);
                     String timestamp = snapshot.child("timestamp").getValue(String.class);
+                    int upvotes = snapshot.child("upvotes").getValue(Integer.class);
                     boolean toggle_anonymity = snapshot.child("toggle_anonymity").getValue(Boolean.class);
                     String subject = snapshot.child("subject").getValue(String.class);
                     String picId = snapshot.child("picId").getValue(String.class);
 
 
 
-                    AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
+                    AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
                     currentReply.setPicId(picId);
-                    answerPostArrayList.add(currentReply);
+                    boolean valid=true;
+                    for(AnswerPost a : answerPostArrayList){
+                        if(a.getPostID().equals(postID)){
+                            valid=false;
+                        }
+                    }
+                    if(valid){
+                      answerPostArrayList.add(currentReply);
+                    }
+
                     //getting profile pictures
                     StorageReference profileRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                             .child(userID);
