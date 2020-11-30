@@ -7,8 +7,6 @@ public class User implements Observer {
     public String name;
     public String email;
     //private String userId;
-    private int rank;
-    private int exp;
     private int total_posts;
     private int karma;
     private int total_answers;
@@ -22,8 +20,6 @@ public class User implements Observer {
     public User(String name, String email){
         this.name = name;
         this.email = email;
-        this.rank=0;
-        this.exp=0;
         this.total_posts=0;
         this.karma=0;
         this.total_answers=0;
@@ -46,21 +42,6 @@ public class User implements Observer {
         this.email = email;
     }
 
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
-    public int getExp() {
-        return exp;
-    }
-
-    public void setExp(int exp) {
-        this.exp = exp;
-    }
 
     public int getTotal_posts() {
         return total_posts;

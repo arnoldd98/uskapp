@@ -357,6 +357,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
                 if(valid){
                     currentPost.increaseUpVote();
+                    givePosterKarma(currentPost.getUserID());
                     int i = currentPost.getUpvotes();
                     String id = currentPost.getPostID();
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
@@ -371,7 +372,26 @@ public class PostFocusActivity extends AppCompatActivity {
                     Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
                 }
             }
+
+            private void givePosterKarma(String posterID) {
+                final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                        .child(posterID);
+                posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int karma = snapshot.child("karma").getValue(Integer.class);
+                        karma +=1;
+                        posterRef.child("karma").setValue(karma);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
         });
+
     }
 
     // set animations for transition between HomeActivity and PostFocusActivity
@@ -481,4 +501,5 @@ public class PostFocusActivity extends AppCompatActivity {
             System.out.println("Gallery image uri: " + imageUri);
         }
     }
+
 }
