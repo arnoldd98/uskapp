@@ -219,6 +219,67 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         });
 
 
+        holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Post post = post_data.get(position);
+                final ArrayList<String> tempPostFollowing = new ArrayList<String>();
+
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
+                        child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String email = snapshot.child("email").getValue(String.class);
+                        String name = snapshot.child("name").getValue(String.class);
+                        int karma = snapshot.child("karma").getValue(Integer.class);
+                        int total_posts = snapshot.child("total_posts").getValue(Integer.class);
+                        int total_answers = snapshot.child("total_answers").getValue(Integer.class);
+                        DataSnapshot arrayFollowingPosts = snapshot.child("PostFollowing");
+                        for(DataSnapshot s : arrayFollowingPosts.getChildren()){
+                            String postfollowingId = s.getValue(String.class);
+                            tempPostFollowing.add(postfollowingId);
+                        }
+
+                        User currentUser = new User(name,email,karma,5,total_answers);
+                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
+                                child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        currentUser.setPostFollowing(tempPostFollowing);
+                        boolean valid = true;
+                        for(String postsFollowed : tempPostFollowing){
+                            if(post.getPostID().equals(postsFollowed)){
+                                valid = false;
+                                //Toast.makeText(view.getContext(), "follow failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        //if current post is not followed
+                        if(valid){
+                            tempPostFollowing.add(post.getPostID());
+                            currentUser.setPostFollowing(tempPostFollowing);
+                            FirebaseDatabase.getInstance().getReference("Users")
+                                    .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                        }
+                                    });
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
+            }
+        });
+
+
+        /*
         // set on click listener on star button to toggle if post should be favourited by user
         holder.favourite_question_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -252,7 +313,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 }
             }
         });
-
+        */
 
     }
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
@@ -296,7 +357,23 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             card_view_context = postView.getContext();
         }
     }
+    private void followPost(String postID){
+        final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(postID);
+        posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int karma = snapshot.child("karma").getValue(Integer.class);
+                karma +=1;
+                posterRef.child("karma").setValue(karma);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     private void givePosterKarma(String posterID){
         final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
