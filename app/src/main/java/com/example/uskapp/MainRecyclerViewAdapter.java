@@ -142,7 +142,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(activity);
             layout_manager.setJustifyContent(JustifyContent.FLEX_START);
             holder.tag_recyclerview.setLayoutManager(layout_manager);
-            TagAdapter tag_adapter = new TagAdapter(activity, post.getTagsList());
+            TagAdapter tag_adapter = new TagAdapter(activity, post.getTagsList(), true);
             holder.tag_recyclerview.setAdapter(tag_adapter);
         } else {
             holder.card_container.removeView(holder.tag_recyclerview);
@@ -190,7 +190,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
-                boolean valid=true;
+                Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                boolean valid = true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
                     if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                         valid=false;

@@ -1,5 +1,6 @@
 package com.example.uskapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,7 +23,11 @@ public class Adapter extends RecyclerView.Adapter {
     private ArrayList<String> subjectArrayList;
     private Context context;
     private int[] androidcolors;
+    private Activity activity;
 
+    public Adapter(Activity activity, ArrayList<String> subjectArrayList, ArrayList<Bitmap> subjectBitmaps) {
+        this.activity = activity;
+        this.subjectBitmaps =subjectBitmaps;
     public Adapter(Context context, ArrayList<String> subjectArrayList, int[] androidcolors) {
         this.context = context;
         this.androidcolors = androidcolors;
@@ -33,7 +38,7 @@ public class Adapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(activity);
         View myOwnView = layoutInflater.inflate(R.layout.recyclerlayout, parent, false);
         ViewHolder viewHolder = new ViewHolder(myOwnView);
 
@@ -60,6 +65,11 @@ public class Adapter extends RecyclerView.Adapter {
                 Intent intent = new Intent(context,TestSubjectActivity.class);
                 intent.putExtra("indsubject", viewHolder.button.getText().toString());
                 context.startActivity(intent);
+                Toast.makeText(activity, viewHolder.textView.getText().toString(), Toast.LENGTH_SHORT).show();
+                activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                Intent intent = new Intent(activity,HomeActivity.class);
+                intent.putExtra("indsubject", viewHolder.textView.getText().toString());
+                activity.startActivity(intent);
 
             }
         });
@@ -82,5 +92,6 @@ public class Adapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return subjectArrayList.size();
     }
+
 
 }

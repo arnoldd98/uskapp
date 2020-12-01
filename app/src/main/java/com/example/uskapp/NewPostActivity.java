@@ -105,7 +105,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(new_post_context);
         layout_manager.setJustifyContent(JustifyContent.FLEX_START);
         tag_recyclerview.setLayoutManager(layout_manager);
-        final TagAdapter tag_adapter = new TagAdapter(new_post_context, associated_tags_list);
+        final TagAdapter tag_adapter = new TagAdapter(this, associated_tags_list);
         tag_recyclerview.setAdapter(tag_adapter);
 
         // Listener to post_edit_text which checks for any hashtags entered by the user
@@ -329,16 +329,18 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String postID = userID+dateStr;
         String picID = postID + "pic";
+        ArrayList<String> associated_tags_string_list = Tag.getTagStringList(associated_tags_list);
         QuestionPost newPost;
 
         String question_text = post_edit_text.getText().toString().replace("#" ,"");
 
+
         if(!isAnonymous){
             newPost = new QuestionPost(name,userID,postID, question_text,
-                    dateStr,current_subject, associated_tags_list,false);
+                    dateStr,current_subject, associated_tags_string_list,false);
         } else {
             newPost = new QuestionPost(name,userID,postID, question_text,
-                    dateStr,current_subject, associated_tags_list,true);
+                    dateStr,current_subject, associated_tags_string_list,true);
         }
 
         //if there is a picture

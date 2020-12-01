@@ -5,12 +5,11 @@
     android:id="@+id/card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
     android:backgroundTint="@color/colorLightGrayPost"
+    android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:layout_marginTop="8dp"
-    app:cardElevation="5dp"
-    app:cardCornerRadius="10dp"
-    android:clickable="true">
+    app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout_container"
@@ -87,6 +86,8 @@
             android:id="@+id/question_tag_recyclerview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:orientation="horizontal"
             android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/image_horizontal_linear_layout"

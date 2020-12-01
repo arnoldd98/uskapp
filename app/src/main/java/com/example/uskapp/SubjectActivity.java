@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -102,6 +104,19 @@ public class SubjectActivity extends AppCompatActivity {
 
     }
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_right);
+//        Intent intent = new Intent(this, HomeActivity.class);
+//        this.startActivity(intent);
+//    }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        Intent intent = new Intent(this, HomeActivity.class);
+        this.startActivity(intent);
+    }
 }

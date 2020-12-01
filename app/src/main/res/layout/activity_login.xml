@@ -87,7 +87,7 @@
             app:srcCompat="@drawable/key" />
 
     <TextView
-        android:id="@+id/register"
+        android:id="@+id/register_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
@@ -119,7 +119,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.154"
-        app:layout_constraintStart_toEndOf="@+id/register"
+        app:layout_constraintStart_toEndOf="@+id/register_select"
         app:layout_constraintTop_toBottomOf="@+id/login"
         app:layout_constraintVertical_bias="0.465" />
 
