@@ -97,8 +97,9 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
 
         if(ArrayListAnswerImages != null){
             ImageView imageView = new ImageView(ctx);
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
             try {
-                imageView.setImageBitmap(ArrayListAnswerImages.get(position));
+                imageView.setImageBitmap(Bitmap.createScaledBitmap(ArrayListAnswerImages.get(position),600,600,true));
                 holder.clickable_to_images_layout1.addView(imageView);
             } catch (Exception e){
 

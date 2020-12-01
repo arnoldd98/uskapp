@@ -21,15 +21,13 @@ public class Adapter extends RecyclerView.Adapter {
 
     //private ArrayList<Bitmap> subjectBitmaps;
     private ArrayList<String> subjectArrayList;
-    private Context context;
+
     private int[] androidcolors;
     private Activity activity;
 
-    public Adapter(Activity activity, ArrayList<String> subjectArrayList, ArrayList<Bitmap> subjectBitmaps) {
+
+    public Adapter(Activity activity, ArrayList<String> subjectArrayList, int[] androidcolors) {
         this.activity = activity;
-        this.subjectBitmaps =subjectBitmaps;
-    public Adapter(Context context, ArrayList<String> subjectArrayList, int[] androidcolors) {
-        this.context = context;
         this.androidcolors = androidcolors;
         //this.subjectBitmaps =subjectBitmaps;
         this.subjectArrayList = subjectArrayList;
@@ -61,10 +59,6 @@ public class Adapter extends RecyclerView.Adapter {
         viewHolder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, viewHolder.button.getText().toString(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context,TestSubjectActivity.class);
-                intent.putExtra("indsubject", viewHolder.button.getText().toString());
-                context.startActivity(intent);
                 Toast.makeText(activity, viewHolder.textView.getText().toString(), Toast.LENGTH_SHORT).show();
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 Intent intent = new Intent(activity,HomeActivity.class);

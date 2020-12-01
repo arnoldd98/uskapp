@@ -154,7 +154,6 @@ public class PostFocusActivity extends AppCompatActivity {
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
                             final boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
-                            DataSnapshot arraySnapTagsID = s.child("tags_list");
 
                             DataSnapshot arraySnapTagsID = s.child("tagsList");
                             for (DataSnapshot id : arraySnapTagsID.getChildren()) {
@@ -216,9 +215,9 @@ public class PostFocusActivity extends AppCompatActivity {
                                                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                 ImageView qnImageView = new ImageView(PostFocusActivity.this);
                                                 qnImageView.setScaleType(ImageView.ScaleType.CENTER);
-                                                qnImageView.setMaxHeight(400);
-                                                qnImageView.setMaxWidth(400);
-                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,400,400,true));
+                                                qnImageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,600,600,true));
                                                 horizontalImageLayout.addView(qnImageView);
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {

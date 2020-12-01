@@ -26,8 +26,8 @@
         android:layout_marginStart="25dp"
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/style"/>
+        app:layout_constraintTop_toTopOf="parent"/>
+        //android:background="@drawable/style"/>
         //app:srcCompat="@drawable/ic_launcher_background"
 
 </androidx.constraintlayout.widget.ConstraintLayout>
