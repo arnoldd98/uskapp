@@ -94,6 +94,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
         horizontalImageLayout = (LinearLayout)qnPostLayout.findViewById(R.id.image_horizontal_linear_layout);
         tag_recyclerview = (RecyclerView) qnPostLayout.findViewById(R.id.question_tag_recyclerview);
+
         profilePicIv = (ImageView)qnPostLayout.findViewById(R.id.profile_imageview);
         favourite_button = (ToggleButton)qnPostLayout.findViewById(R.id.star_question_button);
         timeStampTv = (TextView)qnPostLayout.findViewById(R.id.post_timestamp);
@@ -214,9 +215,9 @@ public class PostFocusActivity extends AppCompatActivity {
                                                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                 ImageView qnImageView = new ImageView(PostFocusActivity.this);
                                                 qnImageView.setScaleType(ImageView.ScaleType.CENTER);
-                                                qnImageView.setMaxHeight(400);
-                                                qnImageView.setMaxWidth(400);
-                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,400,400,true));
+                                                qnImageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,600,600,true));
                                                 horizontalImageLayout.addView(qnImageView);
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
