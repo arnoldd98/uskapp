@@ -348,7 +348,7 @@ public class PostFocusActivity extends AppCompatActivity {
             public void onClick(View view) {
                 boolean valid=true;
                 for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
-                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                         valid=false;
                     }
                 }
@@ -422,11 +422,17 @@ public class PostFocusActivity extends AppCompatActivity {
                     boolean toggle_anonymity = snapshot.child("toggle_anonymity").getValue(Boolean.class);
                     String subject = snapshot.child("subject").getValue(String.class);
                     String picId = snapshot.child("picId").getValue(String.class);
+                    DataSnapshot arrayOfUsersUpvote = snapshot.child("usersWhoUpVoted");
 
 
 
                     AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
                     currentReply.setPicId(picId);
+                    for(DataSnapshot s : arrayOfUsersUpvote.getChildren()){
+                        String id = s.getValue(String.class);
+                        currentReply.addUserUpvote(id);
+                    }
+
                     boolean valid=true;
                     for(AnswerPost a : answerPostArrayList){
                         if(a.getPostID().equals(postID)){
