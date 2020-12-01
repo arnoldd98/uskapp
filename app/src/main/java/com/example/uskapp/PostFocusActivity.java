@@ -1,7 +1,6 @@
 package com.example.uskapp;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,7 +34,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,7 +66,9 @@ public class PostFocusActivity extends AppCompatActivity {
     AnswerRecyclerViewAdapter answerAdapter;
     TextView view_added_image_selector;
     TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
-    Context context;
+    Activity activity;
+    LinearLayout horizontalImageLayout;
+    RecyclerView tag_recyclerview;
 
     String currentPostID,name,replyPostID;
     Uri imageUri;
@@ -72,12 +76,15 @@ public class PostFocusActivity extends AppCompatActivity {
     ArrayList<AnswerPost> answerPostArrayList = new ArrayList<AnswerPost>();
     ArrayList<String> answerPostIDs = new ArrayList<String>();
     ArrayList<Bitmap> answerProfilePhotos = new ArrayList<Bitmap>();
+    ArrayList<Tag> tagsList = new ArrayList<Tag>();
+    ArrayList<Bitmap> answerPictures = new ArrayList<>();
+    ArrayList<Bitmap> currentReplyPictures = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_focus);
-        context = this;
+        activity = this;
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -85,6 +92,8 @@ public class PostFocusActivity extends AppCompatActivity {
         View qnPostLayout = findViewById(R.id.post_card_view);
         currentPostID = getIntent().getStringExtra("postID");
 
+        horizontalImageLayout = (LinearLayout)qnPostLayout.findViewById(R.id.image_horizontal_linear_layout);
+        tag_recyclerview = (RecyclerView) qnPostLayout.findViewById(R.id.question_tag_recyclerview);
         profilePicIv = (ImageView)qnPostLayout.findViewById(R.id.profile_imageview);
         favourite_button = (ToggleButton)qnPostLayout.findViewById(R.id.star_question_button);
         timeStampTv = (TextView)qnPostLayout.findViewById(R.id.post_timestamp);
@@ -99,7 +108,7 @@ public class PostFocusActivity extends AppCompatActivity {
         back_to_main_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, HomeActivity.class));
+                activity.startActivity(new Intent(activity, HomeActivity.class));
             }
         });
 
@@ -108,7 +117,7 @@ public class PostFocusActivity extends AppCompatActivity {
         LinearLayoutManager linear_layout_manager = new LinearLayoutManager(this);
         linear_layout_manager.setStackFromEnd(false);
         answer_recyclerview.setLayoutManager(linear_layout_manager);
-        answerAdapter = new AnswerRecyclerViewAdapter(this,answerPostArrayList,answerProfilePhotos);
+        answerAdapter = new AnswerRecyclerViewAdapter(this,answerPostArrayList,answerProfilePhotos,answerPictures);
         answer_recyclerview.setAdapter(answerAdapter);
 
         //getting name of current user
@@ -137,16 +146,25 @@ public class PostFocusActivity extends AppCompatActivity {
                         for(DataSnapshot s : snapshot.getChildren()){
                             String name = s.child("name").getValue(String.class);
                             String userID = s.child("userID").getValue(String.class);
+                            //String postImageID = s.child("postImageID").getValue(String.class);
                             String postID =s.child("postID").getValue(String.class);
                             String text = s.child("text").getValue(String.class);
                             String timestamp = s.child("timestamp").getValue(String.class);
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
-                            boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
+                            final boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
+
+                            DataSnapshot arraySnapTagsID = s.child("tagsList");
+                            for (DataSnapshot id : arraySnapTagsID.getChildren()) {
+                                String value = id.child("tagName").getValue(String.class);
+                                tagsList.add(new Tag(value));
+                            }
                             DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
                             DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
+                            DataSnapshot arraySnapPicID = s.child("postImageIDs");
 
-                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tagsList),toggle_anonymity,upvotes);
+                           // currentPost.setPostImageID(postImageID);
                             answerPostIDs.clear();
                             for(DataSnapshot id : arraySnapAnsID.getChildren()){
                                 String value = id.getValue(String.class);
@@ -170,16 +188,65 @@ public class PostFocusActivity extends AppCompatActivity {
                                                                   Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                                   RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                                                                   roundBitmap.setCircular(true);
-                                                                  profilePicIv.setImageDrawable(roundBitmap);
+                                                                  if(toggle_anonymity==false){
+                                                                      profilePicIv.setImageDrawable(roundBitmap);
+                                                                  }
+                                                                  else {
+                                                                      profilePicIv.setImageResource(R.drawable.anonymous_icon);
+                                                                  }
+
                                                               }
                                                           }
                                     );
 
+                            ArrayList<String> picIDArray = new ArrayList<String>();
+                            for(DataSnapshot snap : arraySnapPicID.getChildren()){
+                                picIDArray.add(snap.getValue(String.class));
+                            }
+                            currentPost.setPostImageIDs(picIDArray);
+                            for(String picID : picIDArray){
+                                StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                                        .child(picID);
+                                postImageRef.getBytes(2048*2048)
+                                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                            @Override
+                                            public void onSuccess(byte[] bytes) {
+                                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                ImageView qnImageView = new ImageView(PostFocusActivity.this);
+                                                qnImageView.setScaleType(ImageView.ScaleType.CENTER);
+                                                qnImageView.setMaxHeight(400);
+                                                qnImageView.setMaxWidth(400);
+                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,400,400,true));
+                                                horizontalImageLayout.addView(qnImageView);
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(activity, "picture error", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+
                             timeStampTv.setText(timestamp);
-                            nameTv.setText(name);
+                            if(toggle_anonymity==false){
+                                nameTv.setText(name);
+                            } else {
+                                nameTv.setText("Anonymous");
+                            }
+
                             postTextTv.setText(text);
                             upVoteTv.setText(String.valueOf(upvotes));
                             commentTv.setText(String.valueOf(currentPost.getAnswerPostIDs().size()));
+
+                            // set recyclerview showing tags of post under question text
+                            if (tagsList != null) {
+                                FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(activity);
+                                layout_manager.setJustifyContent(JustifyContent.FLEX_START);
+                                tag_recyclerview.setLayoutManager(layout_manager);
+                                TagAdapter tag_adapter = new TagAdapter(activity, tagsList, true);
+                                tag_recyclerview.setAdapter(tag_adapter);
+                            }
                         }
                     }
                     //GETTING DATA OF THE REPLIES WHICH WILL BE PASSED INTO THE ADAPTER
@@ -191,7 +258,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(context, "db failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "db failed", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -218,16 +285,14 @@ public class PostFocusActivity extends AppCompatActivity {
                 String answer_text = user_answer_edit_text.getText().toString();
 
                 AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,false);
+
+                ansPost.setPicId(picID);
                 //adds a new answer post
                 FirebaseDatabase.getInstance().getReference("AnswerPost")
                         .child(postID).setValue(ansPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            //adding the reply post to currentpost arraylist
-                            //currentPost.addAnswerPostID(replyPostID);
-                            //getRepliesFromFirebase();
-                            //answerAdapter.notifyDataSetChanged();
                             currentPost.addAnswerPostID(replyPostID);
                             updateCurrentPost();
                             Toast.makeText(PostFocusActivity.this, "Success!", Toast.LENGTH_SHORT).show();
@@ -236,7 +301,7 @@ public class PostFocusActivity extends AppCompatActivity {
                         }
                     }
                 });
-
+                //adding answer picture to firebase
                 StorageReference imageRef = FirebaseStorage.getInstance().getReference("AnswerPictures")
                         .child(picID);
                 if(imageUri != null ){
@@ -254,13 +319,16 @@ public class PostFocusActivity extends AppCompatActivity {
             }
         });
 
+        // click to check image added
         view_added_image_selector = (TextView) findViewById(R.id.view_added_image_indicator);
         view_added_image_selector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent view_pic_intent = new Intent(context, ViewImageActivity.class);
+                Intent view_pic_intent = new Intent(activity, ViewImageActivity.class);
                 view_pic_intent.putExtra("ImageUri", imageUri);
-                context.startActivity(view_pic_intent);
+
+                view_pic_intent.putExtra("PostText", user_answer_edit_text.getText().toString());
+                activity.startActivity(view_pic_intent);
 
             }
         });
@@ -280,13 +348,14 @@ public class PostFocusActivity extends AppCompatActivity {
             public void onClick(View view) {
                 boolean valid=true;
                 for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
-                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                         valid=false;
                     }
                 }
 
                 if(valid){
                     currentPost.increaseUpVote();
+                    givePosterKarma(currentPost.getUserID());
                     int i = currentPost.getUpvotes();
                     String id = currentPost.getPostID();
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
@@ -301,7 +370,26 @@ public class PostFocusActivity extends AppCompatActivity {
                     Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
                 }
             }
+
+            private void givePosterKarma(String posterID) {
+                final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                        .child(posterID);
+                posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int karma = snapshot.child("karma").getValue(Integer.class);
+                        karma +=1;
+                        posterRef.child("karma").setValue(karma);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
         });
+
     }
 
     // set animations for transition between HomeActivity and PostFocusActivity
@@ -316,9 +404,9 @@ public class PostFocusActivity extends AppCompatActivity {
         super.startActivity(intent, options);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-
+    //getting reply data and storing it in an array
     private void getRepliesFromFirebase(){
-        answerProfilePhotos.clear();
+        //answerProfilePhotos.clear();
         for (String id : currentPost.getAnswerPostIDs() ){
             DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("AnswerPost")
                     .child(id);
@@ -330,34 +418,73 @@ public class PostFocusActivity extends AppCompatActivity {
                     String postID =snapshot.child("postID").getValue(String.class);
                     String text = snapshot.child("text").getValue(String.class);
                     String timestamp = snapshot.child("timestamp").getValue(String.class);
+                    int upvotes = snapshot.child("upvotes").getValue(Integer.class);
                     boolean toggle_anonymity = snapshot.child("toggle_anonymity").getValue(Boolean.class);
                     String subject = snapshot.child("subject").getValue(String.class);
-                    AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
-                    answerPostArrayList.add(currentReply);
+                    String picId = snapshot.child("picId").getValue(String.class);
+                    DataSnapshot arrayOfUsersUpvote = snapshot.child("usersWhoUpVoted");
 
-                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+
+
+                    AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
+                    currentReply.setPicId(picId);
+                    for(DataSnapshot s : arrayOfUsersUpvote.getChildren()){
+                        String id = s.getValue(String.class);
+                        currentReply.addUserUpvote(id);
+                    }
+
+                    boolean valid=true;
+                    for(AnswerPost a : answerPostArrayList){
+                        if(a.getPostID().equals(postID)){
+                            valid=false;
+                        }
+                    }
+                    if(valid){
+                      answerPostArrayList.add(currentReply);
+                    }
+
+                    //getting profile pictures
+                    StorageReference profileRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                             .child(userID);
-                    imageRef.getBytes(2048*2048)
+                    profileRef.getBytes(2048*2048)
                             .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                                       @Override
                                                       public void onSuccess(byte[] bytes) {
                                                           Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                           answerProfilePhotos.add(bitmap);
+                                                          answerAdapter.notifyDataSetChanged();
                                                       }
                                                   }
                             );
+
+                    //getting reply pictures
+                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("AnswerPictures")
+                            .child(picId);
+                    imageRef.getBytes(2048*2048)
+                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                      @Override
+                                                      public void onSuccess(byte[] bytes) {
+                                                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                          answerPictures.add(bitmap);
+                                                          answerAdapter.notifyDataSetChanged();
+                                                      }
+                                                  }
+                            );
+
                     answerAdapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(context, "failed db", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "failed db", Toast.LENGTH_SHORT).show();
                 }
             });
         }
+        answerAdapter.notifyDataSetChanged();
     }
 
     public void updateCurrentPost(){
+        //currentPost.setPostImageIDs();
         currentPost.setAnswerPostIDs(answerPostIDs); //maybe need comment out
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(currentPostID).setValue(currentPost).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -388,4 +515,5 @@ public class PostFocusActivity extends AppCompatActivity {
             System.out.println("Gallery image uri: " + imageUri);
         }
     }
+
 }

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
     android:backgroundTint="@color/colorLightGrayPost"
+    android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:layout_marginTop="8dp"
-    app:cardElevation="0dp"
-    app:cardCornerRadius="10dp"
-    android:clickable="true">
+    app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/constraint_layout_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -83,16 +82,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/question_card_dropdown_menu" />
 
-        <LinearLayout
-            android:id="@+id/tag_horizontal_linear_layout"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/question_tag_recyclerview"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="22dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:orientation="horizontal"
             android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/image_horizontal_linear_layout"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question_textview"></LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/question_textview"></androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:id="@+id/image_horizontal_linear_layout"
@@ -102,7 +103,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/ups_indicator_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tag_horizontal_linear_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/question_tag_recyclerview" />
 
         <LinearLayout
             android:id="@+id/ups_indicator_layout"
@@ -113,7 +114,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
+            app:layout_constraintTop_toBottomOf="@id/question_tag_recyclerview">
 
             <ImageView
                 android:id="@+id/ups_indicator_imageview"
@@ -143,7 +144,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
-            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout">
+            app:layout_constraintTop_toBottomOf="@id/question_tag_recyclerview">
 
             <ImageView
                 android:id="@+id/comment_indicator_imageview"

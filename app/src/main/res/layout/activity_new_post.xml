@@ -18,7 +18,7 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -36,14 +36,13 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/userProfileNewPost"
         android:layout_width="76dp"
         android:layout_height="76dp"
         android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toStartOf="@+id/buttonPostAs"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPos"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
         android:src="@drawable/bunny2"
@@ -66,66 +65,50 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
     <Button
-        android:id="@+id/buttonPostAs"
-        android:layout_width="80dp"
+        android:id="@+id/buttonPos"
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_marginStart="46dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
+        android:layout_marginBottom="50dp"
         android:background="@color/colorPrimary"
         android:onClick="onClick"
-        android:padding="5sp"
-        android:text="Post as:"
-        android:textAlignment="textStart"
+        android:text="Post as"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/tag_recyclerview"
         app:layout_constraintStart_toEndOf="@+id/userProfileNewPost"
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
-    <Button
-        android:id="@+id/select_tag_button"
-        android:onClick="onClick"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
+    <Spinner
+        android:id="@+id/select_subject_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
         android:layout_marginTop="30dp"
-        android:background="@color/colorPrimary"
-        android:padding="5sp"
-        android:text="Tags:"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
+        android:backgroundTint="@color/colorPrimary"
         android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonPostAs"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonPos"
+        app:layout_constraintStart_toEndOf="@+id/buttonPos"
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="21dp"
-        android:layout_height="12dp"
-        android:layout_marginEnd="5dp"
-        android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonPostAs"
-        app:layout_constraintEnd_toEndOf="@+id/buttonPostAs"
-        app:layout_constraintTop_toTopOf="@+id/buttonPostAs"
-        app:srcCompat="@drawable/triangle" />
-
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="21dp"
-        android:layout_height="12dp"
-        android:layout_marginEnd="5dp"
-        android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/select_tag_button"
-        app:layout_constraintEnd_toEndOf="@+id/select_tag_button"
-        app:layout_constraintTop_toTopOf="@+id/select_tag_button"
-        app:srcCompat="@drawable/triangle" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tag_recyclerview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toTopOf="@id/textPostTv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileNewPost" />
 
     <EditText
         android:id="@+id/textPostTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:hint="Type or post a question here."
         android:maxHeight="300dp"
         android:minHeight="25dp"
@@ -134,7 +117,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileNewPost" />
+        app:layout_constraintTop_toBottomOf="@+id/tag_recyclerview" />
 
     <View
         android:id="@+id/myRectangleView"
@@ -177,14 +160,13 @@
         app:layout_constraintTop_toTopOf="@+id/myRectangleView"
         app:srcCompat="@drawable/camera" />
 
-    <ImageView
-        android:id="@+id/postPhotoContent"
+    <LinearLayout
+        android:id="@+id/picturePostHorizontalLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textPostTv"
-         />
+        app:layout_constraintTop_toBottomOf="@+id/textPostTv"></LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

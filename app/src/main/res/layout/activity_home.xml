@@ -51,19 +51,58 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/main_menu_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
         android:background="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav_view"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
     <include
+        android:id="@id/bottom_nav_view"
         layout="@layout/bottom_navigation_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="-16dp" />
+
+    <RelativeLayout
+        android:id="@+id/indicate_search_term_layout"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:background="@drawable/bottom_border"
+        android:backgroundTint="@color/colorLightGrayPost"
+        android:backgroundTintMode="add"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_toolbar">
+
+        <TextView
+            android:id="@+id/hc_search_for_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/nunitosans_regular"
+            android:text="Search for: "
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/close_search_result_button"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark_focused" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

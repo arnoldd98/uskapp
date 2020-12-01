@@ -32,6 +32,8 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -135,70 +137,53 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         else holder.post_timestamp.setText("Missing timestamp");
 
         holder.question_textview.setText(post.getText());
-
+        // set recyclerview showing tags of post under question text
         if (post.getTagsList() != null) {
-            for (Tag tag : post.getTagsList()) {
-                // programmatically create button for each tag and add to horizontal linear layout
-                Context context = holder.tag_layout.getContext();
-                TextView clickable_tag = new TextView(context);
-                clickable_tag.setText(tag.tag_name);
-                clickable_tag.setBackground(ContextCompat.getDrawable(context, R.drawable.tag_rectangle));
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams
-                        (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(0, 0, 8, 8);
-                clickable_tag.setLayoutParams(lp);
-                clickable_tag.setTextSize(12);
-                clickable_tag.setTextColor(Color.parseColor("#707070"));
-                clickable_tag.setPadding(20, 6, 20, 6);
-                clickable_tag.setClickable(true);
-                TypedValue outValue = new TypedValue();
-                context.getTheme().resolveAttribute(
-                        android.R.attr.selectableItemBackground, outValue, true);
-                clickable_tag.setForeground(context.getDrawable(outValue.resourceId));
-
-
-                // add functionality to search for posts with selected tag when tag button is clicked
-
-                holder.tag_layout.addView(clickable_tag);
-            }
+            FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(activity);
+            layout_manager.setJustifyContent(JustifyContent.FLEX_START);
+            holder.tag_recyclerview.setLayoutManager(layout_manager);
+            TagAdapter tag_adapter = new TagAdapter(activity, post.getTagsList(), true);
+            holder.tag_recyclerview.setAdapter(tag_adapter);
+        } else {
+            holder.card_container.removeView(holder.tag_recyclerview);
         }
 
-        if (!post.getPostImageIDs().isEmpty()) {
-            for (String imageID : post.getPostImageIDs()) {
-                ImageView image_view = new ImageView(holder.card_view_context);
+        //if there are
+        if (post.getPostImageIDs().size()!=0) {
 
-                //firebase getting image
-                StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                imageRef.getBytes(2048*2048)
-                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] bytes) {
-                                bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                if(bitmap != null){
-                    image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
-                            , image_view.getHeight(), false));
-                    image_view.setMaxHeight(holder.image_layout.getHeight());
+            ImageView image_view = new ImageView(holder.card_view_context);
 
-                    holder.image_layout.addView(image_view);
+            //firebase getting image
+            StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            imageRef.getBytes(2048*2048)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
                 }
+            });
+            if(bitmap != null){
+                image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
+                        , image_view.getHeight(), false));
+                image_view.setMaxHeight(holder.image_layout.getHeight());
 
+                holder.image_layout.addView(image_view);
             }
+
         } else {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(holder.constraint_layout_container);
-            cs.connect(R.id.tag_horizontal_linear_layout, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 8);
+            cs.connect(R.id.tag_recyclerview, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 8);
             holder.constraint_layout_container.removeView(holder.image_layout);
             cs.applyTo(holder.constraint_layout_container);
         }
-
+        holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
         //upvote button
         holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
@@ -206,15 +191,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             public void onClick(View view) {
                 Post post = post_data.get(position);
                 Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                boolean valid=true;
+                boolean valid = true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
-                    if(upvoteIDs == FirebaseAuth.getInstance().getCurrentUser().getUid()){
+                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                         valid=false;
                     }
                 }
 
                 if(valid){
                     post.increaseUpVote();
+                    givePosterKarma(post.getUserID());
                     int i = post.getUpvotes();
                     String id = post_data.get(position).getPostID();
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
@@ -233,6 +219,67 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         });
 
 
+        holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Post post = post_data.get(position);
+                final ArrayList<String> tempPostFollowing = new ArrayList<String>();
+
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
+                        child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String email = snapshot.child("email").getValue(String.class);
+                        String name = snapshot.child("name").getValue(String.class);
+                        int karma = snapshot.child("karma").getValue(Integer.class);
+                        int total_posts = snapshot.child("total_posts").getValue(Integer.class);
+                        int total_answers = snapshot.child("total_answers").getValue(Integer.class);
+                        DataSnapshot arrayFollowingPosts = snapshot.child("PostFollowing");
+                        for(DataSnapshot s : arrayFollowingPosts.getChildren()){
+                            String postfollowingId = s.getValue(String.class);
+                            tempPostFollowing.add(postfollowingId);
+                        }
+
+                        User currentUser = new User(name,email,karma,5,total_answers);
+                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
+                                child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        currentUser.setPostFollowing(tempPostFollowing);
+                        boolean valid = true;
+                        for(String postsFollowed : tempPostFollowing){
+                            if(post.getPostID().equals(postsFollowed)){
+                                valid = false;
+                                //Toast.makeText(view.getContext(), "follow failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        //if current post is not followed
+                        if(valid){
+                            tempPostFollowing.add(post.getPostID());
+                            currentUser.setPostFollowing(tempPostFollowing);
+                            FirebaseDatabase.getInstance().getReference("Users")
+                                    .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                        }
+                                    });
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
+            }
+        });
+
+
+        /*
         // set on click listener on star button to toggle if post should be favourited by user
         holder.favourite_question_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -266,7 +313,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 }
             }
         });
-
+        */
 
     }
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
@@ -278,7 +325,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         public TextView post_timestamp;
         public TextView question_textview;
         public Toolbar options_menu_toolbar;
-        public LinearLayout tag_layout;
+        public RecyclerView tag_recyclerview;
         public LinearLayout image_layout;
         public LinearLayout ups_indicator_layout;
         public ImageView ups_indicator_image;
@@ -298,7 +345,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             post_timestamp = (TextView) postView.findViewById(R.id.post_timestamp);
             question_textview = (TextView) postView.findViewById(R.id.question_textview);
             options_menu_toolbar = (Toolbar) postView.findViewById(R.id.options_menu_toolbar);
-            tag_layout = (LinearLayout) postView.findViewById(R.id.tag_horizontal_linear_layout);
+            tag_recyclerview = (RecyclerView) postView.findViewById(R.id.question_tag_recyclerview);
             image_layout = (LinearLayout) postView.findViewById(R.id.image_horizontal_linear_layout);
             ups_indicator_layout = (LinearLayout) postView.findViewById(R.id.ups_indicator_layout);
             ups_indicator_image = (ImageView) postView.findViewById(R.id.ups_indicator_imageview);
@@ -310,6 +357,40 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             card_view_context = postView.getContext();
         }
     }
+    private void followPost(String postID){
+        final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(postID);
+        posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int karma = snapshot.child("karma").getValue(Integer.class);
+                karma +=1;
+                posterRef.child("karma").setValue(karma);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void givePosterKarma(String posterID){
+        final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(posterID);
+        posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int karma = snapshot.child("karma").getValue(Integer.class);
+                karma +=1;
+                posterRef.child("karma").setValue(karma);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 }
 

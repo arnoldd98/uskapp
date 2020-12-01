@@ -46,14 +46,14 @@ public class TestSubjectActivity extends AppCompatActivity {
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
         currentTopic = findViewById(R.id.current_topic_textview);
-        currentTopic.setText("50.001");
+        currentTopic.setText(getIntent().getStringExtra("indsubject"));
 
 
         //subject activity this activity displays all the content inside the specific subject
         //query to display only Question posts with matching subject name
         query = FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .orderByChild("subject")
-                .equalTo("50.001");
+                .equalTo(getIntent().getStringExtra("indsubject"));
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -69,7 +69,7 @@ public class TestSubjectActivity extends AppCompatActivity {
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
-                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,toggle_anonymity);
+                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,new ArrayList<String>(), toggle_anonymity);
 
                         posts_list.add(qnPost);
 
