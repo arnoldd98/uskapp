@@ -38,6 +38,7 @@ public class TestSubjectActivity extends AppCompatActivity {
     ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
     Query query;
     MainRecyclerViewAdapter viewAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

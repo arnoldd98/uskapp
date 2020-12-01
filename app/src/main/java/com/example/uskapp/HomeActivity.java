@@ -57,7 +57,7 @@ public class HomeActivity extends BaseNavigationActivity {
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
         currentTopic = findViewById(R.id.current_topic_textview);
-        currentTopic.setText("Feed");
+        currentTopic.setText("Usk");
         choose_subject_button = (ImageButton) top_toolbar.findViewById(R.id.choose_subject_button);
         choose_subject_button.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -7,7 +7,19 @@
     android:layout_height="wrap_content"
     tools:context=".SubjectActivity">
 
-    <ImageButton
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:gravity="start"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintStart_toStartOf="@+id/subjectView"
+        app:layout_constraintTop_toTopOf="@+id/subjectView" />
+
+    <Button
         android:id="@+id/subjectView"
         android:layout_width="155dp"
         android:layout_height="155dp"
@@ -15,15 +27,7 @@
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        android:background="@drawable/style"/>
+        //app:srcCompat="@drawable/ic_launcher_background"
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="28dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="@+id/subjectView"
-        app:layout_constraintTop_toTopOf="@+id/subjectView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
