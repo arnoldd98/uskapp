@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,13 +18,15 @@ import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter {
 
-    private ArrayList<Bitmap> subjectBitmaps;
+    //private ArrayList<Bitmap> subjectBitmaps;
     private ArrayList<String> subjectArrayList;
     private Context context;
+    private int[] androidcolors;
 
-    public Adapter(Context context, ArrayList<String> subjectArrayList, ArrayList<Bitmap> subjectBitmaps) {
+    public Adapter(Context context, ArrayList<String> subjectArrayList, int[] androidcolors) {
         this.context = context;
-        this.subjectBitmaps =subjectBitmaps;
+        this.androidcolors = androidcolors;
+        //this.subjectBitmaps =subjectBitmaps;
         this.subjectArrayList = subjectArrayList;
     }
 
@@ -40,21 +43,22 @@ public class Adapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.textView.setText(subjectArrayList.get(position));
-        try{
-            viewHolder.imageView.setImageBitmap(subjectBitmaps.get(position));
-        } catch (Exception e){
-            viewHolder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
-        }
+        viewHolder.button.setText(subjectArrayList.get(position));
+        viewHolder.button.setBackgroundColor(androidcolors[position]);
+        //try{
+        //    viewHolder.imageView.setImageBitmap(subjectBitmaps.get(position));
+        //} catch (Exception e){
+        //    viewHolder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
+        //}
         //viewHolder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
 
 
-        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+        viewHolder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, viewHolder.textView.getText().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, viewHolder.button.getText().toString(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context,TestSubjectActivity.class);
-                intent.putExtra("indsubject", viewHolder.textView.getText().toString());
+                intent.putExtra("indsubject", viewHolder.button.getText().toString());
                 context.startActivity(intent);
 
             }
@@ -64,12 +68,12 @@ public class Adapter extends RecyclerView.Adapter {
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imageView;
+        Button button;
         TextView textView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.subjectView);
+            button = itemView.findViewById(R.id.subjectView);
             textView = itemView.findViewById(R.id.textView);
         }
     }

@@ -41,7 +41,7 @@ import java.io.IOException;
 
 public class ProfileActivity extends BaseNavigationActivity {
     private String TAG = "PROFILE";
-    ImageView profilePicIV;
+    ImageView profilePicIV, karmaIconView;
     TextView nameView, rankView, karmaView;
     ProgressBar expBar;
     Button signOutBtn;
@@ -63,7 +63,7 @@ public class ProfileActivity extends BaseNavigationActivity {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                name = snapshot.child("email").getValue(String.class);
+                name = snapshot.child("name").getValue(String.class);
                 karma = snapshot.child("karma").getValue(Integer.class);
 
                 nameView.setText(name);
@@ -86,6 +86,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                 Log.w(TAG, "onCancelled: ", error.toException());
             }
         });
+
         //for the profile picture
 
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
@@ -104,11 +105,13 @@ public class ProfileActivity extends BaseNavigationActivity {
                 e.printStackTrace();
             }
         });
+
         //setting data to UI
         profilePicIV = findViewById(R.id.userProfile);
         nameView = findViewById(R.id.nameTv);
         rankView = findViewById(R.id.rankTv);
         karmaView = findViewById(R.id.karmaTv);
+        karmaIconView = findViewById(R.id.karma_icon);
         expBar = findViewById(R.id.expProgressBar);
         signOutBtn = findViewById(R.id.signOutBtn);
         //expBar.setMax(100);
@@ -143,17 +146,26 @@ public class ProfileActivity extends BaseNavigationActivity {
 
     private String convertKaramaToRank(int karma) {
         if(karma <=10){
-            return "noob";
+            karmaIconView.setImageResource(R.drawable.caramel_pudding);
+            return "Pudding";
         } else if (karma<=20){
-            return "average joe";
+            karmaIconView.setImageResource(R.drawable.pancake);
+            return "Pancake";
         } else if (karma <= 50){
-            return "boss";
+            karmaIconView.setImageResource(R.drawable.icecream_waffles);
+            return "Waffle";
         } else if (karma <=100){
-            return  "Big Boss";
+            karmaIconView.setImageResource(R.drawable.chocolate_banana_crepe);
+            return "Crepe";
+        } else if (karma <=150){
+            karmaIconView.setImageResource(R.drawable.doughnuts);
+            return "Doughnuts";
         } else if (karma <=200){
-            return "god level";
+            karmaIconView.setImageResource(R.drawable.macaron);
+            return "Macaroon";
         } else {
-            return "arnold level";
+            karmaIconView.setImageResource(R.drawable.sundae);
+            return "Sundae";
         }
     }
 
