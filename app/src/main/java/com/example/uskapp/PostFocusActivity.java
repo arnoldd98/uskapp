@@ -110,7 +110,9 @@ public class PostFocusActivity extends AppCompatActivity {
         back_to_main_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, HomeActivity.class));
+                finish();
+
+                //context.startActivity(new Intent(context, HomeActivity.class));
             }
         });
 
