@@ -6,11 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +35,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,12 +44,18 @@ public class HomeActivity extends BaseNavigationActivity {
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
     ImageButton choose_subject_button;
-    TextView currentTopic;
+    TextView current_topic_textview;
     ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
     ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
     MainRecyclerViewAdapter viewAdapter;
     Query query;
     DatabaseReference mDatabase;
+
+    RelativeLayout indicate_search_term_layout;
+    Button close_search_result_button;
+
+    // define which subjects posts are shown from. If "home", show the home feed
+    String current_subject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +67,8 @@ public class HomeActivity extends BaseNavigationActivity {
 
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
-        currentTopic = findViewById(R.id.current_topic_textview);
-        currentTopic.setText("Feed");
+
+
         choose_subject_button = (ImageButton) top_toolbar.findViewById(R.id.choose_subject_button);
         choose_subject_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,11 +78,35 @@ public class HomeActivity extends BaseNavigationActivity {
             }
         });
 
-        //subject activity this activity displays all the content inside the specific subject
-        //query to display only Question posts with matching subject name
+        indicate_search_term_layout = (RelativeLayout) findViewById(R.id.indicate_search_term_layout);
+        close_search_result_button = (Button) findViewById(R.id.close_search_result_button);
+
+        // if tag is searched
+        if (getIntent().getStringExtra("searchtag") != null) {
+            indicateCurrentSearchTerm(getIntent().getStringExtra("searchtag"), true);
+        }
+
+
+        // check for current subject to set topics for
+        current_subject = "Home";
+        if (getIntent().getStringExtra("indsubject") != null) {
+            current_subject = getIntent().getStringExtra("indsubject");
+        }
 
         mDatabase = FirebaseDatabase.getInstance().getReference("QuestionPost");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        // Set current topic
+        current_topic_textview = findViewById(R.id.current_topic_textview);
+        if (current_topic_textview.equals("Home")) {
+            current_topic_textview.setText("Feed");
+            query = mDatabase;
+        } else {
+            current_topic_textview.setText(current_subject);
+            query = mDatabase.orderByChild("subject").equalTo(current_subject);
+        }
+
+        //subject activity this activity displays all the content inside the specific subject
+        //query to display only Question posts with matching subject name
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(posts_list!= null){
@@ -81,7 +116,7 @@ public class HomeActivity extends BaseNavigationActivity {
                     for(DataSnapshot s : snapshot.getChildren()){
                         String name = s.child("name").getValue(String.class);
                         String userID = s.child("userID").getValue(String.class);
-                        String postID =s.child("postID").getValue(String.class);
+                        String postID = s.child("postID").getValue(String.class);
                         String text = s.child("text").getValue(String.class);
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
@@ -136,7 +171,6 @@ public class HomeActivity extends BaseNavigationActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         main_recycler_view.setLayoutManager(linearLayoutManager);
 
-
         // Set custom adapter to inflate the recycler view
         viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps);
         main_recycler_view.setAdapter(viewAdapter);
@@ -159,5 +193,18 @@ public class HomeActivity extends BaseNavigationActivity {
         SearchView search_view = (android.widget.SearchView) search_item.getActionView();
         search_view.setMaxWidth(android.R.attr.maxWidth);
         return true;
+    }
+
+    public void indicateCurrentSearchTerm(String term, boolean is_tag) {
+        indicate_search_term_layout.setVisibility(View.VISIBLE);
+        View search_term_view;
+        if (is_tag) {
+            search_term_view = LayoutInflater.from(this).inflate(R.layout.tag_selector_view, null);
+            TextView text = search_term_view.findViewById(R.id.tag_name_textview);
+            text.setText(term);
+        } else {
+            search_term_view = new TextView(this);
+
+        }
     }
 }

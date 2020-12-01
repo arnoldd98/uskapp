@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-        register = (TextView) findViewById(R.id.register);
+        register = (TextView) findViewById(R.id.register_select);
         register.setOnClickListener(this);
 
         forgot = (TextView) findViewById(R.id.forgot);
@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.register:
+            case R.id.register_select:
                 startActivity(new Intent(this,SignupActivity.class));
                 break;
 

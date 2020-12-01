@@ -1,6 +1,7 @@
 package com.example.uskapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,19 @@ public class TagAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Tag> tag_list;
     private Context context;
+    private boolean is_clickable;
 
     public TagAdapter(Context context, ArrayList<Tag> tag_list) {
         Toast.makeText(context, "Tag adapter initialized", Toast.LENGTH_SHORT);
         this.tag_list = tag_list;
         this.context = context;
+        is_clickable = false;
+    }
+
+    public TagAdapter(ArrayList<Tag> tag_list, Context context, boolean is_clickable) {
+        this.tag_list = tag_list;
+        this.context = context;
+        this.is_clickable = is_clickable;
     }
 
     @NonNull
@@ -38,8 +47,18 @@ public class TagAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+        final String current_tag_name = tag_list.get(position).getTagName();
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.tag_name_textview.setText(tag_list.get(position).getTagName());
+        viewHolder.tag_name_textview.setText(current_tag_name);
+        if (is_clickable) {
+            viewHolder.tag_name_textview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent search_tag_intent = new Intent(context, HomeActivity.class);
+                    search_tag_intent.putExtra("searchtag", current_tag_name);
+                }
+            });
+        }
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

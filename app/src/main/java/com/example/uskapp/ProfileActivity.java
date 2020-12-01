@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -38,11 +40,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ProfileActivity extends BaseNavigationActivity {
     private String TAG = "PROFILE";
     ImageView profilePicIV;
     TextView nameView, rankView, karmaView;
+    RecyclerView favorited_post_recyclerview;
     ProgressBar expBar;
     Button signOutBtn;
     private DatabaseReference mDatabase;
@@ -51,6 +55,11 @@ public class ProfileActivity extends BaseNavigationActivity {
     private int rank, exp, karma;
     private static final int PICK_IMAGE = 1;
     Uri imageUri;
+
+    private  ArrayList<String> favourited_post_ids = new ArrayList<>();
+    private ArrayList<QuestionPost> favourited_posts = new ArrayList<>();
+    private ArrayList<Bitmap> profileBitmaps = new ArrayList<>();
+    MainRecyclerViewAdapter favoritedAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +75,13 @@ public class ProfileActivity extends BaseNavigationActivity {
                 name = snapshot.child("email").getValue(String.class);
                 karma = snapshot.child("karma").getValue(Integer.class);
 
+                // get list of IDs of posts followed
+                DataSnapshot postFollowingID = snapshot.child("postFollowing");
+                for (DataSnapshot id: postFollowingID.getChildren()) {
+                    String post_id = id.getValue(String.class);
+                    favourited_post_ids.add(post_id);
+                }
+
                 nameView.setText(name);
                 karmaView.setText(String.valueOf(karma));
                 String rank = convertKaramaToRank(karma);
@@ -74,6 +90,9 @@ public class ProfileActivity extends BaseNavigationActivity {
                 expBar.setProgress(exp);
                 expBar.setMax(100);
                 expBar.setProgressBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#ffeb3b")));
+
+                getFavoritedPostsFromFirebase();
+                favoritedAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -86,8 +105,8 @@ public class ProfileActivity extends BaseNavigationActivity {
                 Log.w(TAG, "onCancelled: ", error.toException());
             }
         });
-        //for the profile picture
 
+        //for the profile picture
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         imageRef.getBytes(2048*2048)
@@ -113,6 +132,14 @@ public class ProfileActivity extends BaseNavigationActivity {
         signOutBtn = findViewById(R.id.signOutBtn);
         //expBar.setMax(100);
         //expBar.setProgress(50);
+
+        favorited_post_recyclerview = findViewById(R.id.favorited_post_recyclerview);
+        LinearLayoutManager layout_manager = new LinearLayoutManager(this);
+        layout_manager.setStackFromEnd(false);
+        layout_manager.setOrientation(RecyclerView.VERTICAL);
+        favorited_post_recyclerview.setLayoutManager(layout_manager);
+        favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps);
+        favorited_post_recyclerview.setAdapter(favoritedAdapter);
 
 
         signOutBtn.setOnClickListener(new View.OnClickListener() {
@@ -220,5 +247,63 @@ public class ProfileActivity extends BaseNavigationActivity {
         }
     }
 
-    ;
+    private void getFavoritedPostsFromFirebase() {
+        System.out.println("Favorited" + favourited_post_ids);
+        for (String id : favourited_post_ids) {
+            DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost").child(id);
+            postRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    String userID = snapshot.child("userID").getValue(String.class);
+                    String postID = snapshot.child("postID").getValue(String.class);
+                    String text = snapshot.child("text").getValue(String.class);
+                    String timestamp = snapshot.child("timestamp").getValue(String.class);
+                    boolean toggle_anonymity = snapshot.child("toggle_anonymity").getValue(Boolean.class);
+                    String subject = snapshot.child("subject").getValue(String.class);
+                    DataSnapshot arraySnapTagsID = snapshot.child("tagsList");
+                    ArrayList<Tag> tags = new ArrayList<Tag>();
+                    for (DataSnapshot id : arraySnapTagsID.getChildren()) {
+                        String value = id.child("tagName").getValue(String.class);
+                        tags.add(new Tag(value));
+                    }
+
+                    int upvotes  = snapshot.child("upvotes").getValue(Integer.class);
+                    DataSnapshot arraySnapAnsID = snapshot.child("answerPostIDs");
+                    DataSnapshot arraySnapVoteID = snapshot.child("usersWhoUpVoted");
+
+                    QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,tags, toggle_anonymity,upvotes);
+                    favourited_posts.add(qnPost);
+                    for(DataSnapshot id : arraySnapAnsID.getChildren()){
+                        String value = id.getValue(String.class);
+                        qnPost.addAnswerPostID(value);
+                    }
+                    for(DataSnapshot id : arraySnapVoteID.getChildren()){
+                        String value = id.getValue(String.class);
+                        qnPost.addUserUpvote(value);
+                    }
+
+                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+                            .child(userID);
+                    imageRef.getBytes(2048*2048)
+                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                      @Override
+                                                      public void onSuccess(byte[] bytes) {
+                                                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                          profileBitmaps.add(bitmap);
+                                                      }
+                                                  }
+                            );
+                    favoritedAdapter.notifyDataSetChanged();
+                }
+
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(getApplicationContext(), "failed db", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        favoritedAdapter.notifyDataSetChanged();
+    }
 }

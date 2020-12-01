@@ -70,4 +70,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="-16dp" />
 
+    <RelativeLayout
+        android:id="@+id/indicate_search_term_layout"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:background="@drawable/bottom_border"
+        android:backgroundTint="@color/colorLightGrayPost"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_toolbar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/nunitosans_regular"
+            android:text="Search for: "
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/close_search_result_button"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@android:drawable/ic_menu_close_clear_cancel" />
+    </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
