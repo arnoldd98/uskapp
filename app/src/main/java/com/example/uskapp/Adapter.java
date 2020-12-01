@@ -56,7 +56,6 @@ public class Adapter extends RecyclerView.Adapter {
                 Intent intent = new Intent(context,TestSubjectActivity.class);
                 intent.putExtra("indsubject", viewHolder.textView.getText().toString());
                 context.startActivity(intent);
-
             }
         });
     }
