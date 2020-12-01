@@ -46,7 +46,8 @@
         app:layout_constraintEnd_toStartOf="@+id/buttonPostAs"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
-        tools:src="@drawable/bunny2" />
+        android:src="@drawable/bunny2"
+         />
 
 
     <TextView
