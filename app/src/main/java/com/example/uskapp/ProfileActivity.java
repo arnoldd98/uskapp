@@ -272,7 +272,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                     DataSnapshot arraySnapAnsID = snapshot.child("answerPostIDs");
                     DataSnapshot arraySnapVoteID = snapshot.child("usersWhoUpVoted");
 
-                    QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,tags, toggle_anonymity,upvotes);
+                    QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tags), toggle_anonymity,upvotes);
                     favourited_posts.add(qnPost);
                     for(DataSnapshot id : arraySnapAnsID.getChildren()){
                         String value = id.getValue(String.class);
