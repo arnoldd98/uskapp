@@ -190,7 +190,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
-                Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
                 boolean valid=true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
                     if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
