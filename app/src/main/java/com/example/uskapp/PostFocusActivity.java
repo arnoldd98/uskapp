@@ -82,6 +82,7 @@ public class PostFocusActivity extends AppCompatActivity {
     ArrayList<Bitmap> currentReplyPictures = new ArrayList();
     private LocalUser local_user = LocalUser.getCurrentUser();
     private boolean is_favourited;
+    private boolean is_upVoted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,12 +178,10 @@ public class PostFocusActivity extends AppCompatActivity {
                             }
                             currentPost.setAnswerPostIDs(answerPostIDs);
 
-                            ArrayList<String> upVoteIds = new ArrayList<String>();
-                            for(DataSnapshot id : arraySnapVoteID.getChildren()){
-                                String value = id.getValue(String.class);
-                                currentPost.addUserUpvote(value);
-                                if(value.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                            for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
+                                if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                                     upVoteIv.setImageResource(R.drawable.blue_triangle);
+                                    is_upVoted = true;
                                 }
                             }
 
@@ -339,17 +338,29 @@ public class PostFocusActivity extends AppCompatActivity {
 
         // upvote click
         // checks if valid then updates the question post data
+
         upVoteIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean valid=true;
-                for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
-                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
-                        valid=false;
-                    }
-                }
+                if(is_upVoted ==true){
 
-                if(valid){
+                    int newUpvoteCount = currentPost.getUpvotes()-1;
+                    String id = currentPost.getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(newUpvoteCount);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
+
+                    newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    postRef2.setValue(newUsersID);
+                    upVoteIv.setImageResource(R.drawable.empty_triangle);
+                    is_upVoted = false;
+                }
+                else{
+                    upVoteIv.setImageResource(R.drawable.blue_triangle);
                     currentPost.increaseUpVote();
                     givePosterKarma(currentPost.getUserID());
                     int i = currentPost.getUpvotes();
@@ -362,9 +373,7 @@ public class PostFocusActivity extends AppCompatActivity {
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
                     newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
-                    upVoteIv.setImageResource(R.drawable.blue_triangle);
-                } else {
-                    Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
+                    is_upVoted=true;
                 }
             }
 
@@ -392,6 +401,7 @@ public class PostFocusActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (is_favourited) {
                     favourite_button.setBackgroundResource(R.drawable.star_unselected);
+
                     local_user.unfavouritePost(currentPost.getPostID());
                     is_favourited = false;
                 } else {

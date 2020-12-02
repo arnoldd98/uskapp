@@ -200,9 +200,11 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
+        final boolean[] upvoted = {false};
         for(String upvoteIDs : post.getUsersWhoUpVoted()){
             if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                 holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
+                upvoted[0] = true;
             }
         }
 
@@ -210,16 +212,22 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
-                holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
-                Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                boolean valid = true;
-                for(String upvoteIDs : post.getUsersWhoUpVoted()){
-                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
-                        valid=false;
-                    }
+                if(upvoted[0] ==true){
+                    holder.ups_indicator_image.setImageResource(R.drawable.empty_triangle);
+                    int newUpvoteCount = post.getUpvotes()-1;
+                    String id = post_data.get(position).getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(newUpvoteCount);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
+                    newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                    upvoted[0] = false;
                 }
-
-                if(valid){
+                else{
+                    holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
                     post.increaseUpVote();
                     givePosterKarma(post.getUserID());
                     int i = post.getUpvotes();
@@ -232,9 +240,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                     ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
                     newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
-                } else {
-                    Toast.makeText(activity, "already voted", Toast.LENGTH_SHORT).show();
                 }
+
             }
 
         });

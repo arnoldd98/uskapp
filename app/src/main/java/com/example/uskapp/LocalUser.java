@@ -31,6 +31,7 @@ public class LocalUser {
     private static LocalUser current_user = null;
     private static final String current_user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private ArrayList<String> followed_post_ids = new ArrayList<String>();
+    private ArrayList<String> users_who_upvoted_ids = new ArrayList<String>();
     private HashMap<String, Bitmap> subjectImageHashmap = new HashMap<String, Bitmap>();
 
     public LocalUser() {
@@ -38,7 +39,7 @@ public class LocalUser {
         getSubjectRef();
         fetchFollowedPostIDsFromFirebase();
         listenFollowedPosts();
-        System.out.println(followed_post_ids);
+
     }
 
     public DatabaseReference getSubjectRef() {
@@ -107,9 +108,15 @@ public class LocalUser {
     public ArrayList<String> getFollowingPostIDs() {
         return followed_post_ids;
     }
+    public ArrayList<String> getUserWhoUpvotedIDs() {
+        return users_who_upvoted_ids;
+    }
 
     public void setFollowingPostIDs(ArrayList<String> followed_post_ids) {
         this.followed_post_ids = followed_post_ids;
+    }
+    public void setUserWhoUpvotedIDs(ArrayList<String> users_who_upvoted_ids) {
+        this.users_who_upvoted_ids = users_who_upvoted_ids;
     }
 
     public void unfavouritePost(String removed_post_id) {
@@ -124,6 +131,8 @@ public class LocalUser {
         listenFollowedPosts();
         return true;
     }
+
+
 
     // singleton function to get the current working LocalUser
     public static LocalUser getCurrentUser() {

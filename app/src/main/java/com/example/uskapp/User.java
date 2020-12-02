@@ -3,7 +3,7 @@ package com.example.uskapp;
 
 import java.util.ArrayList;
 
-public class User implements Observer {
+public class User {
     public String name;
     public String email;
     //private String userId;
@@ -109,7 +109,7 @@ public class User implements Observer {
     public void addPostFollowing(String newPostID){
         this.postFollowing.add(newPostID);
     }
-    @Override
+
     public void update(String updates) {
         // what to update whenever the post u are following updates
     }
