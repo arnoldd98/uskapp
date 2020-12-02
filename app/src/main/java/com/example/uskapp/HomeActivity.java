@@ -121,7 +121,7 @@ public class HomeActivity extends BaseNavigationActivity {
             @Override
             public void onClick(View v) {
                 // reset back to main feed (if search is called)
-                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps);
+                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps, currentUserPostFollowing);
                 main_recycler_view.setAdapter(viewAdapter);
 
                 // shift recyclerview down to accomodate for search indicator layout
@@ -160,7 +160,7 @@ public class HomeActivity extends BaseNavigationActivity {
 
         // Set custom adapter to inflate the recycler view
         if (!is_search) {
-            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps);
+            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps,currentUserPostFollowing);
             main_recycler_view.setAdapter(viewAdapter);
         }
 
@@ -284,7 +284,7 @@ public class HomeActivity extends BaseNavigationActivity {
         cs.connect(R.id.main_menu_recycler_view, ConstraintSet.TOP, R.id.indicate_search_term_layout, ConstraintSet.BOTTOM, 5);
         cs.applyTo(home_container);
 
-        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps);
+        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps, currentUserPostFollowing);
         main_recycler_view.setAdapter(viewAdapter);
 
     }
