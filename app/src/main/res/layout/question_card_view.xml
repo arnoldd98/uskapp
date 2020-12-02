@@ -6,20 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
-    android:paddingBottom="20dp"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="10dp"
+    android:backgroundTint="@color/translucent_gray"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="@color/translucent_gray">
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        >
-
+        android:layout_height="wrap_content">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_imageview"
@@ -40,7 +36,7 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/gotham"
             android:text="Name"
-            android:textColor="@color/dark_text"
+            android:textColor="#000000"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/post_timestamp"
             app:layout_constraintStart_toEndOf="@+id/profile_imageview"
@@ -55,7 +51,7 @@
             android:fontFamily="@font/nunitosans_regular"
             android:text="Time"
             android:textAlignment="viewStart"
-            android:textColor="@color/gray"
+            android:textColor="@color/cardview_dark_background"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/question_textview"
             app:layout_constraintStart_toEndOf="@+id/profile_imageview"
@@ -89,7 +85,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/question_tag_recyclerview"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
@@ -97,8 +93,9 @@
             android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/ups_indicator_layout"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout"/>
+            app:layout_constraintTop_toBottomOf="@+id/question_textview"></androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:id="@+id/image_horizontal_linear_layout"
@@ -114,7 +111,7 @@
             android:id="@+id/ups_indicator_layout"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:layout_marginBottom="5dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -123,7 +120,6 @@
 
             <ImageView
                 android:id="@+id/ups_indicator_imageview"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -132,12 +128,12 @@
             <TextView
                 android:id="@+id/ups_indicator_textview"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
                 android:fontFamily="@font/nunitosans_regular"
-                android:text="25 ups"
+                android:text="11 ups"
                 android:textColor="@color/gray"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 

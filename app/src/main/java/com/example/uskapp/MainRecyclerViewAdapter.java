@@ -6,15 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -22,6 +29,7 @@ import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -35,12 +43,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
     private List<QuestionPost> post_data;
@@ -48,8 +60,20 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
+    private ArrayList<String> currentUserPostFollowing;
     private Bitmap bitmap;
     private LocalUser local_user = LocalUser.getCurrentUser();
+
+
+    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
+            , ArrayList<Bitmap> profileBitmaps,ArrayList<String> currentUserPostFollowing) {
+        this.post_data = post_data;
+        this.activity = activity;
+        this.profileBitmaps =profileBitmaps;
+        this.mInflater = LayoutInflater.from(activity.getApplicationContext());
+        this.currentUserPostFollowing=currentUserPostFollowing;
+
+    }
 
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
             , ArrayList<Bitmap> profileBitmaps) {
@@ -57,6 +81,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.activity = activity;
         this.profileBitmaps = profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
+        this.currentUserPostFollowing=currentUserPostFollowing;
 
     }
 
@@ -175,10 +200,44 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
-        if(post.getUpvotes()>0){
-            holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
-
+        for(String upvoteIDs : post.getUsersWhoUpVoted()){
+            if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
+            }
         }
+
+        holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Post post = post_data.get(position);
+                holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
+                Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                boolean valid = true;
+                for(String upvoteIDs : post.getUsersWhoUpVoted()){
+                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                        valid=false;
+                    }
+                }
+
+                if(valid){
+                    post.increaseUpVote();
+                    givePosterKarma(post.getUserID());
+                    int i = post.getUpvotes();
+                    String id = post_data.get(position).getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
+                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                } else {
+                    Toast.makeText(activity, "already voted", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
 
         final boolean[] is_favourited = {false};
         if (local_user.getFollowingPostIDs().contains(post.getPostID())) {
@@ -209,7 +268,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 //            @Override
 //            public void onClick(View view) {
 //                final Post post = post_data.get(position);
-//                // get data of user from firebase
+//                holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
 //                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
 //                        child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 //                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -222,36 +281,27 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 //                        int total_answers = snapshot.child("total_answers").getValue(Integer.class);
 //                        DataSnapshot arrayFollowingPosts = snapshot.child("postFollowing");
 //
-//                        ArrayList<String> following_posts_id = new ArrayList<String>();
+//                        ArrayList<String> tempPostFollowing = new ArrayList<String>();
+//
 //                        for(DataSnapshot s : arrayFollowingPosts.getChildren()){
 //                            String postfollowingId = s.getValue(String.class);
-//                            following_posts_id.add(postfollowingId);
+//                            tempPostFollowing.add(postfollowingId);
 //                        }
 //
 //                        User currentUser = new User(name,email,karma,total_posts,total_answers);
+//                        //currentUser.setPostFollowing(tempPostFollowing);
 //                        boolean valid = true;
-//                        for(String followed_id : following_posts_id){
-//                            if(post.getPostID().equals(followed_id)){
+//                        for(String postsFollowed : tempPostFollowing){
+//                            if(post_data.get(position).getPostID().equals(postsFollowed)){
 //                                valid = false;
-//                                holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
-//
-//                                ArrayList<String> new_following_posts_id = (ArrayList<String>) following_posts_id.clone();
-//                                new_following_posts_id.remove(post.getPostID());
-//                                currentUser.setPostFollowing(new_following_posts_id);
-//                                FirebaseDatabase.getInstance().getReference("Users")
-//                                        .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
-//                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                            @Override
-//                                            public void onComplete(@NonNull Task<Void> task) {
-//                                            }
-//                                        });
+//                                //Toast.makeText(view.getContext(), "follow failed", Toast.LENGTH_SHORT).show();
 //                            }
 //                        }
 //                        //if current post is not followed
 //                        if(valid){
-//                            holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
-//                            following_posts_id.add(post_data.get(position).getPostID());
-//                            currentUser.setPostFollowing(following_posts_id);
+//                            holder.favourite_question_button.setBackgroundResource(R.drawable.star_red);
+//                            tempPostFollowing.add(post_data.get(position).getPostID());
+//                            currentUser.setPostFollowing(tempPostFollowing);
 //                            FirebaseDatabase.getInstance().getReference("Users")
 //                                    .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
 //                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -259,14 +309,58 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 //                                        public void onComplete(@NonNull Task<Void> task) {
 //                                        }
 //                                    });
-//                            }
+//
 //                        }
+//
+//                    }
+//
 //                    @Override
 //                    public void onCancelled(@NonNull DatabaseError error) {
+//
 //                    }
 //                });
+//
+//
 //            }
 //        });
+
+
+        /*
+        // set on click listener on star button to toggle if post should be favourited by user
+        holder.favourite_question_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            String subscribed = "Successfully subscribed!";
+                            if (!task.isSuccessful()) {
+                                subscribed = "Failed to subscribe";
+                            }
+                            Log.d(TAG, subscribed);
+                            Toast.makeText(activity, subscribed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                } else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            String unsubscribed = "Successfully unsubscribed!";
+                            if (!task.isSuccessful()) {
+                                unsubscribed = "Failed to unsubscribe";
+                            }
+                            Log.d(TAG, unsubscribed);
+                            Toast.makeText(activity, unsubscribed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
+                }
+            }
+        });
+        */
+
     }
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
