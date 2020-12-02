@@ -83,7 +83,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
             , ArrayList<Bitmap> profileBitmaps) {
         this.post_data = post_data;
-        this.post_data_all = post_data;
+        this.post_data_all = new ArrayList<>(post_data);
 
         this.activity = activity;
         this.profileBitmaps = profileBitmaps;
@@ -384,7 +384,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 filteredList.addAll(post_data_all);
             } else{
                 for (QuestionPost questionpost: post_data_all){
-                    if (questionpost.getName().toLowerCase().contains(charSequence.toString().toLowerCase())){
+                    if (questionpost.getText().toLowerCase().contains(charSequence.toString().toLowerCase())){
                         filteredList.add(questionpost);
                     }
                 }
