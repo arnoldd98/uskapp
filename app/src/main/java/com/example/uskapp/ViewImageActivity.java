@@ -7,6 +7,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,10 @@ import com.ortiz.touchview.TouchImageView;
  Takes in Bitmap in the Intent provided and sets the current focused image to be the input Bitmap
  Used in any scenario when an image has to be viewed in full view
  Used in PostFocusActivity when user clicks to check the image added to the post
+
+ Specify "ImageUri" in intent for incoming image URI
+ Specify "ImageBitmap" in intent for incoming image bitmap
+ Specify "PostText" in intent for post content
  */
 public class ViewImageActivity extends AppCompatActivity {
     RelativeLayout image_focus_container_layout;
@@ -67,8 +72,13 @@ public class ViewImageActivity extends AppCompatActivity {
 
         focused_image_view = (TouchImageView) findViewById(R.id.focused_image_view);
 
+        // set image to URI or Bitmap, depending on which one is included in intent
         Uri image_uri = (Uri) getIntent().getParcelableExtra("ImageUri");
-        focused_image_view.setImageURI(image_uri);
+        Bitmap image_bitmap = (Bitmap) getIntent().getParcelableExtra("ImageBitmap");
+        if (image_uri != null) focused_image_view.setImageURI(image_uri);
+        else focused_image_view.setImageBitmap(image_bitmap);
+
+
 
         focused_image_view.setOnClickListener(new View.OnClickListener() {
             @Override

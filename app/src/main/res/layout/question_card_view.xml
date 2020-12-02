@@ -67,7 +67,7 @@
             android:fontFamily="@font/nunitosans_semibold"
             android:text="What are some recommended algorithm to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
             android:textColor="@color/dark_text"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -104,15 +104,14 @@
             android:layout_marginStart="30dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/question_tag_recyclerview"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question_textview" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
             android:id="@+id/ups_indicator_layout"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="12dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +119,7 @@
 
             <ImageView
                 android:id="@+id/ups_indicator_imageview"
-                android:layout_width="wrap_content"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/empty_triangle" />
@@ -133,7 +132,7 @@
                 android:fontFamily="@font/nunitosans_regular"
                 android:text="11 ups"
                 android:textColor="@color/gray"
-                android:textSize="14sp" />
+                android:textSize="11sp" />
 
         </LinearLayout>
 
@@ -142,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_marginStart="12dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="12dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
@@ -150,7 +149,7 @@
 
             <ImageView
                 android:id="@+id/comment_indicator_imageview"
-                android:layout_width="19dp"
+                android:layout_width="20dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/comment" />
@@ -169,17 +168,15 @@
 
         <Button
             android:id="@+id/star_question_button"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/star_unselected"
             android:textOff=""
             android:textOn=""
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question_textview"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

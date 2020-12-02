@@ -1,14 +1,11 @@
 package com.example.uskapp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,7 +75,7 @@ public class Adapter extends RecyclerView.Adapter {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             button = itemView.findViewById(R.id.subjectView);
-            textView = itemView.findViewById(R.id.textView);
+            textView = itemView.findViewById(R.id.subject_name_textview);
         }
     }
 

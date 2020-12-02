@@ -249,7 +249,10 @@ public class HomeActivity extends BaseNavigationActivity {
                 if (tag_string.equals(term)) {
                     searched_posts.add(post);
                     int position = posts_list.indexOf(post);
-                    search_profile_bitmaps.add(profileBitmaps.get(position));
+
+                    if (profileBitmaps != null && !profileBitmaps.isEmpty()) {
+                        search_profile_bitmaps.add(profileBitmaps.get(position));
+                    }
                 }
             }
         }

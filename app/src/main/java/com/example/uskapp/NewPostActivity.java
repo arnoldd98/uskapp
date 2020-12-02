@@ -109,7 +109,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         tag_recyclerview.setAdapter(tag_adapter);
 
         // Listener to post_edit_text which checks for any hashtags entered by the user
-        // and adjusts the list of tags accordingly
+        // and adjusts the list of tags accordingly (live updates)
         post_edit_text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

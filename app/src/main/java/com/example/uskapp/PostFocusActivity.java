@@ -1,6 +1,7 @@
 package com.example.uskapp;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -91,7 +92,7 @@ public class PostFocusActivity extends AppCompatActivity {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        View qnPostLayout = findViewById(R.id.post_card_view);
+        final View qnPostLayout = findViewById(R.id.post_card_view);
         currentPostID = getIntent().getStringExtra("postID");
 
         horizontalImageLayout = (LinearLayout)qnPostLayout.findViewById(R.id.image_horizontal_linear_layout);
@@ -151,7 +152,7 @@ public class PostFocusActivity extends AppCompatActivity {
                             String userID = s.child("userID").getValue(String.class);
                             //String postImageID = s.child("postImageID").getValue(String.class);
                             String postID =s.child("postID").getValue(String.class);
-                            String text = s.child("text").getValue(String.class);
+                            final String text = s.child("text").getValue(String.class);
                             String timestamp = s.child("timestamp").getValue(String.class);
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
                             final boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
@@ -225,13 +226,23 @@ public class PostFocusActivity extends AppCompatActivity {
                                         .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                             @Override
                                             public void onSuccess(byte[] bytes) {
-                                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                 ImageView qnImageView = new ImageView(PostFocusActivity.this);
                                                 qnImageView.setScaleType(ImageView.ScaleType.CENTER);
                                                 qnImageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
 
                                                 qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,600,600,true));
                                                 horizontalImageLayout.addView(qnImageView);
+
+                                                qnPostLayout.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        Intent image_intent = new Intent(PostFocusActivity.this, ViewImageActivity.class);
+                                                        image_intent.putExtra("PostText", text);
+                                                        image_intent.putExtra("ImageBitmap", bitmap);
+                                                        startActivity(image_intent);
+                                                    }
+                                                });
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -284,52 +295,23 @@ public class PostFocusActivity extends AppCompatActivity {
         send_answer_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Date now = new Date();
-                long timestamp = now.getTime();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-                String dateStr = sdf.format(timestamp);
-                String subject = currentPost.getSubject();
-                String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                String postID = userID+dateStr;
-                // in the case where duplicate id sent
-                if(replyPostID!= postID){
-                    replyPostID = postID;
-                }
-                String picID = postID + "pic";
-                String answer_text = user_answer_edit_text.getText().toString();
+                Dialog anon_options = Utils.createBottomDialog(PostFocusActivity.this, getPackageManager(), R.layout.choose_anonymous_options_view);
+                anon_options.show();
+                LinearLayout not_anon_layout = anon_options.findViewById(R.id.choose_not_anonymous_option_layout);
+                final LinearLayout anon_layout = anon_options.findViewById(R.id.choose_anonymous_option_layout);
 
-                AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,false);
-
-                ansPost.setPicId(picID);
-                //adds a new answer post
-                FirebaseDatabase.getInstance().getReference("AnswerPost")
-                        .child(postID).setValue(ansPost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                not_anon_layout.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            currentPost.addAnswerPostID(replyPostID);
-                            updateCurrentPost();
-                            Toast.makeText(PostFocusActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(PostFocusActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                //adding answer picture to firebase
-                StorageReference imageRef = FirebaseStorage.getInstance().getReference("AnswerPictures")
-                        .child(picID);
-                if(imageUri != null ){
-                    imageRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener() {
-                        @Override
-                        public void onComplete(@NonNull Task task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(PostFocusActivity.this, "success upload image", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(PostFocusActivity.this, "failed upload image", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
+                    public void onClick(View v) {
+                        postAnswer(false);
+                    }});
+
+                anon_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        postAnswer(true);
+                    }});
+
             }
         });
 
@@ -433,6 +415,55 @@ public class PostFocusActivity extends AppCompatActivity {
     public void startActivity(Intent intent, @Nullable Bundle options) {
         super.startActivity(intent, options);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    private void postAnswer(boolean is_anon) {
+        Date now = new Date();
+        long timestamp = now.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+        String dateStr = sdf.format(timestamp);
+        String subject = currentPost.getSubject();
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String postID = userID+dateStr;
+        // in the case where duplicate id sent
+        if(replyPostID!= postID){
+            replyPostID = postID;
+        }
+        String picID = postID + "pic";
+        String answer_text = user_answer_edit_text.getText().toString();
+
+        AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,is_anon);
+
+        ansPost.setPicId(picID);
+        //adds a new answer post
+        FirebaseDatabase.getInstance().getReference("AnswerPost")
+                .child(postID).setValue(ansPost).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    currentPost.addAnswerPostID(replyPostID);
+                    updateCurrentPost();
+                    Toast.makeText(PostFocusActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PostFocusActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        //adding answer picture to firebase
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("AnswerPictures")
+                .child(picID);
+        if(imageUri != null ){
+            imageRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(PostFocusActivity.this, "success upload image", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(PostFocusActivity.this, "failed upload image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
     //getting reply data and storing it in an array
     private void getRepliesFromFirebase(){
