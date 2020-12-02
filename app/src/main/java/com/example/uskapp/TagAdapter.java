@@ -1,6 +1,8 @@
 package com.example.uskapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +20,26 @@ import java.util.ArrayList;
 public class TagAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Tag> tag_list;
-    private Context context;
+    private Activity activity;
+    private boolean is_clickable;
 
-    public TagAdapter(Context context, ArrayList<Tag> tag_list) {
-        Toast.makeText(context, "Tag adapter initialized", Toast.LENGTH_SHORT);
+    public TagAdapter(Activity activity, ArrayList<Tag> tag_list) {
+        Toast.makeText(activity, "Tag adapter initialized", Toast.LENGTH_SHORT);
         this.tag_list = tag_list;
-        this.context = context;
+        this.activity = activity;
+        is_clickable = false;
+    }
+
+    public TagAdapter(Activity activity, ArrayList<Tag> tag_list, boolean is_clickable) {
+        this.tag_list = tag_list;
+        this.activity = activity;
+        this.is_clickable = is_clickable;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(activity);
         View view = inflater.inflate(R.layout.tag_selector_view, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
 
@@ -38,8 +48,23 @@ public class TagAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+        final String current_tag_name = tag_list.get(position).getTagName();
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.tag_name_textview.setText(tag_list.get(position).getTagName());
+        viewHolder.tag_name_textview.setText(current_tag_name);
+        if (is_clickable) {
+            viewHolder.tag_name_textview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (activity instanceof HomeActivity) {
+                        ((HomeActivity) activity).indicateCurrentSearchTerm(current_tag_name, true);
+                    } else {
+                        Intent search_tag_intent = new Intent(activity, HomeActivity.class);
+                        search_tag_intent.putExtra("searchtag", current_tag_name);
+                        activity.startActivity(search_tag_intent);
+                    }
+                }
+            });
+        }
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

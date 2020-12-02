@@ -68,7 +68,7 @@ public class FakeAddPostActivity extends AppCompatActivity {
                 String postID = userID+dateStr;
                 String picID = postID + "pic";
                 QuestionPost newPost = new QuestionPost(name,userID,postID, text.getText().toString(),
-                        dateStr,subject, new ArrayList<Tag>(), false);
+                        dateStr,subject, new ArrayList<String>(), false);
                 //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:41:58");
                 //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:42:03");
                 //newPost.addAnswerPostID("2qxNidevHRMeUklVFU4nemLqSV7218 Nov 2020 15:42:06");

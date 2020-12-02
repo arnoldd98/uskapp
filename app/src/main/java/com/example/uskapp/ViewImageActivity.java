@@ -70,8 +70,6 @@ public class ViewImageActivity extends AppCompatActivity {
         Uri image_uri = (Uri) getIntent().getParcelableExtra("ImageUri");
         focused_image_view.setImageURI(image_uri);
 
-        final Animation fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
-        final Animation fade_in = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
         focused_image_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

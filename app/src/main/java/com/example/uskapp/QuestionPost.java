@@ -5,25 +5,25 @@ import java.util.ArrayList;
 public class QuestionPost extends Post{
     private ArrayList<String> answerPostIDs = new ArrayList<String>(); // array lists need be created IDS added later on thru method
     //private ArrayList<AnswerPost> answers_list;
-    private ArrayList<Tag> tags_list;
+    private ArrayList<String> tags_string_list;
     private ArrayList<String> post_followers = new ArrayList<>();
 
     public QuestionPost(String name, String userID, String postID, String text, String timestamp,
-                        String subject, ArrayList<Tag> tags_list, boolean toggle_anonymity) {
+                        String subject, ArrayList<String> tags_list, boolean toggle_anonymity) {
         super(name,userID, postID,text, timestamp, subject, toggle_anonymity);
-        this.tags_list = tags_list;
+        this.tags_string_list = tags_list;
     }
 
     public QuestionPost(String name, String userID, String postID, String text, String timestamp,
-                        String subject, ArrayList<Tag> tags_list, boolean toggle_anonymity,int upvotes) {
+                        String subject, ArrayList<String> tags_list, boolean toggle_anonymity,int upvotes) {
         super(name,userID, postID,text, timestamp, subject, toggle_anonymity,upvotes);
         //answers_list = new ArrayList<AnswerPost>();
-        this.tags_list = tags_list;
+        this.tags_string_list = tags_list;
     }
 
 
-    public void addTag(Tag tag) {
-        tags_list.add(tag);
+    public void addTag(String string) {
+        tags_string_list.add(string);
     }
 /*
     public ArrayList<AnswerPost> getAnswersList() {
@@ -44,7 +44,11 @@ public class QuestionPost extends Post{
     }
 
     public ArrayList<Tag> getTagsList() {
-        return tags_list;
+        return Tag.getTagList(tags_string_list);
+    }
+
+    public ArrayList<String> getTagsStringList() {
+        return tags_string_list;
     }
 
 

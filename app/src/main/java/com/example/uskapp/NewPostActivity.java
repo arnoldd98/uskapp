@@ -105,7 +105,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(new_post_context);
         layout_manager.setJustifyContent(JustifyContent.FLEX_START);
         tag_recyclerview.setLayoutManager(layout_manager);
-        final TagAdapter tag_adapter = new TagAdapter(new_post_context, associated_tags_list);
+        final TagAdapter tag_adapter = new TagAdapter(this, associated_tags_list);
         tag_recyclerview.setAdapter(tag_adapter);
 
         // Listener to post_edit_text which checks for any hashtags entered by the user
@@ -329,16 +329,18 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String postID = userID+dateStr;
         String picID = postID + "pic";
+        ArrayList<String> associated_tags_string_list = Tag.getTagStringList(associated_tags_list);
         QuestionPost newPost;
 
         String question_text = post_edit_text.getText().toString().replace("#" ,"");
 
+
         if(!isAnonymous){
             newPost = new QuestionPost(name,userID,postID, question_text,
-                    dateStr,current_subject, associated_tags_list,false);
+                    dateStr,current_subject, associated_tags_string_list,false);
         } else {
             newPost = new QuestionPost(name,userID,postID, question_text,
-                    dateStr,current_subject, associated_tags_list,true);
+                    dateStr,current_subject, associated_tags_string_list,true);
         }
 
         //if there is a picture
@@ -400,15 +402,26 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             //postPicture.setImageBitmap(imageBitmap);
 
         } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
-
+            Bitmap bitmap=null;
             imageUri = data.getData();
             imageUriArray.add(imageUri);
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             ImageView imagePost = new ImageView(NewPostActivity.this);
-            imagePost.setImageURI(imageUri);
+            imagePost.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            if(bitmap!=null){
+                imagePost.setImageBitmap(Bitmap.createScaledBitmap(bitmap,600,600,true));
+            } else {
+                imagePost.setImageURI(imageUri);
+            }
             imagePost.setScaleType(ImageView.ScaleType.CENTER);
             //imagePost.setImageBitmap(bitmapv2);
-            imagePost.setMaxHeight(400);
-            imagePost.setMaxWidth(400);
+            imagePost.setMaxHeight(600);
+            imagePost.setMaxWidth(600);
             pictureLayout.addView(imagePost);
         }
     }

@@ -1,7 +1,6 @@
 package com.example.uskapp;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -67,7 +66,7 @@ public class PostFocusActivity extends AppCompatActivity {
     AnswerRecyclerViewAdapter answerAdapter;
     TextView view_added_image_selector;
     TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
-    Context context;
+    Activity activity;
     LinearLayout horizontalImageLayout;
     RecyclerView tag_recyclerview;
 
@@ -85,7 +84,7 @@ public class PostFocusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_focus);
-        context = this;
+        activity = this;
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -110,7 +109,7 @@ public class PostFocusActivity extends AppCompatActivity {
         back_to_main_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, HomeActivity.class));
+                activity.startActivity(new Intent(activity, HomeActivity.class));
             }
         });
 
@@ -155,8 +154,8 @@ public class PostFocusActivity extends AppCompatActivity {
                             Integer upvotes = s.child("upvotes").getValue(Integer.class);
                             final boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
-                            DataSnapshot arraySnapTagsID = s.child("tags_list");
 
+                            DataSnapshot arraySnapTagsID = s.child("tagsList");
                             for (DataSnapshot id : arraySnapTagsID.getChildren()) {
                                 String value = id.child("tagName").getValue(String.class);
                                 tagsList.add(new Tag(value));
@@ -165,7 +164,7 @@ public class PostFocusActivity extends AppCompatActivity {
                             DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
                             DataSnapshot arraySnapPicID = s.child("postImageIDs");
 
-                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,tagsList,toggle_anonymity,upvotes);
+                            currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tagsList),toggle_anonymity,upvotes);
                            // currentPost.setPostImageID(postImageID);
                             answerPostIDs.clear();
                             for(DataSnapshot id : arraySnapAnsID.getChildren()){
@@ -216,15 +215,15 @@ public class PostFocusActivity extends AppCompatActivity {
                                                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                 ImageView qnImageView = new ImageView(PostFocusActivity.this);
                                                 qnImageView.setScaleType(ImageView.ScaleType.CENTER);
-                                                qnImageView.setMaxHeight(400);
-                                                qnImageView.setMaxWidth(400);
-                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,400,400,true));
+                                                qnImageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,600,600,true));
                                                 horizontalImageLayout.addView(qnImageView);
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(context, "picture error", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(activity, "picture error", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -240,6 +239,15 @@ public class PostFocusActivity extends AppCompatActivity {
                             postTextTv.setText(text);
                             upVoteTv.setText(String.valueOf(upvotes));
                             commentTv.setText(String.valueOf(currentPost.getAnswerPostIDs().size()));
+
+                            // set recyclerview showing tags of post under question text
+                            if (tagsList != null) {
+                                FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(activity);
+                                layout_manager.setJustifyContent(JustifyContent.FLEX_START);
+                                tag_recyclerview.setLayoutManager(layout_manager);
+                                TagAdapter tag_adapter = new TagAdapter(activity, tagsList, true);
+                                tag_recyclerview.setAdapter(tag_adapter);
+                            }
                         }
                     }
                     //GETTING DATA OF THE REPLIES WHICH WILL BE PASSED INTO THE ADAPTER
@@ -251,18 +259,9 @@ public class PostFocusActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(context, "db failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "db failed", Toast.LENGTH_SHORT).show();
                 }
             });
-        }
-
-        // set recyclerview showing tags of post under question text
-        if (tagsList != null) {
-            FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(this);
-            layout_manager.setJustifyContent(JustifyContent.FLEX_START);
-            tag_recyclerview.setLayoutManager(layout_manager);
-            TagAdapter tag_adapter = new TagAdapter(this, tagsList);
-            tag_recyclerview.setAdapter(tag_adapter);
         }
 
         // UI FOR REPLYING
@@ -326,11 +325,11 @@ public class PostFocusActivity extends AppCompatActivity {
         view_added_image_selector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent view_pic_intent = new Intent(context, ViewImageActivity.class);
+                Intent view_pic_intent = new Intent(activity, ViewImageActivity.class);
                 view_pic_intent.putExtra("ImageUri", imageUri);
 
                 view_pic_intent.putExtra("PostText", user_answer_edit_text.getText().toString());
-                context.startActivity(view_pic_intent);
+                activity.startActivity(view_pic_intent);
 
             }
         });
@@ -478,7 +477,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(context, "failed db", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "failed db", Toast.LENGTH_SHORT).show();
                 }
             });
         }

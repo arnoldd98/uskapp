@@ -123,17 +123,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
         else {
 
-            if(profileBitmaps.size() ==post_data.size()){
+            //bitmap tends not to be properly loaded
+            try{
                 Bitmap bmp = profileBitmaps.get(position);
-                //bitmap tends not to be properly loaded
-                try{
-                    holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
-                            holder.profile_image_view.getHeight(), false));
-                } catch (Exception e){
-                    holder.profile_image_view.setImageResource(R.drawable.ic_launcher_foreground);
-                }
-
+                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
+                        holder.profile_image_view.getHeight(), false));
+            } catch (Exception e){
+                holder.profile_image_view.setImageResource(R.drawable.ic_launcher_foreground);
             }
+
+
 
             holder.question_author_name.setText(post.getName());
 
@@ -149,7 +148,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             FlexboxLayoutManager layout_manager = new FlexboxLayoutManager(activity);
             layout_manager.setJustifyContent(JustifyContent.FLEX_START);
             holder.tag_recyclerview.setLayoutManager(layout_manager);
-            TagAdapter tag_adapter = new TagAdapter(activity, post.getTagsList());
+            TagAdapter tag_adapter = new TagAdapter(activity, post.getTagsList(), true);
             holder.tag_recyclerview.setAdapter(tag_adapter);
         } else {
             holder.card_container.removeView(holder.tag_recyclerview);
@@ -197,7 +196,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
-                boolean valid=true;
+                Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                boolean valid = true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
                     if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                         valid=false;

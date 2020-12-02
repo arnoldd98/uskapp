@@ -38,6 +38,7 @@ public class TestSubjectActivity extends AppCompatActivity {
     ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
     Query query;
     MainRecyclerViewAdapter viewAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +70,7 @@ public class TestSubjectActivity extends AppCompatActivity {
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
-                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,new ArrayList<Tag>(), toggle_anonymity);
+                        QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,new ArrayList<String>(), toggle_anonymity);
 
                         posts_list.add(qnPost);
 
