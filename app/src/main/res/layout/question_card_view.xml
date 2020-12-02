@@ -171,10 +171,10 @@
                 app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout" />
         </LinearLayout>
 
-        <ToggleButton
+        <Button
             android:id="@+id/star_question_button"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/star_unselected"
