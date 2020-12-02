@@ -201,11 +201,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
         holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
-        if(post.getUpvotes()>0){
-            holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
-
+        for(String upvoteIDs : post.getUsersWhoUpVoted()){
+            if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
+            }
         }
-        //upvote button
+
         holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
