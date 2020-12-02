@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,6 +53,7 @@ public class HomeActivity extends BaseNavigationActivity {
     TextView current_topic_textview;
     ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
     ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
+    ArrayList<String> currentUserPostFollowing;
     MainRecyclerViewAdapter viewAdapter;
     Query query;
     DatabaseReference mDatabase;
@@ -151,8 +153,36 @@ public class HomeActivity extends BaseNavigationActivity {
 
         });
 
+
+        //check if user is following the post
+        DatabaseReference UserRef1 = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        UserRef1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DataSnapshot postFollowingID = snapshot.child("postFollowing");
+                for(DataSnapshot id : postFollowingID.getChildren()){
+                    for(DataSnapshot s : id.getChildren()){
+                        String str = s.getValue(String.class);
+                        currentUserPostFollowing.add(str);
+                    }
+                    //currentUserPostFollowing.add(s);
+                }
+                viewAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
         // Set custom adapter to inflate the recycler view
-        viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps);
+        viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps,currentUserPostFollowing);
         main_recycler_view.setAdapter(viewAdapter);
     }
 

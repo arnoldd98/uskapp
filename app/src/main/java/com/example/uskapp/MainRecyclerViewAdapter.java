@@ -60,8 +60,21 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
+    private ArrayList<String> currentUserPostFollowing;
     private Bitmap bitmap;
     private LocalUser local_user = LocalUser.getCurrentUser();
+
+
+    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
+            , ArrayList<Bitmap> profileBitmaps,ArrayList<String> currentUserPostFollowing) {
+        this.post_data = post_data;
+        this.activity = activity;
+        this.profileBitmaps =profileBitmaps;
+        this.mInflater = LayoutInflater.from(activity.getApplicationContext());
+        this.currentUserPostFollowing=currentUserPostFollowing;
+
+    }
+    /*
 
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
             , ArrayList<Bitmap> profileBitmaps) {
@@ -69,7 +82,11 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.activity = activity;
         this.profileBitmaps =profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
+        this.currentUserPostFollowing=currentUserPostFollowing;
+
     }
+
+     */
 
     @Override
     public int getItemCount() {
@@ -215,14 +232,30 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 }
             }
 
-        });
+    });
+
+        if(currentUserPostFollowing!= null){
+            boolean isFollowing = false;
+            String idToCheck = post_data.get(position).getPostID();
+            for (String id : currentUserPostFollowing){
+                if(id.equals(idToCheck)){
+                    isFollowing = true;
+                }
+            }
+            if (isFollowing == true){
+                holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
+            } else {
+                holder.favourite_question_button.setBackgroundResource(R.drawable.star_red);
+            }
+        }
+
+
 
 
         holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Post post = post_data.get(position);
-                final ArrayList<String> tempPostFollowing = new ArrayList<String>();
 
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
                         child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -234,26 +267,28 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                         int karma = snapshot.child("karma").getValue(Integer.class);
                         int total_posts = snapshot.child("total_posts").getValue(Integer.class);
                         int total_answers = snapshot.child("total_answers").getValue(Integer.class);
-                        DataSnapshot arrayFollowingPosts = snapshot.child("PostFollowing");
+                        DataSnapshot arrayFollowingPosts = snapshot.child("postFollowing");
+
+                        ArrayList<String> tempPostFollowing = new ArrayList<String>();
+
                         for(DataSnapshot s : arrayFollowingPosts.getChildren()){
                             String postfollowingId = s.getValue(String.class);
                             tempPostFollowing.add(postfollowingId);
                         }
 
-                        User currentUser = new User(name,email,karma,5,total_answers);
-                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
-                                child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        currentUser.setPostFollowing(tempPostFollowing);
+                        User currentUser = new User(name,email,karma,total_posts,total_answers);
+                        //currentUser.setPostFollowing(tempPostFollowing);
                         boolean valid = true;
                         for(String postsFollowed : tempPostFollowing){
-                            if(post.getPostID().equals(postsFollowed)){
+                            if(post_data.get(position).getPostID().equals(postsFollowed)){
                                 valid = false;
                                 //Toast.makeText(view.getContext(), "follow failed", Toast.LENGTH_SHORT).show();
                             }
                         }
                         //if current post is not followed
                         if(valid){
-                            tempPostFollowing.add(post.getPostID());
+                            holder.favourite_question_button.setBackgroundResource(R.drawable.star_red);
+                            tempPostFollowing.add(post_data.get(position).getPostID());
                             currentUser.setPostFollowing(tempPostFollowing);
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
