@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class FakeAddPostActivity extends AppCompatActivity {
     Button submit,nextActivity;
@@ -64,7 +65,7 @@ public class FakeAddPostActivity extends AppCompatActivity {
                 String dateStr = sdf.format(timestamp);
                 String name = "no reply tester";
                 String subject = subjectTextView.getText().toString();
-                String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String userID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 String postID = userID+dateStr;
                 String picID = postID + "pic";
                 QuestionPost newPost = new QuestionPost(name,userID,postID, text.getText().toString(),
@@ -123,6 +124,7 @@ public class FakeAddPostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            assert data != null;
             imageUri = data.getData();
             image.setImageURI(imageUri);
 

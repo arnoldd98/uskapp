@@ -88,6 +88,7 @@ public class AddUserActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode== PICK_IMAGE && resultCode == RESULT_OK){
+            assert data != null;
             imageUri = data.getData();
 
             try{
