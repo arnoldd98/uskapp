@@ -201,11 +201,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
         holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
+        if(post.getUpvotes()>0){
+            holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
+
+        }
         //upvote button
         holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
+                holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
                 Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
                 boolean valid = true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
@@ -256,7 +261,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View view) {
                 final Post post = post_data.get(position);
-
+                holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
                         child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -330,7 +335,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                             Toast.makeText(activity, subscribed, Toast.LENGTH_SHORT).show();
                         }
                     });
-                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
+
                 } else {
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
