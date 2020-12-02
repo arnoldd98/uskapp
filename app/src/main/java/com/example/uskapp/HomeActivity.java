@@ -25,11 +25,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,21 +49,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HomeActivity extends BaseNavigationActivity {
+    ConstraintLayout home_container;
     RecyclerView main_recycler_view;
     Toolbar top_toolbar;
     ImageButton choose_subject_button;
     TextView current_topic_textview;
-    ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
-    ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
-    MainRecyclerViewAdapter viewAdapter;
-    Query query;
-    DatabaseReference mDatabase;
-
     RelativeLayout indicate_search_term_layout;
     Button close_search_result_button;
 
+    MainRecyclerViewAdapter viewAdapter;
+    DatabaseReference mDatabase;
+
+    ArrayList<String> currentUserPostFollowing;
+    // set arraylists to hold posts and profile images
+    static ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
+    static ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
+
     // define which subjects posts are shown from. If "home", show the home feed
-    String current_subject;
+    static String current_subject;
 
     // variables to check if search is on
     // helper variables for indicateCurrentSearchTermFunction
@@ -71,6 +77,7 @@ public class HomeActivity extends BaseNavigationActivity {
         super.onCreate(savedInstanceState);
         final Activity activity = this;
 
+        home_container = (ConstraintLayout) findViewById(R.id.home_container);
         is_search = false;
 
         // hides bottom navigation view when keyboard is called
@@ -91,8 +98,6 @@ public class HomeActivity extends BaseNavigationActivity {
         indicate_search_term_layout = (RelativeLayout) findViewById(R.id.indicate_search_term_layout);
         close_search_result_button = (Button) findViewById(R.id.close_search_result_button);
 
-
-
         // check for current subject to set topics for
         current_subject = "Home";
         if (getIntent().getStringExtra("indsubject") != null) {
@@ -100,34 +105,30 @@ public class HomeActivity extends BaseNavigationActivity {
             current_subject = getIntent().getStringExtra("indsubject");
         }
 
-        mDatabase = FirebaseDatabase.getInstance().getReference("QuestionPost");
-
-        // Set current topic
         current_topic_textview = findViewById(R.id.current_topic_textview);
-        if (current_subject == "Home") {
-            System.out.println("Home sweet home");
-            current_topic_textview.setText("Usk");
-            query = mDatabase;
-        } else {
-            current_topic_textview.setText(current_subject);
-            query = mDatabase.orderByChild("subject").equalTo(current_subject);
-        }
+        // set query according to current topic
+        Query query = getCurrentQuery();
         setListenerForPostsList(query);
 
-        // if tag is searched (clicked from elsewhere other than HomeActivity)
-        if (getIntent().getStringExtra("searchtag") != null) {
-            indicateCurrentSearchTerm(getIntent().getStringExtra("searchtag"), true);
-        }
 
         // set up main recycler view: linear layout manager to manage the order
         main_recycler_view = findViewById(R.id.main_menu_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         main_recycler_view.setLayoutManager(linearLayoutManager);
 
+        // close search indicator and revert back to main
         close_search_result_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setListenerForPostsList(query);
+                // reset back to main feed (if search is called)
+                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps, currentUserPostFollowing);
+                main_recycler_view.setAdapter(viewAdapter);
+
+                // shift recyclerview down to accomodate for search indicator layout
+                ConstraintSet cs = new ConstraintSet();
+                cs.clone(home_container);
+                cs.connect(R.id.main_menu_recycler_view, ConstraintSet.TOP, R.id.top_toolbar, ConstraintSet.BOTTOM, 12);
+                cs.applyTo(home_container);
                 if (is_search) {
                     Animation fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
                     fade_out.setAnimationListener(new Animation.AnimationListener() {
@@ -146,14 +147,61 @@ public class HomeActivity extends BaseNavigationActivity {
                     });
 
                     indicate_search_term_layout.startAnimation(fade_out);
+
+                    is_search = false;
                 }
             }
-
         });
 
+        // if tag is searched (clicked from elsewhere other than HomeActivity)
+        if (getIntent().getStringExtra("searchtag") != null) {
+            indicateCurrentSearchTerm(getIntent().getStringExtra("searchtag"), true);
+        }
+
         // Set custom adapter to inflate the recycler view
-        viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps);
-        main_recycler_view.setAdapter(viewAdapter);
+        if (!is_search) {
+            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps,currentUserPostFollowing);
+            main_recycler_view.setAdapter(viewAdapter);
+        }
+
+        //check if user is following the post
+        DatabaseReference UserRef1 = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        UserRef1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DataSnapshot postFollowingID = snapshot.child("postFollowing");
+                for(DataSnapshot id : postFollowingID.getChildren()){
+                    for(DataSnapshot s : id.getChildren()){
+                        String str = s.getValue(String.class);
+                        currentUserPostFollowing.add(str);
+                    }
+                    //currentUserPostFollowing.add(s);
+                }
+                viewAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    // Set current topic
+    public Query getCurrentQuery() {
+        mDatabase = FirebaseDatabase.getInstance().getReference("QuestionPost");
+        Query query;
+        if (current_subject == "Home") {
+            current_topic_textview.setText("Usk");
+            query = mDatabase;
+        } else {
+            current_topic_textview.setText(current_subject);
+            query = mDatabase.orderByChild("subject").equalTo(current_subject);
+        }
+
+        return query;
     }
 
     @Override
@@ -175,9 +223,13 @@ public class HomeActivity extends BaseNavigationActivity {
         return true;
     }
 
+
+    // create a layout which indicates the current search term when a tag button is pressed
     @SuppressLint("ResourceAsColor")
     public void indicateCurrentSearchTerm(String term, boolean is_tag) {
-        System.out.println("Indicate current search term function called");
+        current_subject = "Home";
+        Query query = getCurrentQuery();
+        setListenerForPostsList(query);
 
         // toasts error message and returns if indicate_search_term_layout does not exist
         if (indicate_search_term_layout == null) {
@@ -213,10 +265,27 @@ public class HomeActivity extends BaseNavigationActivity {
         indicate_search_term_layout.addView(search_term_view, lp);
         indicate_search_term_layout.setVisibility(View.VISIBLE);
 
-        // ******************************************//
-        Query tag_query = mDatabase;   // NEED TO QUERY BY TAG
-        setListenerForPostsList(tag_query); // WILL PROBABLY NEED TO MANUALLY SEARCH
-        // ****************************************** //
+        ArrayList<QuestionPost> searched_posts = new ArrayList<QuestionPost>();
+        ArrayList<Bitmap> search_profile_bitmaps = new ArrayList<Bitmap>();
+        for (QuestionPost post : posts_list) {
+            if (post.getTagsStringList() == null) continue;
+            for (String tag_string : post.getTagsStringList()) {
+                if (tag_string.equals(term)) {
+                    searched_posts.add(post);
+                    int position = posts_list.indexOf(post);
+                    search_profile_bitmaps.add(profileBitmaps.get(position));
+                }
+            }
+        }
+
+        // shift recyclerview down to accomodate for search indicator layout
+        ConstraintSet cs = new ConstraintSet();
+        cs.clone(home_container);
+        cs.connect(R.id.main_menu_recycler_view, ConstraintSet.TOP, R.id.indicate_search_term_layout, ConstraintSet.BOTTOM, 5);
+        cs.applyTo(home_container);
+
+        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps, currentUserPostFollowing);
+        main_recycler_view.setAdapter(viewAdapter);
 
     }
 
