@@ -141,7 +141,7 @@ public class ProfileActivity extends BaseNavigationActivity {
         layout_manager.setStackFromEnd(false);
         layout_manager.setOrientation(RecyclerView.VERTICAL);
         favorited_post_recyclerview.setLayoutManager(layout_manager);
-        favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps);
+        favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps,null);
         favorited_post_recyclerview.setAdapter(favoritedAdapter);
 
 
