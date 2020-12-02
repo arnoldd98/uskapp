@@ -23,6 +23,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SubjectActivity extends AppCompatActivity {
 
@@ -30,7 +31,7 @@ public class SubjectActivity extends AppCompatActivity {
     RecyclerView recycler;
     Adapter adapter;
     ArrayList<String> subjectTitle;
-    ArrayList<Bitmap> subjectBitmaps= new ArrayList<Bitmap>();
+    //ArrayList<Bitmap> subjectBitmaps= new ArrayList<Bitmap>();
     private DatabaseReference mDatabase;
 
     @Override
@@ -52,35 +53,35 @@ public class SubjectActivity extends AppCompatActivity {
                         String subject = s.getValue(String.class);
                         subjectTitle.add(subject);
 
-                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("SubjectPictures")
-                                .child(subject+".jpg");
-                        imageRef.getBytes(2048*2048)
-                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                                          @Override
-                                                          public void onSuccess(byte[] bytes) {
-                                                              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                                                              subjectBitmaps.add(bitmap);
-                                                              adapter.notifyDataSetChanged();
-                                                          }
-                                                      }
-                                ).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                subjectBitmaps.add(null);
-                            }
-                        });
+
+                        //StorageReference imageRef = FirebaseStorage.getInstance().getReference("SubjectPictures")
+                        //        .child(subject+".jpg");
+                        //imageRef.getBytes(2048*2048)
+                        //        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        //                                  @Override
+                        //                                  public void onSuccess(byte[] bytes) {
+                        //                                      Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                        //                                      subjectBitmaps.add(bitmap);
+                        //                                      adapter.notifyDataSetChanged();
+                        //                                  }
+                        //                              }
+                        //        ).addOnFailureListener(new OnFailureListener() {
+                        //    @Override
+                        //    public void onFailure(@NonNull Exception e) {
+                        //        subjectBitmaps.add(null);
+                        //    }
+                        //});
                     }
                     //adapter.notifyDataSetChanged();
                 }
-
-
-
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(SubjectActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
+
         });
 
 
@@ -90,8 +91,10 @@ public class SubjectActivity extends AppCompatActivity {
 
         subjectTitle = new ArrayList<String>();
 
+        int[] androidcolors = getResources().getIntArray(R.array.androidcolors);
+
         //creating recylcerview adapter
-        adapter = new Adapter(this, subjectTitle,subjectBitmaps);
+        adapter = new Adapter(this, subjectTitle, androidcolors);
 
         //setting the adapter
         recycler.setAdapter(adapter);

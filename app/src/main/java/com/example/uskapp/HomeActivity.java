@@ -79,7 +79,6 @@ public class HomeActivity extends BaseNavigationActivity {
         top_toolbar = findViewById(R.id.top_toolbar);
         setSupportActionBar(top_toolbar);
 
-
         choose_subject_button = (ImageButton) top_toolbar.findViewById(R.id.choose_subject_button);
         choose_subject_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +106,7 @@ public class HomeActivity extends BaseNavigationActivity {
         current_topic_textview = findViewById(R.id.current_topic_textview);
         if (current_subject == "Home") {
             System.out.println("Home sweet home");
-            current_topic_textview.setText("Feed");
+            current_topic_textview.setText("Usk");
             query = mDatabase;
         } else {
             current_topic_textview.setText(current_subject);
