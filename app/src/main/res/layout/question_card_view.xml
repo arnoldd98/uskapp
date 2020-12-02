@@ -6,15 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
-    android:backgroundTint="@color/colorLightGrayPost"
-    android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="10dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/translucent_gray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        >
+
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_imageview"
@@ -35,7 +39,7 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/gotham"
             android:text="Name"
-            android:textColor="#000000"
+            android:textColor="@color/dark_text"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/post_timestamp"
             app:layout_constraintStart_toEndOf="@+id/profile_imageview"
@@ -50,7 +54,7 @@
             android:fontFamily="@font/nunitosans_regular"
             android:text="Time"
             android:textAlignment="viewStart"
-            android:textColor="@color/cardview_dark_background"
+            android:textColor="@color/gray"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/question_textview"
             app:layout_constraintStart_toEndOf="@+id/profile_imageview"
@@ -65,8 +69,8 @@
             android:layout_marginEnd="30dp"
             android:fontFamily="@font/nunitosans_semibold"
             android:text="What are some recommended algorithm to use for sorting? Is quicksort and merge sort enough for my Google Interview?"
-            android:textColor="#000000"
-            android:textSize="20sp"
+            android:textColor="@color/dark_text"
+            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +97,7 @@
             app:layout_constraintBottom_toTopOf="@+id/ups_indicator_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout"></androidx.recyclerview.widget.RecyclerView>
+            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout"/>
 
         <LinearLayout
             android:id="@+id/image_horizontal_linear_layout"
@@ -108,7 +112,7 @@
         <LinearLayout
             android:id="@+id/ups_indicator_layout"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="15dp"
             android:layout_marginStart="20dp"
             android:layout_marginBottom="5dp"
             android:orientation="horizontal"
@@ -118,27 +122,28 @@
 
             <ImageView
                 android:id="@+id/ups_indicator_imageview"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                app:srcCompat="@android:drawable/arrow_up_float" />
+                android:src="@drawable/blue_triangle" />
 
             <TextView
                 android:id="@+id/ups_indicator_textview"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="2dp"
                 android:fontFamily="@font/nunitosans_regular"
                 android:text="25 ups"
-                android:textColor="@color/cardview_dark_background"
-                android:textSize="14sp" />
+                android:textColor="@color/gray"
+                android:textSize="11sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/comment_indicator__layout"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="15dp"
             android:layout_marginStart="12dp"
             android:layout_marginBottom="5dp"
             android:orientation="horizontal"
@@ -151,7 +156,7 @@
                 android:layout_width="19dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                app:srcCompat="@android:drawable/ic_menu_edit" />
+                android:src="@drawable/comment" />
 
             <TextView
                 android:id="@+id/comment_indicator__textview"
@@ -160,16 +165,16 @@
                 android:layout_marginLeft="2dp"
                 android:fontFamily="@font/nunitosans_regular"
                 android:text="10 answers"
-                android:textColor="@color/cardview_dark_background"
-                android:textSize="14sp"
+                android:textColor="@color/gray"
+                android:textSize="11sp"
                 app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout" />
         </LinearLayout>
 
         <ToggleButton
             android:id="@+id/star_question_button"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="16dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginEnd="25dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/star_unselected"
             android:textOff=""
