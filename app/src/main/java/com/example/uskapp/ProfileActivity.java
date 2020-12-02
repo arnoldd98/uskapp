@@ -56,9 +56,9 @@ public class ProfileActivity extends BaseNavigationActivity {
     private static final int PICK_IMAGE = 1;
     Uri imageUri;
 
-    private  ArrayList<String> favourited_post_ids = new ArrayList<>();
     private ArrayList<QuestionPost> favourited_posts = new ArrayList<>();
     private ArrayList<Bitmap> profileBitmaps = new ArrayList<>();
+    private LocalUser local_user = LocalUser.getCurrentUser();
     MainRecyclerViewAdapter favoritedAdapter;
 
     @Override
@@ -75,13 +75,6 @@ public class ProfileActivity extends BaseNavigationActivity {
                 name = snapshot.child("name").getValue(String.class);
                 karma = snapshot.child("karma").getValue(Integer.class);
 
-                // get list of IDs of posts followed
-                DataSnapshot postFollowingID = snapshot.child("postFollowing");
-                for (DataSnapshot id: postFollowingID.getChildren()) {
-                    String post_id = id.getValue(String.class);
-                    favourited_post_ids.add(post_id);
-                }
-
                 nameView.setText(name);
                 karmaView.setText(String.valueOf(karma));
                 String rank = convertKaramaToRank(karma);
@@ -90,9 +83,8 @@ public class ProfileActivity extends BaseNavigationActivity {
                 expBar.setProgress(exp);
                 expBar.setMax(100);
                 expBar.setProgressBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#ffeb3b")));
-
-                getFavoritedPostsFromFirebase();
                 favoritedAdapter.notifyDataSetChanged();
+                getFavoritedPostsFromFirebase();
             }
 
             @Override
@@ -105,6 +97,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                 Log.w(TAG, "onCancelled: ", error.toException());
             }
         });
+
 
         //for the profile picture
 
@@ -141,7 +134,7 @@ public class ProfileActivity extends BaseNavigationActivity {
         layout_manager.setStackFromEnd(false);
         layout_manager.setOrientation(RecyclerView.VERTICAL);
         favorited_post_recyclerview.setLayoutManager(layout_manager);
-        favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps,null);
+        favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps);
         favorited_post_recyclerview.setAdapter(favoritedAdapter);
 
 
@@ -260,8 +253,10 @@ public class ProfileActivity extends BaseNavigationActivity {
     }
 
     private void getFavoritedPostsFromFirebase() {
-        System.out.println("Favorited" + favourited_post_ids);
-        for (String id : favourited_post_ids) {
+        if(favourited_posts!= null){
+            favourited_posts.clear();
+        }
+        for (String id : local_user.getFollowingPostIDs()) {
             DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost").child(id);
             postRef.addValueEventListener(new ValueEventListener() {
                 @Override

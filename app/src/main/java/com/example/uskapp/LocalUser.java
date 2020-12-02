@@ -5,8 +5,10 @@ import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,8 +18,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 // singleton class which acts as a wrapper for current user
 // stores any local data in device
@@ -25,12 +30,15 @@ import java.util.HashMap;
 public class LocalUser {
     private static LocalUser current_user = null;
     private static final String current_user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    private ArrayList<String> postFollowing = new ArrayList<String>();
+    private ArrayList<String> followed_post_ids = new ArrayList<String>();
     private HashMap<String, Bitmap> subjectImageHashmap = new HashMap<String, Bitmap>();
 
     public LocalUser() {
-        super();
+        System.out.println("INITIAILIZED INTIALIZEED");
         getSubjectRef();
+        fetchFollowedPostIDsFromFirebase();
+        listenFollowedPosts();
+        System.out.println(followed_post_ids);
     }
 
     public DatabaseReference getSubjectRef() {
@@ -96,12 +104,25 @@ public class LocalUser {
         return current_user_id;
     }
 
-    public ArrayList<String> getPostFollowing() {
-        return postFollowing;
+    public ArrayList<String> getFollowingPostIDs() {
+        return followed_post_ids;
     }
 
-    public void setPostFollowing(ArrayList<String> postFollowing) {
-        this.postFollowing = postFollowing;
+    public void setFollowingPostIDs(ArrayList<String> followed_post_ids) {
+        this.followed_post_ids = followed_post_ids;
+    }
+
+    public void unfavouritePost(String removed_post_id) {
+        followed_post_ids.remove(removed_post_id);
+        listenFollowedPosts();
+    }
+
+    public boolean favouritePost(String favourite_id) {
+        if (followed_post_ids.contains(favourite_id)) return false;
+
+        followed_post_ids.add(favourite_id);
+        listenFollowedPosts();
+        return true;
     }
 
     // singleton function to get the current working LocalUser
@@ -110,5 +131,72 @@ public class LocalUser {
             current_user = new LocalUser();
         }
         return current_user;
+    }
+
+     // updates the firebase user whenever the list of followed post is changed locally
+    private void listenFollowedPosts() {
+        DatabaseReference userRef = getUserRef();
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String email = snapshot.child("email").getValue(String.class);
+                String name = snapshot.child("name").getValue(String.class);
+                int karma = snapshot.child("karma").getValue(Integer.class);
+                int total_posts = snapshot.child("total_posts").getValue(Integer.class);
+                int total_answers = snapshot.child("total_answers").getValue(Integer.class);
+                DataSnapshot arrayFollowingPosts = snapshot.child("postFollowing");
+
+                ArrayList<String> fb_following_posts_id = new ArrayList<String>();
+                for(DataSnapshot s : arrayFollowingPosts.getChildren()){
+                    String postfollowingId = s.getValue(String.class);
+                    fb_following_posts_id.add(postfollowingId);
+                }
+
+                if (!listEqualsIgnoreOrder(getFollowingPostIDs(), fb_following_posts_id)) {
+                    User currentUser = new User(name,email,karma,total_posts,total_answers);
+                    currentUser.setPostFollowing(getFollowingPostIDs());
+
+                    FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    // feetch list of followed posts from firebase
+    private void fetchFollowedPostIDsFromFirebase() {
+        getUserRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DataSnapshot postFollowingID = snapshot.child("postFollowing");
+                for(DataSnapshot id : postFollowingID.getChildren()){
+                    String str = id.getValue(String.class);
+                    favouritePost(str);
+                }
+
+                for (String id : followed_post_ids) {
+                    System.out.println("Id: " + id);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    // simple helper function to check if two arraylists have the same elements (in any order)
+    private static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
+        return new HashSet<>(list1).equals(new HashSet<>(list2));
     }
 }

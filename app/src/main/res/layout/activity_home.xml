@@ -31,6 +31,7 @@
                 android:layout_centerVertical="true"
                 android:backgroundTint="@color/cardview_shadow_end_color"
                 app:srcCompat="@drawable/ic_baseline_dashboard_24"
+                android:tint="@android:color/white"
                 tools:layout_editor_absoluteX="18dp"
                 tools:layout_editor_absoluteY="4dp" />
 

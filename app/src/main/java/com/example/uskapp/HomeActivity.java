@@ -60,7 +60,6 @@ public class HomeActivity extends BaseNavigationActivity {
     MainRecyclerViewAdapter viewAdapter;
     DatabaseReference mDatabase;
 
-    ArrayList<String> currentUserPostFollowing;
     // set arraylists to hold posts and profile images
     static ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
     static ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
@@ -121,7 +120,7 @@ public class HomeActivity extends BaseNavigationActivity {
             @Override
             public void onClick(View v) {
                 // reset back to main feed (if search is called)
-                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps, currentUserPostFollowing);
+                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps);
                 main_recycler_view.setAdapter(viewAdapter);
 
                 // shift recyclerview down to accomodate for search indicator layout
@@ -158,35 +157,12 @@ public class HomeActivity extends BaseNavigationActivity {
             indicateCurrentSearchTerm(getIntent().getStringExtra("searchtag"), true);
         }
 
+
         // Set custom adapter to inflate the recycler view
         if (!is_search) {
-            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps,currentUserPostFollowing);
+            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps);
             main_recycler_view.setAdapter(viewAdapter);
         }
-
-        //check if user is following the post
-        DatabaseReference UserRef1 = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        UserRef1.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                DataSnapshot postFollowingID = snapshot.child("postFollowing");
-                for(DataSnapshot id : postFollowingID.getChildren()){
-                    for(DataSnapshot s : id.getChildren()){
-                        String str = s.getValue(String.class);
-                        currentUserPostFollowing.add(str);
-                    }
-                    //currentUserPostFollowing.add(s);
-                }
-                viewAdapter.notifyDataSetChanged();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     // Set current topic
@@ -284,7 +260,7 @@ public class HomeActivity extends BaseNavigationActivity {
         cs.connect(R.id.main_menu_recycler_view, ConstraintSet.TOP, R.id.indicate_search_term_layout, ConstraintSet.BOTTOM, 5);
         cs.applyTo(home_container);
 
-        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps, currentUserPostFollowing);
+        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps);
         main_recycler_view.setAdapter(viewAdapter);
 
     }

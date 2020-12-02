@@ -63,7 +63,7 @@ public class PostFocusActivity extends AppCompatActivity {
     EditText user_answer_edit_text;
     ImageButton send_answer_button,get_image_button,back_to_main_button;
     ImageView upVoteIv,profilePicIv,replyIv;
-    ToggleButton favourite_button;
+    Button favourite_button;
     AnswerRecyclerViewAdapter answerAdapter;
     TextView view_added_image_selector;
     TextView nameTv,timeStampTv,postTextTv,upVoteTv,commentTv;
@@ -80,6 +80,8 @@ public class PostFocusActivity extends AppCompatActivity {
     ArrayList<Tag> tagsList = new ArrayList<Tag>();
     ArrayList<Bitmap> answerPictures = new ArrayList<>();
     ArrayList<Bitmap> currentReplyPictures = new ArrayList();
+    private LocalUser local_user = LocalUser.getCurrentUser();
+    private boolean is_favourited;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +99,7 @@ public class PostFocusActivity extends AppCompatActivity {
         tag_recyclerview = (RecyclerView) qnPostLayout.findViewById(R.id.question_tag_recyclerview);
 
         profilePicIv = (ImageView)qnPostLayout.findViewById(R.id.profile_imageview);
-        favourite_button = (ToggleButton)qnPostLayout.findViewById(R.id.star_question_button);
+        favourite_button = (Button)qnPostLayout.findViewById(R.id.star_question_button);
         timeStampTv = (TextView)qnPostLayout.findViewById(R.id.post_timestamp);
         nameTv = (TextView)qnPostLayout.findViewById(R.id.question_author_name);
         postTextTv = (TextView)qnPostLayout.findViewById(R.id.question_textview);
@@ -161,6 +163,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                 String value = id.child("tagName").getValue(String.class);
                                 tagsList.add(new Tag(value));
                             }
+
                             DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
                             DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
                             DataSnapshot arraySnapPicID = s.child("postImageIDs");
@@ -178,8 +181,18 @@ public class PostFocusActivity extends AppCompatActivity {
                             for(DataSnapshot id : arraySnapVoteID.getChildren()){
                                 String value = id.getValue(String.class);
                                 currentPost.addUserUpvote(value);
+                                if(value.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                                    upVoteIv.setImageResource(R.drawable.blue_triangle);
+                                }
                             }
-                            //currentPost.
+
+                            if (local_user.getFollowingPostIDs().contains(currentPost.getPostID())) {
+                                favourite_button.setBackgroundResource(R.drawable.star_favourited);
+                                is_favourited = true;
+                            } else {
+                                favourite_button.setBackgroundResource(R.drawable.star_unselected);
+                                is_favourited = true;
+                            }
 
                             StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                                     .child(userID);
@@ -368,6 +381,7 @@ public class PostFocusActivity extends AppCompatActivity {
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
                     newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
+                    upVoteIv.setImageResource(R.drawable.blue_triangle);
                 } else {
                     Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
                 }
@@ -389,6 +403,21 @@ public class PostFocusActivity extends AppCompatActivity {
 
                     }
                 });
+            }
+        });
+
+        favourite_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (is_favourited) {
+                    favourite_button.setBackgroundResource(R.drawable.star_unselected);
+                    local_user.unfavouritePost(currentPost.getPostID());
+                    is_favourited = false;
+                } else {
+                    favourite_button.setBackgroundResource(R.drawable.star_favourited);
+                    local_user.favouritePost(currentPost.getPostID());
+                    is_favourited = true;
+                }
             }
         });
 

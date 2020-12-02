@@ -79,7 +79,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.currentUserPostFollowing=currentUserPostFollowing;
 
     }
-    /*
 
     public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
             , ArrayList<Bitmap> profileBitmaps) {
@@ -93,7 +92,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     }
 
-     */
 
     @Override
     public int getItemCount() {
@@ -206,13 +204,20 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             holder.constraint_layout_container.removeView(holder.image_layout);
             cs.applyTo(holder.constraint_layout_container);
         }
+
         holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
-        //upvote button
+        for(String upvoteIDs : post.getUsersWhoUpVoted()){
+            if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
+            }
+        }
+
         holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
+                holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
                 Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
                 boolean valid = true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
@@ -239,85 +244,92 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 }
             }
 
-    });
+        });
 
-        if(currentUserPostFollowing!= null){
-            boolean isFollowing = false;
-            String idToCheck = post_data.get(position).getPostID();
-            for (String id : currentUserPostFollowing){
-                if(id.equals(idToCheck)){
-                    isFollowing = true;
-                }
-            }
-            if (isFollowing == true){
-                holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
-            } else {
-                holder.favourite_question_button.setBackgroundResource(R.drawable.star_red);
-            }
+        final boolean[] is_favourited = {false};
+        if (local_user.getFollowingPostIDs().contains(post.getPostID())) {
+            holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
+            is_favourited[0] = true;
+        } else {
+            holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
+            is_favourited[0] = false;
         }
-
-
-
 
         holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                final Post post = post_data.get(position);
-
-                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
-                        child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String email = snapshot.child("email").getValue(String.class);
-                        String name = snapshot.child("name").getValue(String.class);
-                        int karma = snapshot.child("karma").getValue(Integer.class);
-                        int total_posts = snapshot.child("total_posts").getValue(Integer.class);
-                        int total_answers = snapshot.child("total_answers").getValue(Integer.class);
-                        DataSnapshot arrayFollowingPosts = snapshot.child("postFollowing");
-
-                        ArrayList<String> tempPostFollowing = new ArrayList<String>();
-
-                        for(DataSnapshot s : arrayFollowingPosts.getChildren()){
-                            String postfollowingId = s.getValue(String.class);
-                            tempPostFollowing.add(postfollowingId);
-                        }
-
-                        User currentUser = new User(name,email,karma,total_posts,total_answers);
-                        //currentUser.setPostFollowing(tempPostFollowing);
-                        boolean valid = true;
-                        for(String postsFollowed : tempPostFollowing){
-                            if(post_data.get(position).getPostID().equals(postsFollowed)){
-                                valid = false;
-                                //Toast.makeText(view.getContext(), "follow failed", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        //if current post is not followed
-                        if(valid){
-                            holder.favourite_question_button.setBackgroundResource(R.drawable.star_red);
-                            tempPostFollowing.add(post_data.get(position).getPostID());
-                            currentUser.setPostFollowing(tempPostFollowing);
-                            FirebaseDatabase.getInstance().getReference("Users")
-                                    .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                        }
-                                    });
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-
+            public void onClick(View v) {
+                System.out.println(local_user.getFollowingPostIDs());
+                if (is_favourited[0]) {
+                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
+                    local_user.unfavouritePost(post.getPostID());
+                    is_favourited[0] = false;
+                } else {
+                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
+                    local_user.favouritePost(post.getPostID());
+                    is_favourited[0] = true;
+                }
             }
         });
+
+//        holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                final Post post = post_data.get(position);
+//                holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
+//                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
+//                        child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        String email = snapshot.child("email").getValue(String.class);
+//                        String name = snapshot.child("name").getValue(String.class);
+//                        int karma = snapshot.child("karma").getValue(Integer.class);
+//                        int total_posts = snapshot.child("total_posts").getValue(Integer.class);
+//                        int total_answers = snapshot.child("total_answers").getValue(Integer.class);
+//                        DataSnapshot arrayFollowingPosts = snapshot.child("postFollowing");
+//
+//                        ArrayList<String> tempPostFollowing = new ArrayList<String>();
+//
+//                        for(DataSnapshot s : arrayFollowingPosts.getChildren()){
+//                            String postfollowingId = s.getValue(String.class);
+//                            tempPostFollowing.add(postfollowingId);
+//                        }
+//
+//                        User currentUser = new User(name,email,karma,total_posts,total_answers);
+//                        //currentUser.setPostFollowing(tempPostFollowing);
+//                        boolean valid = true;
+//                        for(String postsFollowed : tempPostFollowing){
+//                            if(post_data.get(position).getPostID().equals(postsFollowed)){
+//                                valid = false;
+//                                //Toast.makeText(view.getContext(), "follow failed", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                        //if current post is not followed
+//                        if(valid){
+//                            holder.favourite_question_button.setBackgroundResource(R.drawable.star_red);
+//                            tempPostFollowing.add(post_data.get(position).getPostID());
+//                            currentUser.setPostFollowing(tempPostFollowing);
+//                            FirebaseDatabase.getInstance().getReference("Users")
+//                                    .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
+//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                        }
+//                                    });
+//
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+//
+//
+//            }
+//        });
 
 
         /*
@@ -337,7 +349,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                             Toast.makeText(activity, subscribed, Toast.LENGTH_SHORT).show();
                         }
                     });
-                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
+
                 } else {
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -410,7 +422,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         public TextView ups_indicator_textview;
         public LinearLayout comment_indicator_layout;
         public TextView comment_indicator_textview;
-        public ToggleButton favourite_question_button;
+        public Button favourite_question_button;
 
         public Context card_view_context;
 
@@ -430,7 +442,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             ups_indicator_textview = (TextView) postView.findViewById(R.id.ups_indicator_textview);
             comment_indicator_layout = (LinearLayout) postView.findViewById(R.id.comment_indicator__layout);
             comment_indicator_textview = (TextView) postView.findViewById(R.id.comment_indicator__textview);
-            favourite_question_button = (ToggleButton) postView.findViewById(R.id.star_question_button);
+            favourite_question_button = (Button) postView.findViewById(R.id.star_question_button);
 
             card_view_context = postView.getContext();
         }
