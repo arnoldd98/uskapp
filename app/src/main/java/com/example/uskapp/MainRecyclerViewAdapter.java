@@ -74,7 +74,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.post_data_all = post_data;
 
         this.activity = activity;
-        this.profileBitmaps =profileBitmaps;
+        this.profileBitmaps = profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
     }
 

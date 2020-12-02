@@ -44,7 +44,7 @@ public class Adapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         final ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.button.setText(subjectArrayList.get(position));
         viewHolder.button.setBackgroundColor(androidcolors[position]);
@@ -62,7 +62,7 @@ public class Adapter extends RecyclerView.Adapter {
                 Toast.makeText(activity, viewHolder.textView.getText().toString(), Toast.LENGTH_SHORT).show();
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 Intent intent = new Intent(activity,HomeActivity.class);
-                intent.putExtra("indsubject", viewHolder.textView.getText().toString());
+                intent.putExtra("indsubject", subjectArrayList.get(position));
                 activity.startActivity(intent);
 
             }

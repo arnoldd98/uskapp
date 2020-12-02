@@ -225,7 +225,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onFailure(@NonNull Exception e) {
 
-                profilePic.setImageResource(R.drawable.ic_launcher_foreground);
+                profilePic.setImageResource(R.drawable.bunny2);
                 e.printStackTrace();
             }
         });
@@ -280,7 +280,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                profilePic.setImageResource(R.drawable.ic_launcher_foreground);
+                                profilePic.setImageResource(R.drawable.bunny2);
                                 e.printStackTrace();
                             }
                         });
