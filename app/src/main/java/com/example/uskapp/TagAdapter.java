@@ -24,7 +24,7 @@ public class TagAdapter extends RecyclerView.Adapter {
     private boolean is_clickable;
 
     public TagAdapter(Activity activity, ArrayList<Tag> tag_list) {
-        Toast.makeText(activity, "Tag adapter initialized", Toast.LENGTH_SHORT);
+        Toast.makeText(activity, "Tag adapter initialized", Toast.LENGTH_SHORT).show();
         this.tag_list = tag_list;
         this.activity = activity;
         is_clickable = false;

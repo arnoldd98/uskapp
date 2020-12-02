@@ -17,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,12 +52,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
-public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
-    private List<QuestionPost> post_data;
+public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> implements Filterable {
+    private ArrayList<QuestionPost> post_data;
+    private ArrayList<QuestionPost> post_data_all; //all filtered question postss
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
@@ -64,25 +69,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Bitmap bitmap;
     private LocalUser local_user = LocalUser.getCurrentUser();
 
-
-    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
-            , ArrayList<Bitmap> profileBitmaps,ArrayList<String> currentUserPostFollowing) {
-        this.post_data = post_data;
-        this.activity = activity;
-        this.profileBitmaps =profileBitmaps;
-        this.mInflater = LayoutInflater.from(activity.getApplicationContext());
-        this.currentUserPostFollowing=currentUserPostFollowing;
-
-    }
-
-    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
+    public MainRecyclerViewAdapter(Activity activity, ArrayList<QuestionPost> post_list
             , ArrayList<Bitmap> profileBitmaps) {
-        this.post_data = post_data;
+        this.post_data = post_list;
+        this.post_data_all = new ArrayList<QuestionPost>();
+        for (QuestionPost questionPost : post_list) {
+            post_data_all.add(questionPost);
+        }
         this.activity = activity;
         this.profileBitmaps = profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
-        this.currentUserPostFollowing=currentUserPostFollowing;
-
     }
 
 
@@ -246,6 +242,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         });
 
+        // checks if post is favourited and toggles favourite button when pressed accordingly
         final boolean[] is_favourited = {false};
         if (local_user.getFollowingPostIDs().contains(post.getPostID())) {
             holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
@@ -369,6 +366,43 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         */
 
     }
+
+    @Override
+    public Filter getFilter() { //New Method, use list of all questionposts
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        //run on background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) { //logic for filtering
+            List<QuestionPost> filteredList = new ArrayList<>();
+            if(charSequence.toString().isEmpty()){
+                filteredList.addAll(post_data_all);
+            } else{
+                for (QuestionPost questionpost: post_data_all){
+                    if (questionpost.getText().toLowerCase().contains(charSequence.toString().toLowerCase())){
+                        filteredList.add(questionpost);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+        //runs on an UI thread
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            post_data.clear();
+            System.out.println("SearchBar updated");
+            System.out.println(charSequence);;
+            post_data.addAll((Collection<? extends QuestionPost>) filterResults.values);
+            System.out.println(post_data);
+            notifyDataSetChanged();
+
+        }
+    };
+
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
         public CardView card_container;
@@ -409,23 +443,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
             card_view_context = postView.getContext();
         }
-    }
-    private void followPost(String postID){
-        final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
-                .child(postID);
-        posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int karma = snapshot.child("karma").getValue(Integer.class);
-                karma +=1;
-                posterRef.child("karma").setValue(karma);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     private void givePosterKarma(String posterID){
