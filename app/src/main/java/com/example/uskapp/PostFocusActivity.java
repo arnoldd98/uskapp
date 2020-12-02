@@ -177,7 +177,12 @@ public class PostFocusActivity extends AppCompatActivity {
                             for(DataSnapshot id : arraySnapVoteID.getChildren()){
                                 String value = id.getValue(String.class);
                                 currentPost.addUserUpvote(value);
+                                if(value.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                                    upVoteIv.setImageResource(R.drawable.blue_triangle);
+                                }
+                                System.out.println(id);
                             }
+
                             //currentPost.
 
                             StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
@@ -367,6 +372,7 @@ public class PostFocusActivity extends AppCompatActivity {
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
                     newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
+                    upVoteIv.setImageResource(R.drawable.blue_triangle);
                 } else {
                     Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
                 }
