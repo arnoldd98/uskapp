@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.LayoutInflater;
@@ -46,6 +47,8 @@ import com.google.firebase.storage.StorageReference;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class HomeActivity extends BaseNavigationActivity {
@@ -321,6 +324,8 @@ public class HomeActivity extends BaseNavigationActivity {
                     }
 
                 }
+                System.out.println("Posts: " + posts_list);
+                Collections.sort(posts_list);
                 viewAdapter.notifyDataSetChanged();
             }
 

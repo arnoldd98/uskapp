@@ -50,6 +50,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -64,25 +65,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Bitmap bitmap;
     private LocalUser local_user = LocalUser.getCurrentUser();
 
-
-    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
-            , ArrayList<Bitmap> profileBitmaps,ArrayList<String> currentUserPostFollowing) {
-        this.post_data = post_data;
-        this.activity = activity;
-        this.profileBitmaps =profileBitmaps;
-        this.mInflater = LayoutInflater.from(activity.getApplicationContext());
-        this.currentUserPostFollowing=currentUserPostFollowing;
-
-    }
-
-    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_data
+    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_list
             , ArrayList<Bitmap> profileBitmaps) {
-        this.post_data = post_data;
+        this.post_data = post_list;
         this.activity = activity;
         this.profileBitmaps = profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
-        this.currentUserPostFollowing=currentUserPostFollowing;
-
     }
 
 
@@ -93,6 +81,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
         return post_data.size();
     }
+
+
 
     @NonNull
     @Override
