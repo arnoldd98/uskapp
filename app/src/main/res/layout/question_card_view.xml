@@ -92,8 +92,9 @@
             android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/ups_indicator_layout"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_horizontal_linear_layout"></androidx.recyclerview.widget.RecyclerView>
+            app:layout_constraintTop_toBottomOf="@+id/question_textview"></androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:id="@+id/image_horizontal_linear_layout"

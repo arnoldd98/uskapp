@@ -104,14 +104,6 @@ public class SubjectActivity extends AppCompatActivity {
 
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_right);
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        this.startActivity(intent);
-//    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();

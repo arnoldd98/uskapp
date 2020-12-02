@@ -105,7 +105,6 @@ public class HomeActivity extends BaseNavigationActivity {
         // Set current topic
         current_topic_textview = findViewById(R.id.current_topic_textview);
         if (current_subject == "Home") {
-            System.out.println("Home sweet home");
             current_topic_textview.setText("Usk");
             query = mDatabase;
         } else {
@@ -128,6 +127,11 @@ public class HomeActivity extends BaseNavigationActivity {
             @Override
             public void onClick(View v) {
                 setListenerForPostsList(query);
+
+                // reset back to main feed (if search is called)
+                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps);
+                main_recycler_view.setAdapter(viewAdapter);
+
                 if (is_search) {
                     Animation fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
                     fade_out.setAnimationListener(new Animation.AnimationListener() {
@@ -213,10 +217,21 @@ public class HomeActivity extends BaseNavigationActivity {
         indicate_search_term_layout.addView(search_term_view, lp);
         indicate_search_term_layout.setVisibility(View.VISIBLE);
 
-        // ******************************************//
-        Query tag_query = mDatabase;   // NEED TO QUERY BY TAG
-        setListenerForPostsList(tag_query); // WILL PROBABLY NEED TO MANUALLY SEARCH
-        // ****************************************** //
+        ArrayList<QuestionPost> searched_posts = new ArrayList<QuestionPost>();
+        ArrayList<Bitmap> search_profile_bitmaps = new ArrayList<Bitmap>();
+        for (QuestionPost post : posts_list) {
+            if (post.getTagsStringList() == null) continue;
+            for (String tag_string : post.getTagsStringList()) {
+                if (tag_string.equals(term)) {
+                    searched_posts.add(post);
+                    int position = posts_list.indexOf(post);
+                    search_profile_bitmaps.add(profileBitmaps.get(position));
+                }
+            }
+        }
+
+        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps);
+        main_recycler_view.setAdapter(viewAdapter);
 
     }
 
