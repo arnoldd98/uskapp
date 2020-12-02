@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,6 +60,7 @@ public class HomeActivity extends BaseNavigationActivity {
     MainRecyclerViewAdapter viewAdapter;
     DatabaseReference mDatabase;
 
+    ArrayList<String> currentUserPostFollowing;
     // set arraylists to hold posts and profile images
     static ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
     static ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
@@ -96,8 +98,6 @@ public class HomeActivity extends BaseNavigationActivity {
         indicate_search_term_layout = (RelativeLayout) findViewById(R.id.indicate_search_term_layout);
         close_search_result_button = (Button) findViewById(R.id.close_search_result_button);
 
-
-
         // check for current subject to set topics for
         current_subject = "Home";
         if (getIntent().getStringExtra("indsubject") != null) {
@@ -110,6 +110,7 @@ public class HomeActivity extends BaseNavigationActivity {
         Query query = getCurrentQuery();
         setListenerForPostsList(query);
 
+
         // set up main recycler view: linear layout manager to manage the order
         main_recycler_view = findViewById(R.id.main_menu_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -119,9 +120,8 @@ public class HomeActivity extends BaseNavigationActivity {
         close_search_result_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 // reset back to main feed (if search is called)
-                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps);
+                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps, currentUserPostFollowing);
                 main_recycler_view.setAdapter(viewAdapter);
 
                 // shift recyclerview down to accomodate for search indicator layout
@@ -129,28 +129,28 @@ public class HomeActivity extends BaseNavigationActivity {
                 cs.clone(home_container);
                 cs.connect(R.id.main_menu_recycler_view, ConstraintSet.TOP, R.id.top_toolbar, ConstraintSet.BOTTOM, 12);
                 cs.applyTo(home_container);
+                if (is_search) {
+                    Animation fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
+                    fade_out.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                        }
 
-                Animation fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
-                fade_out.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            indicate_search_term_layout.setVisibility(View.INVISIBLE);
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        indicate_search_term_layout.setVisibility(View.INVISIBLE);
-                    }
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+                    });
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
+                    indicate_search_term_layout.startAnimation(fade_out);
 
-                indicate_search_term_layout.startAnimation(fade_out);
-
-                is_search = false;
+                    is_search = false;
+                }
             }
-
         });
 
         // if tag is searched (clicked from elsewhere other than HomeActivity)
@@ -160,9 +160,33 @@ public class HomeActivity extends BaseNavigationActivity {
 
         // Set custom adapter to inflate the recycler view
         if (!is_search) {
-            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps);
+            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps,currentUserPostFollowing);
             main_recycler_view.setAdapter(viewAdapter);
         }
+
+        //check if user is following the post
+        DatabaseReference UserRef1 = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        UserRef1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DataSnapshot postFollowingID = snapshot.child("postFollowing");
+                for(DataSnapshot id : postFollowingID.getChildren()){
+                    for(DataSnapshot s : id.getChildren()){
+                        String str = s.getValue(String.class);
+                        currentUserPostFollowing.add(str);
+                    }
+                    //currentUserPostFollowing.add(s);
+                }
+                viewAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     // Set current topic
@@ -260,7 +284,7 @@ public class HomeActivity extends BaseNavigationActivity {
         cs.connect(R.id.main_menu_recycler_view, ConstraintSet.TOP, R.id.indicate_search_term_layout, ConstraintSet.BOTTOM, 5);
         cs.applyTo(home_container);
 
-        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps);
+        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps, currentUserPostFollowing);
         main_recycler_view.setAdapter(viewAdapter);
 
     }

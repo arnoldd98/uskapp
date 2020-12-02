@@ -119,7 +119,7 @@ public class TestSubjectActivity extends AppCompatActivity {
         main_recycler_view.addItemDecoration(dividerItemDecoration);
 
         // Set custom adapter to inflate the recycler view
-        viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps);
+        viewAdapter = new MainRecyclerViewAdapter(this, posts_list,profileBitmaps,null);
         main_recycler_view.setAdapter(viewAdapter);
     }
 

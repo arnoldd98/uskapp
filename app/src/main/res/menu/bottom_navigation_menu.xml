@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home_screen"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="Home screen" />
+        android:icon="@drawable/ic_home_24"
+        android:title="Home" />
 
     <item android:id="@+id/nav_add_post"
         android:title="Add post"
