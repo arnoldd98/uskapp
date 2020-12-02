@@ -59,8 +59,8 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> implements Filterable {
-    private List<QuestionPost> post_data;
-    private List<QuestionPost> post_data_all; //all filtered question postss
+    private ArrayList<QuestionPost> post_data;
+    private ArrayList<QuestionPost> post_data_all; //all filtered question postss
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
@@ -69,9 +69,13 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Bitmap bitmap;
     private LocalUser local_user = LocalUser.getCurrentUser();
 
-    public MainRecyclerViewAdapter(Activity activity, List<QuestionPost> post_list
+    public MainRecyclerViewAdapter(Activity activity, ArrayList<QuestionPost> post_list
             , ArrayList<Bitmap> profileBitmaps) {
         this.post_data = post_list;
+        this.post_data_all = new ArrayList<QuestionPost>();
+        for (QuestionPost questionPost : post_list) {
+            post_data_all.add(questionPost);
+        }
         this.activity = activity;
         this.profileBitmaps = profileBitmaps;
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
@@ -231,6 +235,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         });
 
+        // checks if post is favourited and toggles favourite button when pressed accordingly
         final boolean[] is_favourited = {false};
         if (local_user.getFollowingPostIDs().contains(post.getPostID())) {
             holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
@@ -383,7 +388,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             post_data.clear();
             System.out.println("SearchBar updated");
-            System.out.println(charSequence);
+            System.out.println(charSequence);;
             post_data.addAll((Collection<? extends QuestionPost>) filterResults.values);
             System.out.println(post_data);
             notifyDataSetChanged();
@@ -431,23 +436,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
             card_view_context = postView.getContext();
         }
-    }
-    private void followPost(String postID){
-        final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
-                .child(postID);
-        posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int karma = snapshot.child("karma").getValue(Integer.class);
-                karma +=1;
-                posterRef.child("karma").setValue(karma);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     private void givePosterKarma(String posterID){
