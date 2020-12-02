@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
@@ -213,7 +214,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
         // setting users profile photo
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
         imageRef.getBytes(2048*2048)
                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
@@ -269,7 +270,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(View v) {
                         isAnonymous=false;
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                         imageRef.getBytes(2048*2048)
                                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                     @Override
@@ -294,7 +295,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                         profilePic.setImageResource(R.mipmap.anonymous_icon);
                     }
                 });
-                ;
                 break;
         }
 

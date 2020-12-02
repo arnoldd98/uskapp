@@ -17,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,12 +53,14 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
-public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
+public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> implements Filterable {
     private List<QuestionPost> post_data;
+    private List<QuestionPost> post_data_all; //all filtered question postss
     private LayoutInflater mInflater;
     private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
@@ -81,8 +85,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
         return post_data.size();
     }
-
-
 
     @NonNull
     @Override
@@ -352,6 +354,43 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         */
 
     }
+
+    @Override
+    public Filter getFilter() { //New Method, use list of all questionposts
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        //run on background thread
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) { //logic for filtering
+            List<QuestionPost> filteredList = new ArrayList<>();
+            if(charSequence.toString().isEmpty()){
+                filteredList.addAll(post_data_all);
+            } else{
+                for (QuestionPost questionpost: post_data_all){
+                    if (questionpost.getText().toLowerCase().contains(charSequence.toString().toLowerCase())){
+                        filteredList.add(questionpost);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+        //runs on an UI thread
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            post_data.clear();
+            System.out.println("SearchBar updated");
+            System.out.println(charSequence);
+            post_data.addAll((Collection<? extends QuestionPost>) filterResults.values);
+            System.out.println(post_data);
+            notifyDataSetChanged();
+
+        }
+    };
+
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
         public CardView card_container;

@@ -32,6 +32,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecyclerViewAdapter.ViewHolder> {
     private List<AnswerPost> answer_data;
@@ -71,7 +72,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
         AnswerPost answer = answer_data.get(position);
 
-        if (answer.toggle_anonymity==true){
+        if (answer.toggle_anonymity){
             holder.answerer_profile_iv.setImageResource(R.drawable.image);
             holder.answer_author_name_tv.setText("Anonymous");
         }
@@ -102,7 +103,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                 imageView.setImageBitmap(Bitmap.createScaledBitmap(ArrayListAnswerImages.get(position),600,600,true));
                 holder.clickable_to_images_layout1.addView(imageView);
             } catch (Exception e){
-
+                e.printStackTrace();
             }
         }
 
@@ -117,7 +118,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                 AnswerPost post = answer_data.get(position);
                 boolean valid=true;
                 for(String upvoteIDs : post.getUsersWhoUpVoted()){
-                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                    if(upvoteIDs.equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()) ){
                         valid=false;
                     }
                 }
@@ -133,7 +134,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("AnswerPost")
                             .child(id).child("usersWhoUpVoted");
                     ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
-                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    newUsersID.add(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                     postRef2.setValue(newUsersID);
                 } else {
                     Toast.makeText(ctx, "already voted", Toast.LENGTH_SHORT).show();
