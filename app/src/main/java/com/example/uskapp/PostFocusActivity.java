@@ -180,7 +180,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                 if(value.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                                     upVoteIv.setImageResource(R.drawable.blue_triangle);
                                 }
-                                System.out.println(id);
+                                
                             }
 
                             //currentPost.
