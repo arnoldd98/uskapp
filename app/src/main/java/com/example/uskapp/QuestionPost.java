@@ -2,7 +2,7 @@ package com.example.uskapp;
 
 import java.util.ArrayList;
 
-public class QuestionPost extends Post{
+public class QuestionPost extends Post {
     private ArrayList<String> answerPostIDs = new ArrayList<String>(); // array lists need be created IDS added later on thru method
     //private ArrayList<AnswerPost> answers_list;
     private ArrayList<String> tags_string_list;
@@ -50,6 +50,8 @@ public class QuestionPost extends Post{
     public ArrayList<String> getTagsStringList() {
         return tags_string_list;
     }
+
+
 
 
 

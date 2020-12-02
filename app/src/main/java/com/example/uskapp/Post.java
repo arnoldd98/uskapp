@@ -42,7 +42,7 @@ public abstract class Post{
         this.subject = subject;
         this.upvotes = upvotes;
     }
-
+    
     public String getName() {
         return name;
     }
@@ -111,5 +111,4 @@ public abstract class Post{
     public String getTimestamp() {
         return timestamp;
     }
-
 }
