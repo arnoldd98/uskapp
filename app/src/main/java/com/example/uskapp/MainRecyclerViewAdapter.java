@@ -186,7 +186,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             is_favourited[0] = true;
         } else {
             holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
-            is_favourited[0] = true;
+            is_favourited[0] = false;
         }
 
         holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
