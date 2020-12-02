@@ -42,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="40dp"
-                android:text="TextView"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,7 +51,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="10dp"
-                android:text="TextView"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toBottomOf="@+id/expProgressBar" />
 
@@ -62,7 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="10dp"
-                android:text="TextView"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toBottomOf="@+id/rankTv" />
 

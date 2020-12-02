@@ -164,7 +164,7 @@ public class HomeActivity extends BaseNavigationActivity {
             main_recycler_view.setAdapter(viewAdapter);
         }
 
-        //check if user is following the post
+        // check if user is following the post
         DatabaseReference UserRef1 = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         UserRef1.addValueEventListener(new ValueEventListener() {
