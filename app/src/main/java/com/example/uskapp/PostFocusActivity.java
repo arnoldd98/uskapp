@@ -182,15 +182,16 @@ public class PostFocusActivity extends AppCompatActivity {
                             }
 
                             currentPost.setAnswerPostIDs(answerPostIDs);
-
+                            ArrayList<String> tempIds = new ArrayList<String>();
                             for(DataSnapshot id : arraySnapVoteID.getChildren()){
                                 String value = id.getValue(String.class);
-                                currentPost.addUserUpvote(value);
+                                tempIds.add(value);
                             }
+                            currentPost.setUsersWhoUpVoted(tempIds);
 
                             for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
                                 if(upvoteIDs.equals(local_user.getCurrentUserId()) ){
-                                    upVoteIv.setImageResource(R.drawable.blue_triangle);
+                                    //upVoteIv.setImageResource(R.drawable.blue_triangle);
                                     is_upVoted = true;
                                 }
                             }
@@ -353,12 +354,82 @@ public class PostFocusActivity extends AppCompatActivity {
         upVoteIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(upVoteIv.getDrawable().equals(R.drawable.blue_triangle) ){
+                    upVoteIv.setImageResource(R.drawable.empty_triangle);
+                } else {
+                    upVoteIv.setImageResource(R.drawable.blue_triangle);
+                }
+
+                PostFocusActivity.this.is_upVoted =true;
+                for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
+                    if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                        PostFocusActivity.this.is_upVoted=false;
+                    }
+                }
+
+                if(PostFocusActivity.this.is_upVoted){
+                    //upVoteIv.setImageResource(R.drawable.empty_triangle);
+                    currentPost.increaseUpVote();
+                    givePosterKarma(currentPost.getUserID());
+                    int i = currentPost.getUpvotes();
+                    String id = currentPost.getPostID();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
+                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                } else {
+                    int newUpvoteCount = currentPost.getUpvotes()-1;
+                    String id = currentPost.getPostID();
+                    final DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int numVotes = snapshot.getValue(Integer.class);
+                            postRef.setValue(numVotes-1);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                    postRef.setValue(newUpvoteCount);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+
+                    currentPost.removeUserUpvote(local_user.getCurrentUserId());
+                    ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
+
+                    postRef2.setValue(newUsersID);
+                    upVoteIv.setImageResource(R.drawable.empty_triangle);
+                    is_upVoted = false;
+                    Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
+                }
+                /*
+                // if already voted
                 if (is_upVoted) {
 
                     int newUpvoteCount = currentPost.getUpvotes()-1;
                     String id = currentPost.getPostID();
-                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                    final DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("upvotes");
+                    postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int numVotes = snapshot.getValue(Integer.class);
+                            postRef.setValue(numVotes-1);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                     postRef.setValue(newUpvoteCount);
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
@@ -380,14 +451,15 @@ public class PostFocusActivity extends AppCompatActivity {
                     postRef.setValue(i);
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
-
-                    currentPost.addUserUpvote(local_user.getCurrentUserId());
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
-
+                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    //postRef2.setValue(newUsersID);
                     postRef2.setValue(newUsersID);
                     upVoteIv.setImageResource(R.drawable.blue_triangle);
                     is_upVoted=true;
                 }
+
+                 */
             }
 
             private void givePosterKarma(String posterID) {
