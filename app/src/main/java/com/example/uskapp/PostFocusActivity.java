@@ -86,7 +86,7 @@ public class PostFocusActivity extends AppCompatActivity {
     private boolean is_favourited;
     private boolean is_upVoted;
     private boolean is_view_image;
-    private boolean imageThere = false; 
+    private boolean imageThere = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
