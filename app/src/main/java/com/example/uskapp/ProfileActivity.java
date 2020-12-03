@@ -83,7 +83,6 @@ public class ProfileActivity extends BaseNavigationActivity {
                 expBar.setProgress(exp);
                 expBar.setMax(100);
                 expBar.setProgressBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#ffeb3b")));
-                favoritedAdapter.notifyDataSetChanged();
                 getFavoritedPostsFromFirebase();
             }
 
@@ -311,6 +310,5 @@ public class ProfileActivity extends BaseNavigationActivity {
                 }
             });
         }
-        favoritedAdapter.notifyDataSetChanged();
     }
 }

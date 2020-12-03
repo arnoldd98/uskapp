@@ -109,12 +109,19 @@ public abstract class Post implements Comparable<Post> {
         this.upvotes = upvotes;
     }
 
+    public void setUsersWhoUpVoted(ArrayList<String> usersWhoUpVoted) {
+        this.usersWhoUpVoted = usersWhoUpVoted;
+    }
+
     public ArrayList<String> getUsersWhoUpVoted() {
         return usersWhoUpVoted;
     }
 
     public void addUserUpvote(String userID){
         this.usersWhoUpVoted.add(userID);
+    }
+    public void removeUserUpvote(String userID) {
+        this.usersWhoUpVoted.remove(userID);
     }
 
     public String getSubject() {

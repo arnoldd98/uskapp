@@ -52,23 +52,23 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public class HomeActivity extends BaseNavigationActivity {
-    ConstraintLayout home_container;
-    RecyclerView main_recycler_view;
-    Toolbar top_toolbar;
-    ImageButton choose_subject_button;
-    TextView current_topic_textview;
-    RelativeLayout indicate_search_term_layout;
-    Button close_search_result_button;
+    private ConstraintLayout home_container;
+    private RecyclerView main_recycler_view;
+    private Toolbar top_toolbar;
+    private ImageButton choose_subject_button;
+    private TextView current_topic_textview;
+    private RelativeLayout indicate_search_term_layout;
+    private Button close_search_result_button;
 
-    MainRecyclerViewAdapter viewAdapter;
-    DatabaseReference mDatabase;
+    private MainRecyclerViewAdapter viewAdapter;
+    private DatabaseReference mDatabase;
 
     // set arraylists to hold posts and profile images
-    static ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
-    static ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
+    protected static ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
+    protected static ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
 
     // define which subjects posts are shown from. If "home", show the home feed
-    static String current_subject;
+    private static String current_subject;
 
     // variables to check if search is on
     // helper variables for indicateCurrentSearchTermFunction
@@ -336,7 +336,6 @@ public class HomeActivity extends BaseNavigationActivity {
                     }
 
                 }
-                System.out.println("Posts: " + posts_list);
                 Collections.sort(posts_list);
                 viewAdapter.notifyDataSetChanged();
             }

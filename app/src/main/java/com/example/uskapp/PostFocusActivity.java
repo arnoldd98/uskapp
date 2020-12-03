@@ -160,6 +160,7 @@ public class PostFocusActivity extends AppCompatActivity {
                             final boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                             String subject = s.child("subject").getValue(String.class);
 
+                            tagsList.clear();
                             DataSnapshot arraySnapTagsID = s.child("tagsList");
                             for (DataSnapshot id : arraySnapTagsID.getChildren()) {
                                 String value = id.child("tagName").getValue(String.class);
@@ -177,10 +178,15 @@ public class PostFocusActivity extends AppCompatActivity {
                                 String value = id.getValue(String.class);
                                 answerPostIDs.add(value);
                             }
-                            currentPost.setAnswerPostIDs(answerPostIDs);
+
+                            for(DataSnapshot id : arraySnapVoteID.getChildren()){
+                                String value = id.getValue(String.class);
+                                currentPost.addUserUpvote(value);
+                            }
 
                             for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
-                                if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+                                if(upvoteIDs.equals(local_user.getCurrentUserId()) ){
+                                    System.out.println("UPVOTE UPVOTE");
                                     upVoteIv.setImageResource(R.drawable.blue_triangle);
                                     is_upVoted = true;
                                 }
@@ -191,7 +197,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                 is_favourited = true;
                             } else {
                                 favourite_button.setBackgroundResource(R.drawable.star_unselected);
-                                is_favourited = true;
+                                is_favourited = false;
                             }
 
                             StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
@@ -261,7 +267,7 @@ public class PostFocusActivity extends AppCompatActivity {
                             }
 
                             postTextTv.setText(text);
-                            upVoteTv.setText(String.valueOf(upvotes));
+                            upVoteTv.setText(upvotes + " ups");
                             commentTv.setText(String.valueOf(currentPost.getAnswerPostIDs().size()));
 
                             // set recyclerview showing tags of post under question text
@@ -343,7 +349,7 @@ public class PostFocusActivity extends AppCompatActivity {
         upVoteIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(is_upVoted ==true){
+                if (is_upVoted) {
 
                     int newUpvoteCount = currentPost.getUpvotes()-1;
                     String id = currentPost.getPostID();
@@ -352,16 +358,15 @@ public class PostFocusActivity extends AppCompatActivity {
                     postRef.setValue(newUpvoteCount);
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
-                    ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
 
-                    newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    currentPost.removeUserUpvote(local_user.getCurrentUserId());
+                    ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
 
                     postRef2.setValue(newUsersID);
                     upVoteIv.setImageResource(R.drawable.empty_triangle);
                     is_upVoted = false;
                 }
-                else{
-                    upVoteIv.setImageResource(R.drawable.blue_triangle);
+                else {
                     currentPost.increaseUpVote();
                     givePosterKarma(currentPost.getUserID());
                     int i = currentPost.getUpvotes();
@@ -371,9 +376,12 @@ public class PostFocusActivity extends AppCompatActivity {
                     postRef.setValue(i);
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
+
+                    currentPost.addUserUpvote(local_user.getCurrentUserId());
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
-                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                     postRef2.setValue(newUsersID);
+                    upVoteIv.setImageResource(R.drawable.blue_triangle);
                     is_upVoted=true;
                 }
             }

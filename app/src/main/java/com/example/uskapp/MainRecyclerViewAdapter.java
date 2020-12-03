@@ -135,9 +135,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             } catch (Exception e){
                 holder.profile_image_view.setImageResource(R.drawable.ic_launcher_foreground);
             }
-
-
-
+            
             holder.question_author_name.setText(post.getName());
 
 
@@ -208,7 +206,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
-                if(upvoted[0] ==true){
+                if(upvoted[0]){
                     holder.ups_indicator_image.setImageResource(R.drawable.empty_triangle);
                     int newUpvoteCount = post.getUpvotes()-1;
                     String id = post_data.get(position).getPostID();
@@ -236,6 +234,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                     ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
                     newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
+                    upvoted[0] = true;
                 }
 
             }
@@ -458,7 +457,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
