@@ -56,7 +56,7 @@ public class TagAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
                     if (activity instanceof HomeActivity) {
-                        ((HomeActivity) activity).indicateCurrentSearchTerm(current_tag_name, true);
+                        ((HomeActivity) activity).indicateCurrentSearchTerm(current_tag_name);
                     } else {
                         Intent search_tag_intent = new Intent(activity, HomeActivity.class);
                         search_tag_intent.putExtra("searchtag", current_tag_name);

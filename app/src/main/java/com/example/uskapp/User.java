@@ -50,7 +50,6 @@ public class User {
         this.email = email;
     }
 
-
     public int getTotal_posts() {
         return total_posts;
     }
@@ -108,9 +107,5 @@ public class User {
     }
     public void addPostFollowing(String newPostID){
         this.postFollowing.add(newPostID);
-    }
-
-    public void update(String updates) {
-        // what to update whenever the post u are following updates
     }
 }

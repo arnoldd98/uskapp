@@ -125,8 +125,6 @@ public class ProfileActivity extends BaseNavigationActivity {
         karmaIconView = findViewById(R.id.karma_icon);
         expBar = findViewById(R.id.expProgressBar);
         signOutBtn = findViewById(R.id.signOutBtn);
-        //expBar.setMax(100);
-        //expBar.setProgress(50);
 
         favorited_post_recyclerview = findViewById(R.id.favorited_post_recyclerview);
         LinearLayoutManager layout_manager = new LinearLayoutManager(this);
@@ -135,7 +133,6 @@ public class ProfileActivity extends BaseNavigationActivity {
         favorited_post_recyclerview.setLayoutManager(layout_manager);
         favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps);
         favorited_post_recyclerview.setAdapter(favoritedAdapter);
-
 
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,6 +252,7 @@ public class ProfileActivity extends BaseNavigationActivity {
         if(favourited_posts!= null){
             favourited_posts.clear();
         }
+
         for (String id : local_user.getFollowingPostIDs()) {
             DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost").child(id);
             postRef.addValueEventListener(new ValueEventListener() {
@@ -297,6 +295,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                                                       public void onSuccess(byte[] bytes) {
                                                           Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                           profileBitmaps.add(bitmap);
+                                                          favoritedAdapter.notifyDataSetChanged();
                                                       }
                                                   }
                             );

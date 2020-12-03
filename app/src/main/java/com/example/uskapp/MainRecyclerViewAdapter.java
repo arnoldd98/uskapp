@@ -187,8 +187,9 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         } else {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(holder.constraint_layout_container);
-            cs.connect(R.id.tag_recyclerview, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 8);
-            holder.constraint_layout_container.removeView(holder.image_layout);
+            System.out.println("YES YES YES");
+            cs.connect(R.id.tag_recyclerview, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 0);
+            cs.connect(R.id.tag_recyclerview, ConstraintSet.TOP, R.id.question_textview, ConstraintSet.BOTTOM, 0);
             cs.applyTo(holder.constraint_layout_container);
         }
 
@@ -410,7 +411,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         public TextView question_author_name;
         public TextView post_timestamp;
         public TextView question_textview;
-        public Toolbar options_menu_toolbar;
         public RecyclerView tag_recyclerview;
         public LinearLayout image_layout;
         public LinearLayout ups_indicator_layout;
@@ -430,7 +430,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             question_author_name = (TextView) postView.findViewById(R.id.question_author_name);
             post_timestamp = (TextView) postView.findViewById(R.id.post_timestamp);
             question_textview = (TextView) postView.findViewById(R.id.question_textview);
-            options_menu_toolbar = (Toolbar) postView.findViewById(R.id.options_menu_toolbar);
             tag_recyclerview = (RecyclerView) postView.findViewById(R.id.question_tag_recyclerview);
             image_layout = (LinearLayout) postView.findViewById(R.id.image_horizontal_linear_layout);
             ups_indicator_layout = (LinearLayout) postView.findViewById(R.id.ups_indicator_layout);
