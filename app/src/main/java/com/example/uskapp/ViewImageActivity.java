@@ -150,12 +150,7 @@ public class ViewImageActivity extends AppCompatActivity {
         else view.startAnimation(fade_out);
     }
 
-    public void fadeOut(final View view) {
-
-    }
-
-    // set animations for transitioning (previous activity slides out left, current activity slides in right)
-
+    // set animations for transitioning (slide direction depending on "SlideDir" extra in intent)
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
@@ -166,5 +161,11 @@ public class ViewImageActivity extends AppCompatActivity {
     public void startActivity(Intent intent, @Nullable Bundle options) {
         super.startActivity(intent, options);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }
