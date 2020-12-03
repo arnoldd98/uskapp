@@ -42,6 +42,10 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
 
     public AnswerRecyclerViewAdapter(Context ctx, List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps, ArrayList<Bitmap> ArrayListAnswerImages) {
         this.answer_data = answer_data;
+        for (AnswerPost answerPost : answer_data) {
+            System.out.println("HERE IS IT");
+            System.out.println(answerPost.getPostID());
+        }
         this.answerProfileBitmaps=answerProfileBitmaps;
         this.ArrayListAnswerImages = ArrayListAnswerImages;
         this.ctx = ctx;

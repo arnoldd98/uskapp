@@ -39,22 +39,20 @@
         layout="@layout/question_card_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/top_toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/top_toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/answer_recycler_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-
         app:layout_constraintBottom_toTopOf="@+id/enter_answer_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.326"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_card_view" />
+        app:layout_constraintTop_toBottomOf="@id/post_card_view"/>
 
     <LinearLayout
         android:id="@+id/enter_answer_bar"

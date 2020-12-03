@@ -51,6 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,6 +85,7 @@ public class PostFocusActivity extends AppCompatActivity {
     private LocalUser local_user = LocalUser.getCurrentUser();
     private boolean is_favourited;
     private boolean is_upVoted;
+    private boolean is_view_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +181,8 @@ public class PostFocusActivity extends AppCompatActivity {
                                 answerPostIDs.add(value);
                             }
 
+                            currentPost.setAnswerPostIDs(answerPostIDs);
+
                             for(DataSnapshot id : arraySnapVoteID.getChildren()){
                                 String value = id.getValue(String.class);
                                 currentPost.addUserUpvote(value);
@@ -186,7 +190,6 @@ public class PostFocusActivity extends AppCompatActivity {
 
                             for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
                                 if(upvoteIDs.equals(local_user.getCurrentUserId()) ){
-                                    System.out.println("UPVOTE UPVOTE");
                                     upVoteIv.setImageResource(R.drawable.blue_triangle);
                                     is_upVoted = true;
                                 }
@@ -246,6 +249,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                                         Intent image_intent = new Intent(PostFocusActivity.this, ViewImageActivity.class);
                                                         image_intent.putExtra("PostText", text);
                                                         image_intent.putExtra("ImageBitmap", bitmap);
+                                                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                                         startActivity(image_intent);
                                                     }
                                                 });
@@ -328,8 +332,8 @@ public class PostFocusActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent view_pic_intent = new Intent(activity, ViewImageActivity.class);
                 view_pic_intent.putExtra("ImageUri", imageUri);
-
                 view_pic_intent.putExtra("PostText", user_answer_edit_text.getText().toString());
+                is_view_image = true;
                 activity.startActivity(view_pic_intent);
 
             }
@@ -436,6 +440,7 @@ public class PostFocusActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
+    // handler function when user posts answer
     private void postAnswer(boolean is_anon) {
         Date now = new Date();
         long timestamp = now.getTime();
@@ -452,7 +457,6 @@ public class PostFocusActivity extends AppCompatActivity {
         String answer_text = user_answer_edit_text.getText().toString();
 
         AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,is_anon);
-
         ansPost.setPicId(picID);
         //adds a new answer post
         FirebaseDatabase.getInstance().getReference("AnswerPost")
@@ -503,7 +507,6 @@ public class PostFocusActivity extends AppCompatActivity {
                     String subject = snapshot.child("subject").getValue(String.class);
                     String picId = snapshot.child("picId").getValue(String.class);
                     DataSnapshot arrayOfUsersUpvote = snapshot.child("usersWhoUpVoted");
-
 
 
                     AnswerPost currentReply = new AnswerPost(name,userID,postID,text,timestamp,subject,toggle_anonymity,upvotes);
@@ -565,7 +568,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
     public void updateCurrentPost(){
         //currentPost.setPostImageIDs();
-        currentPost.setAnswerPostIDs(answerPostIDs); //maybe need comment out
+        currentPost.setAnswerPostIDs(answerPostIDs); // maybe need comment out
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(currentPostID).setValue(currentPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
