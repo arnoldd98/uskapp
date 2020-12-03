@@ -29,7 +29,7 @@ public class SubjectActivity extends AppCompatActivity {
 
 
     RecyclerView recycler;
-    Adapter adapter;
+    SubjectAdapter adapter;
     ArrayList<String> subjectTitle;
     //ArrayList<Bitmap> subjectBitmaps= new ArrayList<Bitmap>();
     private DatabaseReference mDatabase;
@@ -94,7 +94,7 @@ public class SubjectActivity extends AppCompatActivity {
         int[] androidcolors = getResources().getIntArray(R.array.androidcolors);
 
         //creating recylcerview adapter
-        adapter = new Adapter(this, subjectTitle, androidcolors);
+        adapter = new SubjectAdapter(this, subjectTitle, androidcolors);
 
         //setting the adapter
         recycler.setAdapter(adapter);

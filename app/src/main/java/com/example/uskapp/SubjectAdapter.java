@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter {
+public class SubjectAdapter extends RecyclerView.Adapter {
 
     //private ArrayList<Bitmap> subjectBitmaps;
     private ArrayList<String> subjectArrayList;
@@ -23,7 +23,7 @@ public class Adapter extends RecyclerView.Adapter {
     private Activity activity;
 
 
-    public Adapter(Activity activity, ArrayList<String> subjectArrayList, int[] androidcolors) {
+    public SubjectAdapter(Activity activity, ArrayList<String> subjectArrayList, int[] androidcolors) {
         this.activity = activity;
         this.androidcolors = androidcolors;
         //this.subjectBitmaps =subjectBitmaps;
@@ -83,6 +83,4 @@ public class Adapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return subjectArrayList.size();
     }
-
-
 }

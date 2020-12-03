@@ -123,6 +123,7 @@ public class HomeActivity extends BaseNavigationActivity {
             @Override
             public void onClick(View v) {
                 // reset back to main feed (if search is called)
+                setListenerForPostsList(getCurrentQuery());
                 viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps);
                 main_recycler_view.setAdapter(viewAdapter);
 
@@ -149,7 +150,6 @@ public class HomeActivity extends BaseNavigationActivity {
                     });
 
                     indicate_search_term_layout.startAnimation(fade_out);
-
                     is_search = false;
                 }
             }
@@ -157,7 +157,7 @@ public class HomeActivity extends BaseNavigationActivity {
 
         // if tag is searched (clicked from elsewhere other than HomeActivity)
         if (getIntent().getStringExtra("searchtag") != null) {
-            indicateCurrentSearchTerm(getIntent().getStringExtra("searchtag"), true);
+            indicateCurrentSearchTerm(getIntent().getStringExtra("searchtag"));
         }
 
 
@@ -217,7 +217,7 @@ public class HomeActivity extends BaseNavigationActivity {
 
     // create a layout which indicates the current search term when a tag button is pressed
     @SuppressLint("ResourceAsColor")
-    public void indicateCurrentSearchTerm(String term, boolean is_tag) {
+    public void indicateCurrentSearchTerm(String term) {
         current_subject = "Home";
         Query query = getCurrentQuery();
         setListenerForPostsList(query);
@@ -228,25 +228,18 @@ public class HomeActivity extends BaseNavigationActivity {
             return;
         }
         View search_term_view;
-        if (is_tag) {
-            search_term_view = LayoutInflater.from(this).inflate(R.layout.tag_selector_view, null);
-            TextView text = search_term_view.findViewById(R.id.tag_name_textview);
-            text.setText(term);
-        } else {
-            // create text if search term is entered in search bar
-            search_term_view = new TextView(this);
-            ((TextView) search_term_view).setText(term);
-            ((TextView) search_term_view).setTextColor(R.color.colorPrimary);
-            ((TextView) search_term_view).setTextSize(18);
-            search_term_view.setPadding(8, 0, 0, 0);
-        }
+        // create text if search term is entered in search bar
+        search_term_view = new TextView(this);
+        ((TextView) search_term_view).setText(term);
+        ((TextView) search_term_view).setTextColor(R.color.colorPrimary);
+        ((TextView) search_term_view).setTextSize(18);
+        search_term_view.setPadding(8, 0, 0, 0);
 
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.RIGHT_OF, R.id.hc_search_for_textview);
         lp.addRule(RelativeLayout.CENTER_VERTICAL);
 
         if (is_search) {
-            System.out.println("IS SEARCH");
             // remove current search view if tag was clicked again
             indicate_search_term_layout.removeViewAt(2);
         }
@@ -321,13 +314,18 @@ public class HomeActivity extends BaseNavigationActivity {
                             String value = id.getValue(String.class);
                             qnPost.addUserUpvote(value);
                         }
+                    }
+
+                    Collections.sort(posts_list);
+                    for (QuestionPost post : posts_list) {
+                        String userID = post.getUserID();
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                                 .child(userID);
-                        imageRef.getBytes(2048*2048)
+                        imageRef.getBytes(2048 * 2048)
                                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                                           @Override
                                                           public void onSuccess(byte[] bytes) {
-                                                              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                                                               profileBitmaps.add(bitmap);
                                                               viewAdapter.notifyDataSetChanged();
                                                           }
@@ -336,7 +334,6 @@ public class HomeActivity extends BaseNavigationActivity {
                     }
 
                 }
-                Collections.sort(posts_list);
                 viewAdapter.notifyDataSetChanged();
             }
 
