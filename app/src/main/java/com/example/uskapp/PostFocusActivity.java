@@ -72,7 +72,7 @@ public class PostFocusActivity extends AppCompatActivity {
     Activity activity;
     LinearLayout horizontalImageLayout;
     RecyclerView tag_recyclerview;
-
+    ArrayList<String> picIDArray = new ArrayList<String>();
     String currentPostID,name,replyPostID;
     Uri imageUri;
     QuestionPost currentPost;
@@ -86,6 +86,7 @@ public class PostFocusActivity extends AppCompatActivity {
     private boolean is_favourited;
     private boolean is_upVoted;
     private boolean is_view_image;
+    private boolean imageThere = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,43 +225,50 @@ public class PostFocusActivity extends AppCompatActivity {
                                                           }
                                     );
 
-                            ArrayList<String> picIDArray = new ArrayList<String>();
                             for(DataSnapshot snap : arraySnapPicID.getChildren()){
                                 picIDArray.add(snap.getValue(String.class));
                             }
-                            currentPost.setPostImageIDs(picIDArray);
+
                             for(String picID : picIDArray){
-                                StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                                        .child(picID);
-                                postImageRef.getBytes(2048*2048)
-                                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                            @Override
-                                            public void onSuccess(byte[] bytes) {
-                                                final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                                                ImageView qnImageView = new ImageView(PostFocusActivity.this);
-                                                qnImageView.setScaleType(ImageView.ScaleType.CENTER);
-                                                qnImageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+                                if(imageThere){
 
-                                                qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,600,600,true));
-                                                horizontalImageLayout.addView(qnImageView);
+                                } else {
+                                    StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                                            .child(picID);
+                                    postImageRef.getBytes(2048*2048)
+                                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                @Override
+                                                public void onSuccess(byte[] bytes) {
 
-                                                qnPostLayout.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        Intent image_intent = new Intent(PostFocusActivity.this, ViewImageActivity.class);
-                                                        image_intent.putExtra("PostText", text);
-                                                        image_intent.putExtra("ImageBitmap", bitmap);
-                                                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                                        startActivity(image_intent);
-                                                    }
-                                                });
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(activity, "picture error", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                                    final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                                                    ImageView qnImageView = new ImageView(PostFocusActivity.this);
+                                                    qnImageView.setScaleType(ImageView.ScaleType.CENTER);
+                                                    qnImageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                                    qnImageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,600,600,true));
+
+                                                    horizontalImageLayout.addView(qnImageView);
+
+                                                    qnPostLayout.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            Intent image_intent = new Intent(PostFocusActivity.this, ViewImageActivity.class);
+                                                            image_intent.putExtra("PostText", text);
+                                                            image_intent.putExtra("ImageBitmap", bitmap);
+                                                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                                            startActivity(image_intent);
+                                                        }
+                                                    });
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(activity, "picture error", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    imageThere = true;
+                                }
+
                             }
 
 
