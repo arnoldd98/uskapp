@@ -134,7 +134,6 @@ public class ProfileActivity extends BaseNavigationActivity {
         favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps);
         favorited_post_recyclerview.setAdapter(favoritedAdapter);
 
-
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

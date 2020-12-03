@@ -73,16 +73,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/post_timestamp" />
 
-        <Toolbar
-            android:id="@+id/options_menu_toolbar"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:menu="@menu/question_card_dropdown_menu" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/question_tag_recyclerview"
             android:layout_width="wrap_content"
@@ -95,7 +85,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question_textview"></androidx.recyclerview.widget.RecyclerView>
+            app:layout_constraintTop_toBottomOf="@id/image_horizontal_linear_layout"></androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:id="@+id/image_horizontal_linear_layout"
@@ -118,7 +108,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_horizontal_linear_layout">
+            app:layout_constraintTop_toBottomOf="@id/question_tag_recyclerview">
 
             <ImageView
                 android:id="@+id/ups_indicator_imageview"
@@ -145,10 +135,11 @@
             android:layout_height="15dp"
             android:layout_marginStart="12dp"
             android:layout_marginBottom="12dp"
+            android:layout_marginTop="0dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
-            app:layout_constraintTop_toBottomOf="@id/image_horizontal_linear_layout">
+            app:layout_constraintTop_toBottomOf="@id/question_tag_recyclerview">
 
             <ImageView
                 android:id="@+id/comment_indicator_imageview"
@@ -173,8 +164,8 @@
             android:id="@+id/star_question_button"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/star_unselected"
             android:textOff=""
             android:textOn=""
