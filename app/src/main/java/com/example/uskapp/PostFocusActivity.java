@@ -263,7 +263,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                             }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(activity, "picture error", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(activity, "Error loading picture", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                     imageThere = true;
@@ -416,7 +416,6 @@ public class PostFocusActivity extends AppCompatActivity {
                     postRef2.setValue(newUsersID);
                     upVoteIv.setImageResource(R.drawable.empty_triangle);
                     is_upVoted = false;
-                    Toast.makeText(PostFocusActivity.this, "already voted", Toast.LENGTH_SHORT).show();
                 }
                 /*
                 // if already voted

@@ -6,25 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Build;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -267,104 +259,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 }
             }
         });
-
-//        holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                final Post post = post_data.get(position);
-//                holder.favourite_question_button.setBackgroundResource(R.drawable.star_favourited);
-//                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").
-//                        child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-//                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        String email = snapshot.child("email").getValue(String.class);
-//                        String name = snapshot.child("name").getValue(String.class);
-//                        int karma = snapshot.child("karma").getValue(Integer.class);
-//                        int total_posts = snapshot.child("total_posts").getValue(Integer.class);
-//                        int total_answers = snapshot.child("total_answers").getValue(Integer.class);
-//                        DataSnapshot arrayFollowingPosts = snapshot.child("postFollowing");
-//
-//                        ArrayList<String> tempPostFollowing = new ArrayList<String>();
-//
-//                        for(DataSnapshot s : arrayFollowingPosts.getChildren()){
-//                            String postfollowingId = s.getValue(String.class);
-//                            tempPostFollowing.add(postfollowingId);
-//                        }
-//
-//                        User currentUser = new User(name,email,karma,total_posts,total_answers);
-//                        //currentUser.setPostFollowing(tempPostFollowing);
-//                        boolean valid = true;
-//                        for(String postsFollowed : tempPostFollowing){
-//                            if(post_data.get(position).getPostID().equals(postsFollowed)){
-//                                valid = false;
-//                                //Toast.makeText(view.getContext(), "follow failed", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                        //if current post is not followed
-//                        if(valid){
-//                            holder.favourite_question_button.setBackgroundResource(R.drawable.star_red);
-//                            tempPostFollowing.add(post_data.get(position).getPostID());
-//                            currentUser.setPostFollowing(tempPostFollowing);
-//                            FirebaseDatabase.getInstance().getReference("Users")
-//                                    .child(FirebaseAuth.getInstance().getUid()).setValue(currentUser)
-//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Void> task) {
-//                                        }
-//                                    });
-//
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//
-//
-//            }
-//        });
-
-
-        /*
-        // set on click listener on star button to toggle if post should be favourited by user
-        holder.favourite_question_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            String subscribed = "Successfully subscribed!";
-                            if (!task.isSuccessful()) {
-                                subscribed = "Failed to subscribe";
-                            }
-                            Log.d(TAG, subscribed);
-                            Toast.makeText(activity, subscribed, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                } else {
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(post.getPostID()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            String unsubscribed = "Successfully unsubscribed!";
-                            if (!task.isSuccessful()) {
-                                unsubscribed = "Failed to unsubscribe";
-                            }
-                            Log.d(TAG, unsubscribed);
-                            Toast.makeText(activity, unsubscribed, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
-                }
-            }
-        });
-        */
-
     }
 
     @Override
