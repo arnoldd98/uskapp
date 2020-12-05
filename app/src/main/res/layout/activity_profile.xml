@@ -42,6 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="40dp"
+                android:fontFamily="@font/nunitosans_semibold"
+                android:textSize="20sp"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="10dp"
+                android:fontFamily="@font/nunitosans_semibold"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toBottomOf="@+id/expProgressBar" />
 
@@ -59,17 +62,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/nunitosans_semibold"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toBottomOf="@+id/rankTv" />
 
             <ProgressBar
                 android:id="@+id/expProgressBar"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="102dp"
+                android:layout_width="150dp"
                 android:layout_height="38dp"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="5dp"
                 android:progressTint="#ffeb3b"
                 app:layout_constraintStart_toEndOf="@+id/userProfile"
                 app:layout_constraintTop_toBottomOf="@+id/nameTv" />
