@@ -96,7 +96,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         //THE RECYCLER LOGIC IS SCREWING IT UP NEED LOOK IT UP
-        holder.setIsRecyclable(false);
+        //holder.setIsRecyclable(false);
         final QuestionPost post = post_data.get(position);
         holder.card_container.setOnClickListener(new View.OnClickListener() {
 
