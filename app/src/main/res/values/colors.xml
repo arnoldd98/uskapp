@@ -13,13 +13,18 @@
     <item name="green" type="color">#FF99CC00</item>
     <item name="orange" type="color">#FFFFBB33</item>
     <item name="red" type="color">#FFFF4444</item>
+    <item name="Lightblue" type="color">#AED6F1</item>
+    <item name="Lightpurple" type="color">#D2B4DE</item>
+    <item name="Lightgreen" type="color">#ABEBC6</item>
+    <item name="Lightorange" type="color">#FAD7A0</item>
+    <item name="Lightred" type="color">#F5B7B1</item>
 
 
     <integer-array name="androidcolors">
-        <item>@color/blue</item>
-        <item>@color/purple</item>
-        <item>@color/green</item>
-        <item>@color/orange</item>
-        <item>@color/red</item>
+        <item>@color/Lightpurple</item>
+        <item>@color/Lightblue</item>
+        <item>@color/Lightgreen</item>
+        <item>@color/Lightorange</item>
+        <item>@color/Lightred</item>
     </integer-array>
 </resources>
