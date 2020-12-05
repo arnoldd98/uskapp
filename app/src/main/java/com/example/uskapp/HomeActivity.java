@@ -299,7 +299,12 @@ public class HomeActivity extends BaseNavigationActivity {
                         String timestamp = s.child("timestamp").getValue(String.class);
                         boolean toggle_anonymity = s.child("toggle_anonymity").getValue(Boolean.class);
                         String subject = s.child("subject").getValue(String.class);
+                        int upvotes  = s.child("upvotes").getValue(Integer.class);
                         DataSnapshot arraySnapTagsID = s.child("tagsList");
+                        DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
+                        DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
+                        DataSnapshot arraySnapPicID = s.child("postImageIDs");
+
                         ArrayList<Tag> tags = new ArrayList<Tag>();
                         for (DataSnapshot id : arraySnapTagsID.getChildren()) {
                             String value = id.child("tagName").getValue(String.class);
@@ -307,11 +312,25 @@ public class HomeActivity extends BaseNavigationActivity {
                         }
                         ArrayList<String> tag_strings = Tag.getTagStringList(tags);
 
-                        int upvotes  = s.child("upvotes").getValue(Integer.class);
-                        DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
-                        DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
+                        final ArrayList<Bitmap> qnPics = new ArrayList<Bitmap>();
+                        for(DataSnapshot id : arraySnapPicID.getChildren()){
+                            String value = id.getValue(String.class);
+                            StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                                    .child(value);
+                            imageRef.getBytes(2048 * 2048)
+                                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                              @Override
+                                                              public void onSuccess(byte[] bytes) {
+                                                                  Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                                                  qnPics.add(bitmap);
+
+                                                              }
+                                                          }
+                                    );
+                        }
 
                         QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject, tag_strings, toggle_anonymity,upvotes);
+                        qnPost.setPictures(qnPics);
                         posts_list.add(qnPost);
                         for(DataSnapshot id : arraySnapAnsID.getChildren()){
                             String value = id.getValue(String.class);
@@ -321,11 +340,51 @@ public class HomeActivity extends BaseNavigationActivity {
                             String value = id.getValue(String.class);
                             qnPost.addUserUpvote(value);
                         }
+                        for(DataSnapshot id : arraySnapPicID.getChildren()){
+                            String value = id.getValue(String.class);
+                            qnPost.addPostImageIDs(value);
+                        }
                     }
 
                 }
                 Collections.sort(posts_list);
-                viewAdapter.notifyDataSetChanged();
+                for (QuestionPost post : posts_list) {
+                    String userID = post.getUserID();
+                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+                            .child(userID);
+                    imageRef.getBytes(2048 * 2048)
+                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                      @Override
+                                                      public void onSuccess(byte[] bytes) {
+                                                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                                          profileBitmaps.add(bitmap);
+                                                          viewAdapter.notifyDataSetChanged();
+                                                      }
+                                                  }
+                            );
+                    viewAdapter.notifyDataSetChanged();
+                }
+                /*
+                for(QuestionPost post : posts_list){
+                    ArrayList<String> picIDArray = post.getPostImageIDs();
+                    final ArrayList<Bitmap> postQuestionBitmaps = new ArrayList<Bitmap>();
+                    for (String postImageID : picIDArray){
+                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                                .child(postImageID);
+                        imageRef.getBytes(2048*2048)
+                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0,bytes.length);
+                                        postQuestionBitmaps.add(bitmap);
+                                    }
+                                });
+                    }
+                    questionBitmaps.add(postQuestionBitmaps);
+
+                }
+
+                 */
             }
 
             @Override

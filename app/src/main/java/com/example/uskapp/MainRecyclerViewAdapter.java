@@ -54,11 +54,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private ArrayList<QuestionPost> post_data;
     private ArrayList<QuestionPost> post_data_all; //all filtered question postss
     private LayoutInflater mInflater;
-    private AdapterView.OnItemClickListener post_click_listener;
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
-    private ArrayList<String> currentUserPostFollowing;
-    private Bitmap bitmap;
     private LocalUser local_user = LocalUser.getCurrentUser();
 
     public MainRecyclerViewAdapter(Activity activity, ArrayList<QuestionPost> post_list
@@ -98,7 +95,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @SuppressLint({"ResourceAsColor", "ResourceType"})
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-
+        //THE RECYCLER LOGIC IS SCREWING IT UP NEED LOOK IT UP
+        holder.setIsRecyclable(false);
         final QuestionPost post = post_data.get(position);
         holder.card_container.setOnClickListener(new View.OnClickListener() {
 
@@ -149,32 +147,66 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
 
         //if there are
-        if (post.getPostImageIDs().size()!=0) {
 
-            ImageView image_view = new ImageView(holder.card_view_context);
+        if (post.getPictures().size()!=0) {
+            //prevents over adding
+            if(holder.image_layout.getChildCount() < post.getPictures().size()){
+                for(Bitmap bitmap : post.getPictures()){
+                    ImageView image_view = new ImageView(holder.card_view_context);
+                    image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 400
+                            , 400 , false));
+                    image_view.setMaxHeight(holder.image_layout.getHeight());
 
-            //firebase getting image
-            StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            imageRef.getBytes(2048*2048)
-                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    e.printStackTrace();
+                    holder.image_layout.addView(image_view);
+
                 }
-            });
-            if(bitmap != null){
-                image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, image_view.getWidth()
-                        , image_view.getHeight(), false));
-                image_view.setMaxHeight(holder.image_layout.getHeight());
-
-                holder.image_layout.addView(image_view);
             }
+
+
+
+
+
+            /*
+        if (questionBitmaps.get(position).size()>0) {
+            if(holder.image_layout.getChildCount() == 0) {
+                for (Bitmap bitmap : questionBitmaps.get(position)) {
+
+                /*
+                //firebase getting image
+                StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                        .child(postPicId);
+                imageRef.getBytes(2048*2048)
+                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+
+                    try {
+                        ImageView image_view = new ImageView(holder.card_view_context);
+                        image_view.setImageBitmap(bitmap);
+                        image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 400
+                                , 400, false));
+                        image_view.setMaxHeight(holder.image_layout.getHeight());
+                        holder.image_layout.addView(image_view);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+             */
+
+
 
         } else {
             ConstraintSet cs = new ConstraintSet();
