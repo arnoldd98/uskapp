@@ -1,5 +1,7 @@
 package com.example.uskapp;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 public class QuestionPost extends Post {
@@ -7,6 +9,7 @@ public class QuestionPost extends Post {
     //private ArrayList<AnswerPost> answers_list;
     private ArrayList<String> tags_string_list;
     private ArrayList<String> post_followers = new ArrayList<>();
+    private ArrayList<Bitmap> pictures = new ArrayList<>();
 
     public QuestionPost(String name, String userID, String postID, String text, String timestamp,
                         String subject, ArrayList<String> tags_list, boolean toggle_anonymity) {
@@ -51,10 +54,11 @@ public class QuestionPost extends Post {
         return tags_string_list;
     }
 
+    public ArrayList<Bitmap> getPictures() {
+        return pictures;
+    }
 
-
-
-
-
-
+    public void setPictures(ArrayList<Bitmap> pictures) {
+        this.pictures = pictures;
+    }
 }
