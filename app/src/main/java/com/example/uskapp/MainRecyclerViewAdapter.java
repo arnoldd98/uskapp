@@ -70,6 +70,15 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.mInflater = LayoutInflater.from(activity.getApplicationContext());
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     @Override
     public int getItemCount() {
@@ -331,22 +340,22 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     // Create ViewHolder class, and specify the UI components which value are to be defined in the QuestionPost class
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public CardView card_container;
-        public ConstraintLayout constraint_layout_container;
-        public ImageView profile_image_view;
-        public TextView question_author_name;
-        public TextView post_timestamp;
-        public TextView question_textview;
-        public RecyclerView tag_recyclerview;
-        public LinearLayout image_layout;
-        public LinearLayout ups_indicator_layout;
-        public ImageView ups_indicator_image;
-        public TextView ups_indicator_textview;
-        public LinearLayout comment_indicator_layout;
-        public TextView comment_indicator_textview;
-        public Button favourite_question_button;
+        private CardView card_container;
+        private ConstraintLayout constraint_layout_container;
+        private ImageView profile_image_view;
+        private TextView question_author_name;
+        private TextView post_timestamp;
+        private TextView question_textview;
+        private RecyclerView tag_recyclerview;
+        private LinearLayout image_layout;
+        private LinearLayout ups_indicator_layout;
+        private ImageView ups_indicator_image;
+        private TextView ups_indicator_textview;
+        private LinearLayout comment_indicator_layout;
+        private TextView comment_indicator_textview;
+        private Button favourite_question_button;
 
-        public Context card_view_context;
+        private Context card_view_context;
 
         public ViewHolder(View postView) {
             super(postView);
