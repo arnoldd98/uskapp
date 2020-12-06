@@ -57,6 +57,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Activity activity;
     private ArrayList<Bitmap> profileBitmaps;
     private LocalUser local_user = LocalUser.getCurrentUser();
+    final DatabaseReference questionPostDatabase = FirebaseDatabase.getInstance().getReference("QuestionPost");
 
     public MainRecyclerViewAdapter(Activity activity, ArrayList<QuestionPost> post_list
             , ArrayList<Bitmap> profileBitmaps) {
@@ -128,11 +129,39 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
             //bitmap tends not to be properly loaded
             try{
-                Bitmap bmp = profileBitmaps.get(position);
-                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.profile_image_view.getWidth(),
-                        holder.profile_image_view.getHeight(), false));
-            } catch (Exception e){
-                holder.profile_image_view.setImageResource(R.drawable.ic_launcher_foreground);
+                questionPostDatabase.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                        String id = post_data.get(position).getPostID();
+                        String userID = (String) dataSnapshot.child(id).child("userID").getValue();
+                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+                                .child(userID);
+                        imageRef.getBytes(2048 * 2048)
+                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
+                                                holder.profile_image_view.getHeight(), false));
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        holder.profile_image_view.setImageResource(R.drawable.bunny2);
+                                        e.printStackTrace();
+                                    }
+                                    });
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        holder.profile_image_view.setImageResource(R.drawable.bunny2);
+                    }
+
+                });
+            }catch (Exception e){
+                System.out.println(e);
             }
             
             holder.question_author_name.setText(post.getName());
