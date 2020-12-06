@@ -94,7 +94,7 @@
         android:clickable="true"
         android:fontFamily="@font/nunitosans_regular"
         android:onClick="onClick"
-        android:text="register"
+        android:text="Register"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
