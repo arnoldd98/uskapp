@@ -34,13 +34,17 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
     private List<AnswerPost> answer_data;
     private ArrayList<Bitmap> answerProfileBitmaps;
     private ArrayList<Bitmap> ArrayListAnswerImages;
-    private Context context;
+    private Context ctx;
 
     public AnswerRecyclerViewAdapter(Context ctx, List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps, ArrayList<Bitmap> ArrayListAnswerImages) {
         this.answer_data = answer_data;
+        for (AnswerPost answerPost : answer_data) {
+            System.out.println("HERE IS IT");
+            System.out.println(answerPost.getPostID());
+        }
         this.answerProfileBitmaps=answerProfileBitmaps;
         this.ArrayListAnswerImages = ArrayListAnswerImages;
-        this.context = ctx;
+        this.ctx = ctx;
     }
 
     @Override
@@ -49,6 +53,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             return 0;
         }
         return answer_data.size();
+
     }
 
 
@@ -87,7 +92,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
         holder.answer_tv.setText(answer.getText());
         //  ADDING IMAGES OF REPLIES
         if(ArrayListAnswerImages != null){
-            ImageView imageView = new ImageView(context);
+            ImageView imageView = new ImageView(ctx);
             imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
             try {
                 imageView.setImageBitmap(Bitmap.createScaledBitmap(ArrayListAnswerImages.get(position),600,600,true));
@@ -96,6 +101,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                 e.printStackTrace();
             }
         }
+
 
 
         //upvoting button
@@ -126,7 +132,18 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                     newUsersID.add(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                     postRef2.setValue(newUsersID);
                 } else {
-                    Toast.makeText(context, "already voted", Toast.LENGTH_SHORT).show();
+                    minusPosterKarma(post.getUserID());
+                    String id = answer_data.get(position).getPostID();
+                    int i = post.getUpvotes()-1;
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
+                    newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
+                    Toast.makeText(ctx, "already voted", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -138,6 +155,23 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         int karma = snapshot.child("karma").getValue(Integer.class);
                         karma +=1;
+                        posterRef.child("karma").setValue(karma);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+            private void minusPosterKarma(String posterID) {
+                final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                        .child(posterID);
+                posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int karma = snapshot.child("karma").getValue(Integer.class);
+                        karma -=1;
                         posterRef.child("karma").setValue(karma);
                     }
 
