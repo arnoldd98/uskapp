@@ -215,7 +215,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
         ////////////////////////////////////////////////////////////////////////////////////////////
         // UPVOTE
-        holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
+        holder.ups_indicator_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);

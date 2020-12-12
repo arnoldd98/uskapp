@@ -102,9 +102,9 @@
         <LinearLayout
             android:id="@+id/ups_indicator_layout"
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="25dp"
             android:layout_marginStart="15dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -112,16 +112,19 @@
 
             <ImageView
                 android:id="@+id/ups_indicator_imageview"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:src="@drawable/empty_triangle" />
 
             <TextView
                 android:id="@+id/ups_indicator_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="0dp"
                 android:fontFamily="@font/nunitosans_regular"
                 android:text="11 ups"
                 android:textColor="@color/gray"
@@ -132,10 +135,9 @@
         <LinearLayout
             android:id="@+id/comment_indicator__layout"
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="25dp"
             android:layout_marginStart="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ups_indicator_layout"
@@ -143,17 +145,20 @@
 
             <ImageView
                 android:id="@+id/comment_indicator_imageview"
-                android:layout_width="20dp"
+                android:layout_width="25dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:src="@drawable/comment" />
 
             <TextView
                 android:id="@+id/comment_indicator__textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
+                android:layout_gravity="center_vertical"
                 android:fontFamily="@font/nunitosans_regular"
+                android:gravity="left"
                 android:text="10 answers"
                 android:textColor="@color/gray"
                 android:textSize="11sp"
