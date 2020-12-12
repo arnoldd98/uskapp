@@ -58,6 +58,7 @@ public class ProfileActivity extends BaseNavigationActivity {
     Uri imageUri;
 
     private ArrayList<QuestionPost> favourited_posts = new ArrayList<>();
+    private ArrayList<Bitmap> profileBitmaps = new ArrayList<>();
     private LocalUser local_user = LocalUser.getCurrentUser();
     MainRecyclerViewAdapter favoritedAdapter;
 
@@ -288,6 +289,16 @@ public class ProfileActivity extends BaseNavigationActivity {
 
                     QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tags), toggle_anonymity,upvotes);
 
+
+                    for(DataSnapshot id : arraySnapAnsID.getChildren()){
+                        String value = id.getValue(String.class);
+                        qnPost.addAnswerPostID(value);
+                    }
+                    for(DataSnapshot id : arraySnapVoteID.getChildren()){
+                        String value = id.getValue(String.class);
+                        qnPost.addUserUpvote(value);
+                    }
+
                     boolean valid =true;
                     for(Post p : favourited_posts){
                         String id = p.getPostID();
@@ -297,14 +308,6 @@ public class ProfileActivity extends BaseNavigationActivity {
                     }
                     if(valid){
                         favourited_posts.add(qnPost);
-                    }
-                    for(DataSnapshot id : arraySnapAnsID.getChildren()){
-                        String value = id.getValue(String.class);
-                        qnPost.addAnswerPostID(value);
-                    }
-                    for(DataSnapshot id : arraySnapVoteID.getChildren()){
-                        String value = id.getValue(String.class);
-                        qnPost.addUserUpvote(value);
                     }
                     favoritedAdapter.notifyDataSetChanged();
                 }
