@@ -39,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -46,22 +47,18 @@ import java.util.List;
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> implements Filterable {
     private ArrayList<QuestionPost> post_data;
     private ArrayList<QuestionPost> post_data_all; //all filtered question postss
-    private LayoutInflater mInflater;
     private Activity activity;
-    private ArrayList<Bitmap> profileBitmaps;
+    private HashMap<String, Bitmap> savedBitmaps = new HashMap<String, Bitmap>();
     private LocalUser local_user = LocalUser.getCurrentUser();
     final DatabaseReference questionPostDatabase = FirebaseDatabase.getInstance().getReference("QuestionPost");
 
-    public MainRecyclerViewAdapter(Activity activity, ArrayList<QuestionPost> post_list
-            , ArrayList<Bitmap> profileBitmaps) {
+    public MainRecyclerViewAdapter(Activity activity, ArrayList<QuestionPost> post_list) {
         this.post_data = post_list;
         this.post_data_all = new ArrayList<QuestionPost>();
         for (QuestionPost questionPost : post_list) {
             post_data_all.add(questionPost);
         }
         this.activity = activity;
-        this.profileBitmaps = profileBitmaps;
-        this.mInflater = LayoutInflater.from(activity.getApplicationContext());
     }
 
     @Override
@@ -128,26 +125,31 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                             return;
                         };
                         String id = post_data.get(position).getPostID();
-                        String userID = (String) dataSnapshot.child(id).child("userID").getValue();
-                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-                                .child(userID);
-                        imageRef.getBytes(2048 * 2048)
-                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                    @Override
-                                    public void onSuccess(byte[] bytes) {
-                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                        if (holder.profile_image_view.getHeight() > 0 && holder.profile_image_view.getWidth() > 0) {
-                                            holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
-                                                    holder.profile_image_view.getHeight(), false));
+                        final String userID = (String) dataSnapshot.child(id).child("userID").getValue();
+                        if (savedBitmaps.containsKey(userID)) {
+                            holder.profile_image_view.setImageBitmap(savedBitmaps.get(userID));
+                        } else {
+                            StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
+                                    .child(userID);
+                            imageRef.getBytes(2048 * 2048)
+                                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                        @Override
+                                        public void onSuccess(byte[] bytes) {
+                                            Bitmap profile_bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            if (holder.profile_image_view.getHeight() > 0 && holder.profile_image_view.getWidth() > 0) {
+                                                holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(profile_bitmap, holder.profile_image_view.getWidth(),
+                                                        holder.profile_image_view.getHeight(), false));
+                                                savedBitmaps.put(userID, profile_bitmap);
+                                            }
                                         }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        holder.profile_image_view.setImageResource(R.drawable.bunny2);
-                                        e.printStackTrace();
-                                    }
-                                    });
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    holder.profile_image_view.setImageResource(R.drawable.bunny2);
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
 
                     }
 

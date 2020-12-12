@@ -55,7 +55,6 @@ public class HomeActivity extends BaseNavigationActivity {
 
     // set arraylists to hold posts and profile images
     protected static ArrayList<QuestionPost> posts_list = new ArrayList<QuestionPost>();
-    protected static ArrayList<Bitmap> profileBitmaps = new ArrayList<Bitmap>();
 
     // define which subjects posts are shown from. If "home", show the home feed
     private static String current_subject;
@@ -112,7 +111,7 @@ public class HomeActivity extends BaseNavigationActivity {
             @Override
             public void onClick(View v) {
                 // reset back to main feed (if search is called)
-                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list,profileBitmaps);
+                viewAdapter = new MainRecyclerViewAdapter(HomeActivity.this, posts_list);
                 main_recycler_view.setAdapter(viewAdapter);
 
                 // shift recyclerview down to accomodate for search indicator layout
@@ -152,7 +151,7 @@ public class HomeActivity extends BaseNavigationActivity {
 
         // Set custom adapter to inflate the recycler view
         if (!is_search) {
-            viewAdapter = new MainRecyclerViewAdapter(this, posts_list, profileBitmaps);
+            viewAdapter = new MainRecyclerViewAdapter(this, posts_list);
             main_recycler_view.setAdapter(viewAdapter);
         }
     }
@@ -252,10 +251,6 @@ public class HomeActivity extends BaseNavigationActivity {
                 if (tag_string.equals(term)) {
                     searched_posts.add(post);
                     int position = posts_list.indexOf(post);
-
-                    if (profileBitmaps != null && !profileBitmaps.isEmpty()) {
-                        search_profile_bitmaps.add(profileBitmaps.get(position));
-                    }
                 }
             }
         }
@@ -266,7 +261,7 @@ public class HomeActivity extends BaseNavigationActivity {
         cs.connect(R.id.main_menu_recycler_view, ConstraintSet.TOP, R.id.indicate_search_term_layout, ConstraintSet.BOTTOM, 5);
         cs.applyTo(home_container);
 
-        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts, search_profile_bitmaps);
+        viewAdapter = new MainRecyclerViewAdapter(this, searched_posts);
         main_recycler_view.setAdapter(viewAdapter);
 
     }
@@ -311,7 +306,7 @@ public class HomeActivity extends BaseNavigationActivity {
                                                               public void onSuccess(byte[] bytes) {
                                                                   Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                                                                   qnPics.add(bitmap);
-
+                                                                  viewAdapter.notifyDataSetChanged();
                                                               }
                                                           }
                                     );
@@ -332,26 +327,11 @@ public class HomeActivity extends BaseNavigationActivity {
                             String value = id.getValue(String.class);
                             qnPost.addPostImageIDs(value);
                         }
+                        viewAdapter.notifyDataSetChanged();
                     }
 
                 }
                 Collections.sort(posts_list);
-                for (QuestionPost post : posts_list) {
-                    String userID = post.getUserID();
-                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-                            .child(userID);
-                    imageRef.getBytes(2048 * 2048)
-                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                                      @Override
-                                                      public void onSuccess(byte[] bytes) {
-                                                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                                          profileBitmaps.add(bitmap);
-                                                          viewAdapter.notifyDataSetChanged();
-                                                      }
-                                                  }
-                            );
-                    viewAdapter.notifyDataSetChanged();
-                }
             }
 
             @Override

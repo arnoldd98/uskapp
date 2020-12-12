@@ -78,7 +78,6 @@ public class PostFocusActivity extends AppCompatActivity {
     ArrayList<Bitmap> answerProfilePhotos = new ArrayList<Bitmap>();
     ArrayList<Tag> tagsList = new ArrayList<Tag>();
     ArrayList<Bitmap> answerPictures = new ArrayList<>();
-    ArrayList<Bitmap> currentReplyPictures = new ArrayList();
     private LocalUser local_user = LocalUser.getCurrentUser();
     private boolean is_favourited;
     private boolean is_upVoted;
@@ -263,7 +262,9 @@ public class PostFocusActivity extends AppCompatActivity {
                                                         public void onClick(View v) {
                                                             Intent image_intent = new Intent(PostFocusActivity.this, ViewImageActivity.class);
                                                             image_intent.putExtra("PostText", text);
-                                                            image_intent.putExtra("ImageBitmap", bitmap);
+                                                            Bitmap compressed_bitmap = Utils.compressBitmapLossless(bitmap);
+                                                            image_intent.putExtra("ImageBitmap", compressed_bitmap);
+
                                                             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                                             startActivity(image_intent);
                                                         }

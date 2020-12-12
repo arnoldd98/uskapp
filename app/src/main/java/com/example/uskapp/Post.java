@@ -54,8 +54,6 @@ public abstract class Post implements Comparable<Post> {
         try {
             Date date1 = sdf.parse(this.timestamp);
             Date date2 = sdf.parse(o.timestamp);
-            System.out.println("Date1: " + date1);
-            System.out.println("Date2: " + date2);
             if (date1.after(date2)) return -1;
             else if (date1.equals(date2)) return 0;
             else if (date1.before(date2)) return 1;

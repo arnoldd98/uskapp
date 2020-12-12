@@ -144,6 +144,8 @@ public class LocalUser {
     private void listenFollowedPosts() {
         DatabaseReference userRef = getUserRef();
 
+
+
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

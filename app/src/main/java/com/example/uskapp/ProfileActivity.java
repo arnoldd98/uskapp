@@ -58,7 +58,6 @@ public class ProfileActivity extends BaseNavigationActivity {
     Uri imageUri;
 
     private ArrayList<QuestionPost> favourited_posts = new ArrayList<>();
-    private ArrayList<Bitmap> profileBitmaps = new ArrayList<>();
     private LocalUser local_user = LocalUser.getCurrentUser();
     MainRecyclerViewAdapter favoritedAdapter;
 
@@ -132,7 +131,7 @@ public class ProfileActivity extends BaseNavigationActivity {
         layout_manager.setStackFromEnd(false);
         layout_manager.setOrientation(RecyclerView.VERTICAL);
         favorited_post_recyclerview.setLayoutManager(layout_manager);
-        favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps);
+        favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts);
         favorited_post_recyclerview.setAdapter(favoritedAdapter);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +147,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                 }
             }
         });
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // CHANGING PROFILE PICTURE
         profilePicIV.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +163,7 @@ public class ProfileActivity extends BaseNavigationActivity {
 
 
     }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
     // METHOD THAT HANDLES THE CONVERSION OF KARMA TO RANK AND THE IMAGE ASSOCIATED WITH EACH RANK
     private String convertKaramaToRank(int karma) {
@@ -189,6 +190,7 @@ public class ProfileActivity extends BaseNavigationActivity {
             return "Sundae";
         }
     }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // FOR THE EXP GAUGE
     private int convertKaramaToExp(int karma) {
@@ -304,19 +306,6 @@ public class ProfileActivity extends BaseNavigationActivity {
                         String value = id.getValue(String.class);
                         qnPost.addUserUpvote(value);
                     }
-
-                    StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-                            .child(userID);
-                    imageRef.getBytes(2048*2048)
-                            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                                      @Override
-                                                      public void onSuccess(byte[] bytes) {
-                                                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                                                          profileBitmaps.add(bitmap);
-                                                          //favoritedAdapter.notifyDataSetChanged();
-                                                      }
-                                                  }
-                            );
                     favoritedAdapter.notifyDataSetChanged();
                 }
 
@@ -326,6 +315,10 @@ public class ProfileActivity extends BaseNavigationActivity {
                     Toast.makeText(getApplicationContext(), "failed db", Toast.LENGTH_SHORT).show();
                 }
             });
+        }
+
+        if (local_user.getFollowingPostIDs().isEmpty()) {
+            favourited_posts.clear();
         }
     }
 }
