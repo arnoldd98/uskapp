@@ -52,7 +52,7 @@ public class ProfileActivity extends BaseNavigationActivity {
     private DatabaseReference mDatabase;
     private StorageReference mStorageRef;
     private String name;
-    private int rank, exp, karma;
+    private int karma;
     private static final int PICK_IMAGE = 1;
     Uri imageUri;
 
@@ -285,6 +285,16 @@ public class ProfileActivity extends BaseNavigationActivity {
 
                     QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tags), toggle_anonymity,upvotes);
 
+
+                    for(DataSnapshot id : arraySnapAnsID.getChildren()){
+                        String value = id.getValue(String.class);
+                        qnPost.addAnswerPostID(value);
+                    }
+                    for(DataSnapshot id : arraySnapVoteID.getChildren()){
+                        String value = id.getValue(String.class);
+                        qnPost.addUserUpvote(value);
+                    }
+
                     boolean valid =true;
                     for(Post p : favourited_posts){
                         String id = p.getPostID();
@@ -295,15 +305,6 @@ public class ProfileActivity extends BaseNavigationActivity {
                     if(valid){
                         favourited_posts.add(qnPost);
                     }
-                    for(DataSnapshot id : arraySnapAnsID.getChildren()){
-                        String value = id.getValue(String.class);
-                        qnPost.addAnswerPostID(value);
-                    }
-                    for(DataSnapshot id : arraySnapVoteID.getChildren()){
-                        String value = id.getValue(String.class);
-                        qnPost.addUserUpvote(value);
-                    }
-
                     StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                             .child(userID);
                     imageRef.getBytes(2048*2048)
