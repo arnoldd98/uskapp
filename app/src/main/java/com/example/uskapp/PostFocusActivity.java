@@ -128,8 +128,8 @@ public class PostFocusActivity extends AppCompatActivity {
         answer_recyclerview.setLayoutManager(linear_layout_manager);
         answerAdapter = new AnswerRecyclerViewAdapter(this,answerPostArrayList,answerProfilePhotos,answerPictures);
         answer_recyclerview.setAdapter(answerAdapter);
-
-        //getting name of current user
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //GETTING NAME OF CURRENT USER
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
         userRef.addValueEventListener(new ValueEventListener() {
@@ -142,8 +142,9 @@ public class PostFocusActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //DATA FOR THE CURRENT QUESTION POST
+
         if(currentPostID != null){
             Query query = FirebaseDatabase.getInstance().getReference("QuestionPost")
                     .orderByChild("postID")
@@ -155,7 +156,6 @@ public class PostFocusActivity extends AppCompatActivity {
                         for(DataSnapshot s : snapshot.getChildren()){
                             String name = s.child("name").getValue(String.class);
                             String userID = s.child("userID").getValue(String.class);
-                            //String postImageID = s.child("postImageID").getValue(String.class);
                             String postID =s.child("postID").getValue(String.class);
                             final String text = s.child("text").getValue(String.class);
                             String timestamp = s.child("timestamp").getValue(String.class);
@@ -169,20 +169,21 @@ public class PostFocusActivity extends AppCompatActivity {
                                 String value = id.child("tagName").getValue(String.class);
                                 tagsList.add(new Tag(value));
                             }
-
+                            // ARRAYS NEED TO BE LOOPED, LOOPED BELOW
                             DataSnapshot arraySnapAnsID = s.child("answerPostIDs");
                             DataSnapshot arraySnapVoteID = s.child("usersWhoUpVoted");
                             DataSnapshot arraySnapPicID = s.child("postImageIDs");
 
                             currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tagsList),toggle_anonymity,upvotes);
-                            //currentPost.setPostImageIDs(postImageID);
+                            // ADDING ARRAY OF REPLY IDS
                             answerPostIDs.clear();
                             for(DataSnapshot id : arraySnapAnsID.getChildren()){
                                 String value = id.getValue(String.class);
                                 answerPostIDs.add(value);
                             }
-
                             currentPost.setAnswerPostIDs(answerPostIDs);
+
+                            // ADDING ARRAY OF USER IDS WHO UPVOTED
                             ArrayList<String> tempIds = new ArrayList<String>();
                             for(DataSnapshot id : arraySnapVoteID.getChildren()){
                                 String value = id.getValue(String.class);
@@ -190,6 +191,8 @@ public class PostFocusActivity extends AppCompatActivity {
                             }
                             currentPost.setUsersWhoUpVoted(tempIds);
 
+                            //LOOP TO CHECK WHETHER TO DISPLAY WHETHER THE CURRENT USER HAS ALREADY
+                            //VOTED ON A POST
                             for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
                                 if(upvoteIDs.equals(local_user.getCurrentUserId()) ){
                                     //upVoteIv.setImageResource(R.drawable.blue_triangle);
@@ -197,6 +200,8 @@ public class PostFocusActivity extends AppCompatActivity {
                                 }
                             }
 
+                            //LOOP TO CHECK WHETHER TO DISPLAY WHETHER THE CURRENT USER HAS ALREADY
+                            //FAVOURITED A POST
                             if (local_user.getFollowingPostIDs().contains(currentPost.getPostID())) {
                                 favourite_button.setBackgroundResource(R.drawable.star_favourited);
                                 is_favourited = true;
@@ -205,6 +210,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                 is_favourited = false;
                             }
 
+                            // FETCHING OF PROFILE PICTURES OF THE POSTER OF EACH POST
                             StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                                     .child(userID);
                             imageRef.getBytes(2048*2048)
@@ -214,6 +220,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                                                   Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                                   RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                                                                   roundBitmap.setCircular(true);
+                                                                  // HANDLING OF ANONYMITY, WHETHER TO DISPLAY PROFILE PICTURE
                                                                   if(toggle_anonymity==false){
                                                                       profilePicIv.setImageDrawable(roundBitmap);
                                                                   }
@@ -225,14 +232,18 @@ public class PostFocusActivity extends AppCompatActivity {
                                                           }
                                     );
 
+                            //ADDING ARRAY OF CURRENT POST PICTURE IDS
                             for(DataSnapshot snap : arraySnapPicID.getChildren()){
                                 picIDArray.add(snap.getValue(String.class));
                             }
                             currentPost.setPostImageIDs(picIDArray);
+
+                            // LOOP TO PREVENT DUPLICATE IMAGES FROM APPEARING
                             for(String picID : picIDArray){
                                 if(imageThere){
 
                                 } else {
+                                    //IF NO DUPLICATE, ADD IMAGE TO IMAGE VIEW AND DISPLAY THAT IMAGEVIEW
                                     StorageReference postImageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
                                             .child(picID);
                                     postImageRef.getBytes(2048*2048)
@@ -270,6 +281,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                 }
                             }
 
+                            //SETTING OF DATA TO UI
                             timeStampTv.setText(timestamp);
                             if(toggle_anonymity==false){
                                 nameTv.setText(name);
@@ -304,8 +316,9 @@ public class PostFocusActivity extends AppCompatActivity {
                 }
             });
         }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // UI FOR REPLYING
+
         user_answer_edit_text = (EditText) findViewById(R.id.user_answer_edittext);
         send_answer_button = (ImageButton) findViewById(R.id.send_answer_button);
         // SENDS A REPLY
@@ -353,13 +366,14 @@ public class PostFocusActivity extends AppCompatActivity {
                 Utils.popUpImageOptions(PostFocusActivity.this, getPackageManager());
             }
         });
-
-        // upvote click
-        // checks if valid then updates the question post data
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // UPVOTING click
+        // CHECKS if USER HAS ALREADY VOTED
 
         upVoteIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //HANDLING OF UI THAT DISPLAYS WHETHER UPVOTED
                 if(upVoteIv.getDrawable().equals(R.drawable.blue_triangle) ){
                     upVoteIv.setImageResource(R.drawable.empty_triangle);
                 } else {
@@ -367,6 +381,7 @@ public class PostFocusActivity extends AppCompatActivity {
                 }
 
                 PostFocusActivity.this.is_upVoted =true;
+                //CHECKS WHETHER USER HAS VOTED
                 for(String upvoteIDs : currentPost.getUsersWhoUpVoted()){
                     if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                         PostFocusActivity.this.is_upVoted=false;
@@ -374,11 +389,14 @@ public class PostFocusActivity extends AppCompatActivity {
                 }
 
                 if(PostFocusActivity.this.is_upVoted){
+                    //IF USER HAS NOT VOTED ADD A VOTE TO FIREBASE DATA
                     //upVoteIv.setImageResource(R.drawable.empty_triangle);
                     currentPost.increaseUpVote();
                     givePosterKarma(currentPost.getUserID());
                     int i = currentPost.getUpvotes();
                     String id = currentPost.getPostID();
+
+                    //UPDATINNG FIREBASE
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("upvotes");
                     postRef.setValue(i);
@@ -387,9 +405,14 @@ public class PostFocusActivity extends AppCompatActivity {
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
                     newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
+
                 } else {
+                    //USER ALREADY VOTED BEFORE AND NOW WANT TO REMOVE HIS VOTE
+                    // REMOVING USERS UPVOTE
                     int newUpvoteCount = currentPost.getUpvotes()-1;
                     String id = currentPost.getPostID();
+
+                    //UPDATING FIREBASE
                     final DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("upvotes");
                     postRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -466,7 +489,8 @@ public class PostFocusActivity extends AppCompatActivity {
 
                  */
             }
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // METHOD TO HANDLE GIVING KARMA TO THE USER WHO POSTED
             private void givePosterKarma(String posterID) {
                 final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
                         .child(posterID);
@@ -485,6 +509,9 @@ public class PostFocusActivity extends AppCompatActivity {
                 });
             }
         });
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // FAVOURITE BUTTON WHICH UPDATE'S THE CURRENT USERS DATA TO INCLUDE THE POST ID FAVOURED
 
         favourite_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -516,8 +543,8 @@ public class PostFocusActivity extends AppCompatActivity {
         super.startActivity(intent, options);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-
-    // handler function when user posts answer
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    // FUNCTION THAT HANDLES A USER POSTING AN ANSWER TO THE CURRENT POST
     private void postAnswer(boolean is_anon) {
         Date now = new Date();
         long timestamp = now.getTime();
@@ -535,7 +562,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
         AnswerPost ansPost = new AnswerPost(name,userID,postID,answer_text,dateStr,subject,is_anon);
         ansPost.setPicId(picID);
-        //adds a new answer post
+        //adds a new answer post TO FIREBASE
         FirebaseDatabase.getInstance().getReference("AnswerPost")
                 .child(postID).setValue(ansPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -565,9 +592,9 @@ public class PostFocusActivity extends AppCompatActivity {
             });
         }
     }
-    //getting reply data and storing it in an array
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //METHOD THAT GETS REPLY DATA OF THE CURRENT POST AND STORES IN AN ARRAY
     private void getRepliesFromFirebase(){
-        //answerProfilePhotos.clear();
         for (String id : currentPost.getAnswerPostIDs() ){
             DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("AnswerPost")
                     .child(id);
@@ -592,7 +619,7 @@ public class PostFocusActivity extends AppCompatActivity {
                         String id = s.getValue(String.class);
                         currentReply.addUserUpvote(id);
                     }
-
+                    //PREVENTS DUPLICATE REPLIES FROM APPEARING
                     boolean valid=true;
                     for(AnswerPost a : answerPostArrayList){
                         if(a.getPostID().equals(postID)){
@@ -603,7 +630,7 @@ public class PostFocusActivity extends AppCompatActivity {
                       answerPostArrayList.add(currentReply);
                     }
 
-                    //getting profile pictures
+                    //getting profile pictures OF EACH REPLY
                     StorageReference profileRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                             .child(userID);
                     profileRef.getBytes(2048*2048)
@@ -630,7 +657,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                                       }
                                                   }
                             );
-
+                    //REFLECT CHANGES IN THE ADAPTER
                     answerAdapter.notifyDataSetChanged();
                 }
 
@@ -642,7 +669,8 @@ public class PostFocusActivity extends AppCompatActivity {
         }
         answerAdapter.notifyDataSetChanged();
     }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // UPDATES THE CURRENT POST DATA
     public void updateCurrentPost(){
         currentPost.setAnswerPostIDs(answerPostIDs);
         FirebaseDatabase.getInstance().getReference("QuestionPost")
