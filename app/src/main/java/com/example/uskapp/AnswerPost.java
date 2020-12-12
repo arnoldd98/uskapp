@@ -1,7 +1,5 @@
 package com.example.uskapp;
 
-import java.util.ArrayList;
-
 public class AnswerPost extends Post {
     String picId;
     public AnswerPost(String name, String userID, String postID, String text, String timestamp, String subject,

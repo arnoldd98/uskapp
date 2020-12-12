@@ -1,29 +1,21 @@
 package com.example.uskapp;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.view.ActionMode;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class SubjectActivity extends AppCompatActivity {
 
@@ -52,27 +44,7 @@ public class SubjectActivity extends AppCompatActivity {
                     for (DataSnapshot s : snapshot.getChildren()) {
                         String subject = s.getValue(String.class);
                         subjectTitle.add(subject);
-
-
-                        //StorageReference imageRef = FirebaseStorage.getInstance().getReference("SubjectPictures")
-                        //        .child(subject+".jpg");
-                        //imageRef.getBytes(2048*2048)
-                        //        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        //                                  @Override
-                        //                                  public void onSuccess(byte[] bytes) {
-                        //                                      Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                        //                                      subjectBitmaps.add(bitmap);
-                        //                                      adapter.notifyDataSetChanged();
-                        //                                  }
-                        //                              }
-                        //        ).addOnFailureListener(new OnFailureListener() {
-                        //    @Override
-                        //    public void onFailure(@NonNull Exception e) {
-                        //        subjectBitmaps.add(null);
-                        //    }
-                        //});
                     }
-                    //adapter.notifyDataSetChanged();
                 }
                 adapter.notifyDataSetChanged();
             }

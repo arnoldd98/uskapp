@@ -15,18 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class SubjectAdapter extends RecyclerView.Adapter {
-
-    //private ArrayList<Bitmap> subjectBitmaps;
     private ArrayList<String> subjectArrayList;
-
     private int[] androidcolors;
     private Activity activity;
-
 
     public SubjectAdapter(Activity activity, ArrayList<String> subjectArrayList, int[] androidcolors) {
         this.activity = activity;
         this.androidcolors = androidcolors;
-        //this.subjectBitmaps =subjectBitmaps;
         this.subjectArrayList = subjectArrayList;
     }
 
@@ -45,13 +40,6 @@ public class SubjectAdapter extends RecyclerView.Adapter {
         final ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.button.setText(subjectArrayList.get(position));
         viewHolder.button.setBackgroundColor(androidcolors[position]);
-        //try{
-        //    viewHolder.imageView.setImageBitmap(subjectBitmaps.get(position));
-        //} catch (Exception e){
-        //    viewHolder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
-        //}
-        //viewHolder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
-
 
         viewHolder.button.setOnClickListener(new View.OnClickListener() {
             @Override

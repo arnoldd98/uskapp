@@ -105,8 +105,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @SuppressLint({"ResourceAsColor", "ResourceType"})
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        //THE RECYCLER LOGIC IS SCREWING IT UP NEED LOOK IT UP
-        //holder.setIsRecyclable(false);
         final QuestionPost post = post_data.get(position);
         holder.card_container.setOnClickListener(new View.OnClickListener() {
 
@@ -126,8 +124,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             holder.question_author_name.setText("Anonymous");
         }
         else {
-
-            //bitmap tends not to be properly loaded
+            //////////////////////////////////////////////////////////////////////////////////////
+            // GETTING PROFILE PICTURE DATA FOR EACH QN POST
             try{
                 questionPostDatabase.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
                     @Override
@@ -186,7 +184,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
 
         if (post.getPictures().size()!=0) {
-            //prevents over adding
+            //PREVENTS DUPLICATE PICTURES FROM APPEARING
             if(holder.image_layout.getChildCount() < post.getPictures().size()){
                 for(Bitmap bitmap : post.getPictures()){
                     ImageView image_view = new ImageView(holder.card_view_context);
@@ -205,21 +203,24 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             cs.connect(R.id.tag_recyclerview, ConstraintSet.TOP, R.id.question_textview, ConstraintSet.BOTTOM, 0);
             cs.applyTo(holder.constraint_layout_container);
         }
-
+        //DISPLAY NUMBER OF UPVOTES
         holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
         final boolean[] upvoted = {false};
+        //CHECKS IF USER ALREADY VOTED
         for(String upvoteIDs : post.getUsersWhoUpVoted()){
             if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
                 holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
                 upvoted[0] = true;
             }
         }
-
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // UPVOTE
         holder.ups_indicator_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Post post = post_data.get(position);
+                //IF USER HAS ALREADY VOTED
                 if(upvoted[0]){
                     holder.ups_indicator_image.setImageResource(R.drawable.empty_triangle);
                     int newUpvoteCount = post.getUpvotes()-1;
@@ -235,6 +236,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                     upvoted[0] = false;
                     MainRecyclerViewAdapter.this.notifyDataSetChanged();
                 }
+                //IF USER HAS NOT VOTED
                 else{
                     holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
                     post.increaseUpVote();
@@ -335,7 +337,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         private LinearLayout comment_indicator_layout;
         private TextView comment_indicator_textview;
         private Button favourite_question_button;
-
         private Context card_view_context;
 
         public ViewHolder(View postView) {
@@ -358,7 +359,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             card_view_context = postView.getContext();
         }
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //FUNCTION THAT GIVES THE USER WHO POSTED THE QN KARMA
     private void givePosterKarma(String posterID){
         final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
                 .child(posterID);

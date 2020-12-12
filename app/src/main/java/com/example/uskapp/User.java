@@ -6,7 +6,6 @@ import java.util.ArrayList;
 public class User {
     public String name;
     public String email;
-    //private String userId;
     private int total_posts;
     private int karma;
     private int total_answers;
@@ -23,7 +22,6 @@ public class User {
         this.total_posts=0;
         this.karma=0;
         this.total_answers=0;
-        //this.userId=userId;
     }
 
     public User(String name, String email, int karma, int total_posts, int total_answers){

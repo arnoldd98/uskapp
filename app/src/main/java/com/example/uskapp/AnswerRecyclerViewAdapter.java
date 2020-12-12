@@ -75,15 +75,12 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
         AnswerPost answer = answer_data.get(position);
-
+        // ANONYMITY HANDLING
         if (answer.toggle_anonymity){
             holder.answerer_profile_iv.setImageResource(R.drawable.image);
             holder.answer_author_name_tv.setText("Anonymous");
         }
         else {
-            //loading of replier's profile pic
-
-            //bitmap tends to not be properly loaded
             try{
                 Bitmap bitmap = answerProfileBitmaps.get(position);
                 holder.answerer_profile_iv.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.answerer_profile_iv.getWidth(),
@@ -91,15 +88,13 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             } catch (Exception e){
                 holder.answerer_profile_iv.setImageResource(R.drawable.ic_launcher_foreground);
             }
-
             holder.answer_author_name_tv.setText(answer.getName());
         }
 
         if (answer.getTimestamp() != null) holder.answer_post_timestamp_tv.setText(answer.getTimestamp());
-
         holder.up_answer_btn.setText(answer.getUpvotes() + " ups");
         holder.answer_tv.setText(answer.getText());
-
+        //  ADDING IMAGES OF REPLIES
         if(ArrayListAnswerImages != null){
             ImageView imageView = new ImageView(ctx);
             imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -164,40 +159,9 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             }
         });
 
-
-
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(holder.clickable_to_images_layout1.getHeight(),
                 holder.clickable_to_images_layout1.getHeight());
-        int image_count = 0;
-        /*
-        if (answer.getImages() != null) {
-            for (byte[] image : answer.getImages()) {
-                ImageView image_view = new ImageView(holder.answer_card_context);
-                Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
-                image_view.setImageBitmap(Bitmap.createScaledBitmap(bmp, image_view.getWidth()
-                        , image_view.getHeight(), false));
-                image_view.setId(image_count);
-                if (image_count == 0) {
-                    lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                    image_view.setLayoutParams(lp);
-                    holder.clickable_to_images_layout.addView(image_view);
-                    lp.removeRule(RelativeLayout.ALIGN_LEFT);
-                } else {
-                    lp.addRule(RelativeLayout.RIGHT_OF, image_count - 1);
-                    image_view.setLayoutParams(lp);
-                    holder.clickable_to_images_layout.addView(image_view);
-                    lp.removeRule(RelativeLayout.RIGHT_OF);
-                }
-                image_count++;
 
-                holder.clickable_to_images_layout.addView(image_view);
-            }
-            holder.image_count_textview.setText("View " + image_count + " images");
-        } else {
-            holder.answer_container_layout.removeView(holder.clickable_to_images_layout);
-        }
-
-         */
     }
 
 
@@ -209,8 +173,6 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
         public Button up_answer_btn;
         public TextView answer_tv;
         public RelativeLayout clickable_to_images_layout1;
-        public TextView image_count_textview;
-
         public Context answer_card_context;
 
         public ViewHolder(@NonNull View answerView) {
@@ -222,7 +184,6 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             up_answer_btn = (Button) answerView.findViewById(R.id.up_answer_button);
             answer_tv = (TextView) answerView.findViewById(R.id.answer_textview);
             clickable_to_images_layout1 = (RelativeLayout) answerView.findViewById(R.id.clickable_to_images_layout);
-
             answer_card_context = answerView.getContext();
         }
     }

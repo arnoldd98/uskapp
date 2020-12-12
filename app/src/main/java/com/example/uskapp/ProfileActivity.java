@@ -64,8 +64,8 @@ public class ProfileActivity extends BaseNavigationActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //gets information from firebase and displays it
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+        //GETS THE CURRENT USERS INFO AND DISPLAYS IT
         mDatabase = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -97,8 +97,8 @@ public class ProfileActivity extends BaseNavigationActivity {
             }
         });
 
-
-        //for the profile picture
+////////////////////////////////////////////////////////////////////////////////////////////////////
+        //GETS CURRENT USERS PROFILE PICTURE AND DISPLAYS IT
 
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -117,7 +117,7 @@ public class ProfileActivity extends BaseNavigationActivity {
             }
         });
 
-        //setting data to UI
+        //SETTING UP UI
         profilePicIV = findViewById(R.id.userProfile);
         nameView = findViewById(R.id.nameTv);
         rankView = findViewById(R.id.rankTv);
@@ -134,6 +134,8 @@ public class ProfileActivity extends BaseNavigationActivity {
         favoritedAdapter = new MainRecyclerViewAdapter(this, favourited_posts, profileBitmaps);
         favorited_post_recyclerview.setAdapter(favoritedAdapter);
 
+////////////////////////////////////////////////////////////////////////////////////////////
+        // SIGN OUT
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,7 +147,8 @@ public class ProfileActivity extends BaseNavigationActivity {
                 }
             }
         });
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // CHANGING PROFILE PICTURE
         profilePicIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,7 +162,8 @@ public class ProfileActivity extends BaseNavigationActivity {
 
 
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
+    // METHOD THAT HANDLES THE CONVERSION OF KARMA TO RANK AND THE IMAGE ASSOCIATED WITH EACH RANK
     private String convertKaramaToRank(int karma) {
         if(karma <=10){
             karmaIconView.setImageResource(R.drawable.caramel_pudding);
@@ -184,7 +188,8 @@ public class ProfileActivity extends BaseNavigationActivity {
             return "Sundae";
         }
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // FOR THE EXP GAUGE
     private int convertKaramaToExp(int karma) {
         if(karma <=10){
             return (int)(100*karma/10);
@@ -247,7 +252,8 @@ public class ProfileActivity extends BaseNavigationActivity {
 
         }
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //GETS POST DATA OF USERS FAVOURITED POSTS
     private void getFavoritedPostsFromFirebase() {
 
         if(favourited_posts!= null){
