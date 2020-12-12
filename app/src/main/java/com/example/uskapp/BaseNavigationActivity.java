@@ -3,13 +3,17 @@ package com.example.uskapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+/*
+    Base Navigation activity which is inherited by both HomeActivity and ProfileActivity
+    Used to facillitate switching between different activites using the navigation bar
+ */
 
 public abstract class BaseNavigationActivity extends AppCompatActivity {
     protected BottomNavigationView bottom_navigation_view;

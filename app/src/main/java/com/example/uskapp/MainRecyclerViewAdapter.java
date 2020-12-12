@@ -10,7 +10,6 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -23,33 +22,27 @@ import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Collection;
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
 
+// RecyclerView Adapter used in both HomeActivity and ProfileActivity. Used to fill recyclerview with question posts
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> implements Filterable {
     private ArrayList<QuestionPost> post_data;
     private ArrayList<QuestionPost> post_data_all; //all filtered question postss
@@ -130,6 +123,10 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 questionPostDatabase.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
                     @Override
                     public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                        if (position >= post_data.size()) {
+                            holder.profile_image_view.setImageResource(R.drawable.anonymous_icon);
+                            return;
+                        };
                         String id = post_data.get(position).getPostID();
                         String userID = (String) dataSnapshot.child(id).child("userID").getValue();
                         StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
@@ -161,7 +158,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
                 });
             }catch (Exception e){
-                System.out.println(e);
+                e.printStackTrace();
             }
             
             holder.question_author_name.setText(post.getName());
@@ -203,10 +200,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             cs.connect(R.id.tag_recyclerview, ConstraintSet.TOP, R.id.question_textview, ConstraintSet.BOTTOM, 0);
             cs.applyTo(holder.constraint_layout_container);
         }
+
         //DISPLAY NUMBER OF UPVOTES
         holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
         final boolean[] upvoted = {false};
+
         //CHECKS IF USER ALREADY VOTED
         for(String upvoteIDs : post.getUsersWhoUpVoted()){
             if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
@@ -286,7 +285,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     }
 
     @Override
-    public Filter getFilter() { //New Method, use list of all questionposts
+    public Filter getFilter() { // New Method, use list of all questionposts
         return filter;
     }
 
@@ -308,14 +307,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             filterResults.values = filteredList;
             return filterResults;
         }
+
         //runs on an UI thread
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             post_data.clear();
-            System.out.println("SearchBar updated");
-            System.out.println(charSequence);;
             post_data.addAll((Collection<? extends QuestionPost>) filterResults.values);
-            System.out.println(post_data);
             notifyDataSetChanged();
 
         }
@@ -359,6 +356,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             card_view_context = postView.getContext();
         }
     }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
     //FUNCTION THAT GIVES THE USER WHO POSTED THE QN KARMA
     private void givePosterKarma(String posterID){

@@ -2,9 +2,6 @@ package com.example.uskapp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,7 +24,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +37,12 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/*
+    Profile Activity which holds:
+        1. The user information such as accumulated upvotes and ranking
+        2. Local user's favourite list
+ */
+
 public class ProfileActivity extends BaseNavigationActivity {
     private String TAG = "PROFILE";
     ImageView profilePicIV, karmaIconView;
@@ -52,7 +53,7 @@ public class ProfileActivity extends BaseNavigationActivity {
     private DatabaseReference mDatabase;
     private StorageReference mStorageRef;
     private String name;
-    private int rank, exp, karma;
+    private int karma;
     private static final int PICK_IMAGE = 1;
     Uri imageUri;
 

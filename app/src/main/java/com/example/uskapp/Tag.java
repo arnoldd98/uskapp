@@ -7,6 +7,8 @@ import java.util.ArrayList;
 public class Tag {
     private String tag_name;
 
+    // constructor for tag, which converts a string to the tag
+    // for example, '#Breadth-FIRST-SearCH-' becomes 'Breadth first search'
     public Tag(String name) {
         // remove all punctuation except hyphen '-'
         name = name.replaceAll("[^\\P{P}-]+", "");

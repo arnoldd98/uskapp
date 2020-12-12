@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+
+// RecyclerView Adapter used in MainRecyclerViewAdapter to fill the tag recyclerview
 public class TagAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Tag> tag_list;

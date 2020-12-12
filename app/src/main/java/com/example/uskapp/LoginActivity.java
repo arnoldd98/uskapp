@@ -17,14 +17,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+
+/*
+    Activity which handles the logoging in
+ */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     private TextView register,forgot;
     private EditText editTextEmail,editTextPassword;
     private Button login;
     private FirebaseAuth mAuth;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -71,8 +73,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void userLogin(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        System.out.println(email);
-        System.out.println(password);
         if(email.isEmpty()){
             editTextEmail.setError("Email required!");
             editTextEmail.requestFocus();
@@ -108,9 +108,4 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
-    private void signInWithGoogle(){
-
-    }
-
 }

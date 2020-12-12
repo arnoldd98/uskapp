@@ -5,9 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,17 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,12 +38,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 
 public class HomeActivity extends BaseNavigationActivity {
     private ConstraintLayout home_container;
@@ -103,7 +93,6 @@ public class HomeActivity extends BaseNavigationActivity {
         // check for current subject to set topics for
         current_subject = "Home";
         if (getIntent().getStringExtra("indsubject") != null) {
-            System.out.println(getIntent().getStringExtra("indsubject"));
             current_subject = getIntent().getStringExtra("indsubject");
         }
 
@@ -246,7 +235,6 @@ public class HomeActivity extends BaseNavigationActivity {
         lp.addRule(RelativeLayout.CENTER_VERTICAL);
 
         if (is_search) {
-            System.out.println("IS SEARCH");
             // remove current search view if tag was clicked again
             indicate_search_term_layout.removeViewAt(2);
         }
@@ -364,27 +352,6 @@ public class HomeActivity extends BaseNavigationActivity {
                             );
                     viewAdapter.notifyDataSetChanged();
                 }
-                /*
-                for(QuestionPost post : posts_list){
-                    ArrayList<String> picIDArray = post.getPostImageIDs();
-                    final ArrayList<Bitmap> postQuestionBitmaps = new ArrayList<Bitmap>();
-                    for (String postImageID : picIDArray){
-                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                                .child(postImageID);
-                        imageRef.getBytes(2048*2048)
-                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                    @Override
-                                    public void onSuccess(byte[] bytes) {
-                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0,bytes.length);
-                                        postQuestionBitmaps.add(bitmap);
-                                    }
-                                });
-                    }
-                    questionBitmaps.add(postQuestionBitmaps);
-
-                }
-
-                 */
             }
 
             @Override
@@ -392,22 +359,6 @@ public class HomeActivity extends BaseNavigationActivity {
                 Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-//        for (QuestionPost post : posts_list) {
-//            String userID = post.getUserID();
-//        StorageReference imageRef = FirebaseStorage.getInstance().getReference("ProfilePictures")
-//                .child(userID);
-//        imageRef.getBytes(2048 * 2048)
-//                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//                                          @Override
-//                                          public void onSuccess(byte[] bytes) {
-//                                              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                                              profileBitmaps.add(bitmap);
-//                                              viewAdapter.notifyDataSetChanged();
-//                                          }
-//                                      }
-//                );
-//    }
     }
 
     @Override

@@ -1,21 +1,18 @@
 package com.example.uskapp;
 
-import android.media.Image;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+// base class for posts. Contains all the ost essentials
 public abstract class Post implements Comparable<Post> {
     private String userID;
     private String postID;
     private ArrayList<String> postImageIDs = new ArrayList<>();
-    private ArrayList<String> usersWhoUpVoted = new ArrayList<String>(); // keeps track of the ids of user
-    //prevents double voting
+    private ArrayList<String> usersWhoUpVoted = new ArrayList<String>(); // keeps track of the ids of user to prevent double voting
     private String name;
     public boolean toggle_anonymity;
     private String text;

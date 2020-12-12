@@ -2,7 +2,6 @@ package com.example.uskapp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,43 +11,36 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
+// RecyclerView Adapter used in PostFocusActivity showing all the answers to the current post
+
 public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecyclerViewAdapter.ViewHolder> {
     private List<AnswerPost> answer_data;
     private ArrayList<Bitmap> answerProfileBitmaps;
     private ArrayList<Bitmap> ArrayListAnswerImages;
-    private Context ctx;
+    private Context context;
 
     public AnswerRecyclerViewAdapter(Context ctx, List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps, ArrayList<Bitmap> ArrayListAnswerImages) {
         this.answer_data = answer_data;
-        for (AnswerPost answerPost : answer_data) {
-            System.out.println("HERE IS IT");
-            System.out.println(answerPost.getPostID());
-        }
         this.answerProfileBitmaps=answerProfileBitmaps;
         this.ArrayListAnswerImages = ArrayListAnswerImages;
-        this.ctx = ctx;
+        this.context = ctx;
     }
 
     @Override
@@ -57,7 +49,6 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
             return 0;
         }
         return answer_data.size();
-
     }
 
 
@@ -96,7 +87,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
         holder.answer_tv.setText(answer.getText());
         //  ADDING IMAGES OF REPLIES
         if(ArrayListAnswerImages != null){
-            ImageView imageView = new ImageView(ctx);
+            ImageView imageView = new ImageView(context);
             imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
             try {
                 imageView.setImageBitmap(Bitmap.createScaledBitmap(ArrayListAnswerImages.get(position),600,600,true));
@@ -105,7 +96,6 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                 e.printStackTrace();
             }
         }
-
 
 
         //upvoting button
@@ -136,7 +126,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                     newUsersID.add(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                     postRef2.setValue(newUsersID);
                 } else {
-                    Toast.makeText(ctx, "already voted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "already voted", Toast.LENGTH_SHORT).show();
                 }
             }
 

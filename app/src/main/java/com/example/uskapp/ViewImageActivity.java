@@ -95,18 +95,6 @@ public class ViewImageActivity extends AppCompatActivity {
                         fadeAnimate(show_associated_post_layout, true);
                     }
                     options_visible = true;
-
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            fadeAnimate(exit_image_focus_button, false);
-                            if (show_associated_post_layout != null) {
-                                fadeAnimate(show_associated_post_layout, false);
-                            }
-                            options_visible = false;
-                        }
-                    }, 5000);
                 }
             }
         });

@@ -54,11 +54,15 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
+/*
+    Activity for users to add new questions.
+    Supports adding of images, toggling anonymity, adding of tags through hashtags and subject selection
+ */
 public class NewPostActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int CAMERA_REQUEST = 1;
     private static final int PICK_IMAGE = 2;
 
-    boolean isAnonymous=false;
+    boolean isAnonymous = false;
     String current_subject;
     String name;
 
@@ -320,15 +324,16 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         }
         return super.dispatchTouchEvent( event );
     }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // FUNCTION THAT HANDLES POSTING, DATA WILL BE SENT TO FIREBASE
     private void post(){
-
         Date now = new Date();
         long timestamp = now.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss",Locale.ENGLISH);
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
         String dateStr = sdf.format(timestamp);
+
         // need get from the tag but need implement tag system first
         //String subject = subjectTextView.getText().toString();
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -337,8 +342,10 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         ArrayList<String> associated_tags_string_list = Tag.getTagStringList(associated_tags_list);
         QuestionPost newPost;
 
-        String question_text = post_edit_text.getText().toString().replace("#" ,"");
-
+        // get text from edittext and filters out all the tag symbols
+        String question_text = post_edit_text.getText().toString()
+                                             .replace("#" ,"")
+                                             .replace("-", " ");
 
         if(!isAnonymous){
             newPost = new QuestionPost(name,userID,postID, question_text,
@@ -348,7 +355,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                     dateStr,current_subject, associated_tags_string_list,true);
         }
 
-        //if there is a picture
+        // if there is a picture
         int i=0;
         for(Uri u : imageUriArray){
             newPost.addPostImageIDs(picID+i);
@@ -367,7 +374,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             i++;
         }
 
-        //creates the post
+        // creates the post
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(postID).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
