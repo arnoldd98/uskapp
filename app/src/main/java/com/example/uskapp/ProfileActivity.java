@@ -249,6 +249,7 @@ public class ProfileActivity extends BaseNavigationActivity {
     }
 
     private void getFavoritedPostsFromFirebase() {
+
         if(favourited_posts!= null){
             favourited_posts.clear();
         }
@@ -277,7 +278,17 @@ public class ProfileActivity extends BaseNavigationActivity {
                     DataSnapshot arraySnapVoteID = snapshot.child("usersWhoUpVoted");
 
                     QuestionPost qnPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tags), toggle_anonymity,upvotes);
-                    favourited_posts.add(qnPost);
+
+                    boolean valid =true;
+                    for(Post p : favourited_posts){
+                        String id = p.getPostID();
+                        if(qnPost.getPostID().equals(id)){
+                            valid=false;
+                        }
+                    }
+                    if(valid){
+                        favourited_posts.add(qnPost);
+                    }
                     for(DataSnapshot id : arraySnapAnsID.getChildren()){
                         String value = id.getValue(String.class);
                         qnPost.addAnswerPostID(value);
@@ -295,7 +306,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                                                       public void onSuccess(byte[] bytes) {
                                                           Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                                                           profileBitmaps.add(bitmap);
-                                                          favoritedAdapter.notifyDataSetChanged();
+                                                          //favoritedAdapter.notifyDataSetChanged();
                                                       }
                                                   }
                             );
