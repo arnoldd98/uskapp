@@ -320,7 +320,8 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         }
         return super.dispatchTouchEvent( event );
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // FUNCTION THAT HANDLES POSTING, DATA WILL BE SENT TO FIREBASE
     private void post(){
 
         Date now = new Date();
