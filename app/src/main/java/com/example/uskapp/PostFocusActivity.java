@@ -175,7 +175,7 @@ public class PostFocusActivity extends AppCompatActivity {
                             DataSnapshot arraySnapPicID = s.child("postImageIDs");
 
                             currentPost = new QuestionPost(name,userID,postID,text,timestamp,subject,Tag.getTagStringList(tagsList),toggle_anonymity,upvotes);
-                           // currentPost.setPostImageID(postImageID);
+                            //currentPost.setPostImageIDs(postImageID);
                             answerPostIDs.clear();
                             for(DataSnapshot id : arraySnapAnsID.getChildren()){
                                 String value = id.getValue(String.class);
@@ -228,7 +228,7 @@ public class PostFocusActivity extends AppCompatActivity {
                             for(DataSnapshot snap : arraySnapPicID.getChildren()){
                                 picIDArray.add(snap.getValue(String.class));
                             }
-
+                            currentPost.setPostImageIDs(picIDArray);
                             for(String picID : picIDArray){
                                 if(imageThere){
 
@@ -644,8 +644,7 @@ public class PostFocusActivity extends AppCompatActivity {
     }
 
     public void updateCurrentPost(){
-        //currentPost.setPostImageIDs();
-        currentPost.setAnswerPostIDs(answerPostIDs); // maybe need comment out
+        currentPost.setAnswerPostIDs(answerPostIDs);
         FirebaseDatabase.getInstance().getReference("QuestionPost")
                 .child(currentPostID).setValue(currentPost).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
