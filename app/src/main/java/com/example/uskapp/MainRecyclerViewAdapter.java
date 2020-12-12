@@ -141,8 +141,10 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                                     @Override
                                     public void onSuccess(byte[] bytes) {
                                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                        holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
-                                                holder.profile_image_view.getHeight(), false));
+                                        if (holder.profile_image_view.getHeight() > 0 && holder.profile_image_view.getWidth() > 0) {
+                                            holder.profile_image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, holder.profile_image_view.getWidth(),
+                                                    holder.profile_image_view.getHeight(), false));
+                                        }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -165,8 +167,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             }
             
             holder.question_author_name.setText(post.getName());
-
-
         }
 
         if (post.getTimestamp() != null) holder.post_timestamp.setText(post.getTimestamp());
@@ -184,7 +184,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             holder.card_container.removeView(holder.tag_recyclerview);
         }
 
-        //if there are
 
         if (post.getPictures().size()!=0) {
             //prevents over adding
@@ -199,57 +198,9 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
                 }
             }
-
-
-
-
-
-            /*
-        if (questionBitmaps.get(position).size()>0) {
-            if(holder.image_layout.getChildCount() == 0) {
-                for (Bitmap bitmap : questionBitmaps.get(position)) {
-
-                /*
-                //firebase getting image
-                StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
-                        .child(postPicId);
-                imageRef.getBytes(2048*2048)
-                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] bytes) {
-                                bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
-
-                    try {
-                        ImageView image_view = new ImageView(holder.card_view_context);
-                        image_view.setImageBitmap(bitmap);
-                        image_view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 400
-                                , 400, false));
-                        image_view.setMaxHeight(holder.image_layout.getHeight());
-                        holder.image_layout.addView(image_view);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-
-             */
-
-
-
         } else {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(holder.constraint_layout_container);
-            System.out.println("YES YES YES");
             cs.connect(R.id.tag_recyclerview, ConstraintSet.BOTTOM, R.id.ups_indicator_layout, ConstraintSet.TOP, 0);
             cs.connect(R.id.tag_recyclerview, ConstraintSet.TOP, R.id.question_textview, ConstraintSet.BOTTOM, 0);
             cs.applyTo(holder.constraint_layout_container);
@@ -282,6 +233,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                     newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
                     upvoted[0] = false;
+                    MainRecyclerViewAdapter.this.notifyDataSetChanged();
                 }
                 else{
                     holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
@@ -298,6 +250,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                     newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
                     upvoted[0] = true;
+                    MainRecyclerViewAdapter.this.notifyDataSetChanged();
                 }
 
             }
@@ -317,7 +270,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         holder.favourite_question_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(local_user.getFollowingPostIDs());
                 if (is_favourited[0]) {
                     holder.favourite_question_button.setBackgroundResource(R.drawable.star_unselected);
                     local_user.unfavouritePost(post.getPostID());

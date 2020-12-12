@@ -14,6 +14,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -35,11 +36,9 @@ public class LocalUser {
     private HashMap<String, Bitmap> subjectImageHashmap = new HashMap<String, Bitmap>();
 
     public LocalUser() {
-        System.out.println("INITIAILIZED INTIALIZEED");
         getSubjectRef();
         fetchFollowedPostIDsFromFirebase();
         listenFollowedPosts();
-
     }
 
     public DatabaseReference getSubjectRef() {
@@ -76,7 +75,6 @@ public class LocalUser {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 
@@ -182,7 +180,7 @@ public class LocalUser {
         });
     }
 
-    // feetch list of followed posts from firebase
+    // fetch list of followed posts from firebase
     private void fetchFollowedPostIDsFromFirebase() {
         getUserRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -191,10 +189,6 @@ public class LocalUser {
                 for(DataSnapshot id : postFollowingID.getChildren()){
                     String str = id.getValue(String.class);
                     favouritePost(str);
-                }
-
-                for (String id : followed_post_ids) {
-                    System.out.println("Id: " + id);
                 }
             }
 

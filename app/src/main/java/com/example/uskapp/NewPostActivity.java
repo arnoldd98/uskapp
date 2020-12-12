@@ -68,8 +68,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     ImageButton cameraButton;
     ImageButton galleryButton;
     LinearLayout pictureLayout;
-    ConstraintLayout.LayoutParams layoutParams;
-    ConstraintLayout anonymousOrNot;
     ConstraintLayout mainLayout;
     ImageView profilePic;
     TextView postText;
@@ -124,16 +122,20 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 ArrayList<Tag> prev_tags_list = (ArrayList<Tag>) associated_tags_list.clone();
 
                 for (Tag tag : prev_tags_list) {
-                    String tag_name = tag.getTagName().toLowerCase();
                     boolean contain_tag = false;
                     for (String word : words) {
-                        word = word.substring(1).replaceAll("\\p{Punct}", "");
-                        if (word.equals(tag_name)) {
-                            contain_tag = true;
+                        if (word.startsWith("#")) {
+                            if (word.equals("#")) continue;
+                            word = word.substring(1);
+                            Tag existing_tag = new Tag(word);
+                            if (existing_tag.equals(tag)) {
+                                contain_tag = true;
+                            }
                         }
                     }
                     if (!contain_tag) {
                         associated_tags_list.remove(tag);
+                        tag_adapter.notifyDataSetChanged();
                     }
                 }
 
@@ -143,15 +145,17 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                     if (word.startsWith("#") && word.equals(words[words.length - 1])) {
                         if (word.substring(1).equals("")) return;
                         if (word.charAt(word.length() - 1) == '#') continue;
-                        Tag new_tag = new Tag(word.substring(1).replaceAll("\\p{Punct}", ""));
+
+                        // clean up word, remove all punctuations except hyphen
+                        Tag new_tag = new Tag(word.substring(1));
                         if (!associated_tags_list.contains(new_tag)) {
                             associated_tags_list.add(new_tag);
                         }
                     }
                     if (word.startsWith("#")) {
-                        if (word.substring(1).equals("")) return;
+                        if (word.substring(1).isEmpty()) return;
                         if (word.charAt(word.length() - 1) == '#') continue;
-                        Tag new_tag = new Tag(word.substring(1).replaceAll("\\p{Punct}", ""));
+                        Tag new_tag = new Tag(word.substring(1));
                         char last_char = s.charAt(s.length() - 1);
                         if (!associated_tags_list.contains(new_tag) && Character.isWhitespace(last_char)) {
                             associated_tags_list.add(new_tag);
@@ -398,8 +402,6 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             imagePost.setMaxHeight(400);
             imagePost.setMaxWidth(400);
             pictureLayout.addView(imagePost);
-            //postPicture.setImageURI(imageUri);
-            //postPicture.setImageBitmap(imageBitmap);
 
         } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             Bitmap bitmap=null;
@@ -425,6 +427,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             pictureLayout.addView(imagePost);
         }
     }
+
     public void popUpImageOptions() {
         final Dialog bottomDialogue = new Dialog(this, R.style.ImageDialogSheet);
         bottomDialogue.setContentView(R.layout.choose_image_options_view);

@@ -268,9 +268,7 @@ public class PostFocusActivity extends AppCompatActivity {
                                     });
                                     imageThere = true;
                                 }
-
                             }
-
 
                             timeStampTv.setText(timestamp);
                             if(toggle_anonymity==false){

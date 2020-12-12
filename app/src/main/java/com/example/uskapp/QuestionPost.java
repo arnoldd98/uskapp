@@ -8,7 +8,6 @@ public class QuestionPost extends Post {
     private ArrayList<String> answerPostIDs = new ArrayList<String>(); // array lists need be created IDS added later on thru method
     //private ArrayList<AnswerPost> answers_list;
     private ArrayList<String> tags_string_list;
-    private ArrayList<String> post_followers = new ArrayList<>();
     private ArrayList<Bitmap> pictures = new ArrayList<>();
 
     public QuestionPost(String name, String userID, String postID, String text, String timestamp,
