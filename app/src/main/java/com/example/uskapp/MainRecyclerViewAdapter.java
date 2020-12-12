@@ -224,6 +224,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 if(upvoted[0]){
                     holder.ups_indicator_image.setImageResource(R.drawable.empty_triangle);
                     int newUpvoteCount = post.getUpvotes()-1;
+                    minusPosterKarma(post.getUserID());
                     String id = post_data.get(position).getPostID();
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("upvotes");
@@ -369,6 +370,24 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int karma = snapshot.child("karma").getValue(Integer.class);
                 karma +=1;
+                posterRef.child("karma").setValue(karma);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //FUNCTION THAT GIVES THE USER WHO POSTED THE QN KARMA
+    private void minusPosterKarma(String posterID){
+        final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                .child(posterID);
+        posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int karma = snapshot.child("karma").getValue(Integer.class);
+                karma -=1;
                 posterRef.child("karma").setValue(karma);
             }
 

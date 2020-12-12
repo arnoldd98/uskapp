@@ -136,6 +136,17 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                     newUsersID.add(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                     postRef2.setValue(newUsersID);
                 } else {
+                    minusPosterKarma(post.getUserID());
+                    String id = answer_data.get(position).getPostID();
+                    int i = post.getUpvotes()-1;
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("upvotes");
+                    postRef.setValue(i);
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                            .child(id).child("usersWhoUpVoted");
+                    ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
+                    newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    postRef2.setValue(newUsersID);
                     Toast.makeText(ctx, "already voted", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -148,6 +159,23 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         int karma = snapshot.child("karma").getValue(Integer.class);
                         karma +=1;
+                        posterRef.child("karma").setValue(karma);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+            private void minusPosterKarma(String posterID) {
+                final DatabaseReference posterRef = FirebaseDatabase.getInstance().getReference("Users")
+                        .child(posterID);
+                posterRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int karma = snapshot.child("karma").getValue(Integer.class);
+                        karma -=1;
                         posterRef.child("karma").setValue(karma);
                     }
 
