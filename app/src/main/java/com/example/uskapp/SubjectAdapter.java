@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +28,7 @@ public class SubjectAdapter extends RecyclerView.Adapter {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(activity);
-        View myOwnView = layoutInflater.inflate(R.layout.recyclerlayout, parent, false);
+        View myOwnView = layoutInflater.inflate(R.layout.subject_recyclerlayout, parent, false);
         ViewHolder viewHolder = new ViewHolder(myOwnView);
 
         return viewHolder;
@@ -38,13 +37,12 @@ public class SubjectAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         final ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.button.setText(subjectArrayList.get(position));
-        viewHolder.button.setBackgroundColor(androidcolors[position]);
+        viewHolder.subject_button.setText(subjectArrayList.get(position));
+        viewHolder.subject_button.setBackgroundColor(androidcolors[position]);
 
-        viewHolder.button.setOnClickListener(new View.OnClickListener() {
+        viewHolder.subject_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, viewHolder.textView.getText().toString(), Toast.LENGTH_SHORT).show();
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 Intent intent = new Intent(activity,HomeActivity.class);
                 intent.putExtra("indsubject", subjectArrayList.get(position));
@@ -57,13 +55,11 @@ public class SubjectAdapter extends RecyclerView.Adapter {
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
-        Button button;
-        TextView textView;
+        Button subject_button;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            button = itemView.findViewById(R.id.subjectView);
-            textView = itemView.findViewById(R.id.subject_name_textview);
+            subject_button = itemView.findViewById(R.id.subject_button);
         }
     }
 

@@ -7,27 +7,15 @@
         android:layout_height="wrap_content"
         tools:context=".SubjectActivity">
 
-        <TextView
-            android:id="@+id/subject_name_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="20dp"
-            android:gravity="start"
-            android:text="TextView"
-            android:fontFamily="@font/nunitosans_semibold"
-            android:textSize="20sp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            app:layout_constraintStart_toStartOf="@+id/subjectView"
-            app:layout_constraintTop_toTopOf="@+id/subjectView" />
-
         <Button
-            android:id="@+id/subjectView"
+            android:id="@+id/subject_button"
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_marginStart="25dp"
             android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:textAppearance="@font/nunitosans_semibold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
