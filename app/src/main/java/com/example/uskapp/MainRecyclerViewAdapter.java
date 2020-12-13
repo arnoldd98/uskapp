@@ -300,12 +300,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     Filter filter = new Filter() {
         //run on background thread
         @Override
-        protected FilterResults performFiltering(CharSequence charSequence) { //logic for filtering
+        protected FilterResults performFiltering(CharSequence charSequence) { //logic for filtering the search query
             List<QuestionPost> filteredList = new ArrayList<>();
-            if(charSequence.toString().isEmpty()){
+            if(charSequence.toString().isEmpty()){ //if there is no text detected in the search bar, then it will show all posts (unfiltered)
                 filteredList.addAll(post_data_all);
             } else{
-                for (QuestionPost questionpost: post_data_all){
+                for (QuestionPost questionpost: post_data_all){ //for each question post, check if the text content matches the query text in the search bar
                     if (questionpost.getText().toLowerCase().contains(charSequence.toString().toLowerCase())){
                         filteredList.add(questionpost);
                     }
@@ -319,8 +319,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         //runs on an UI thread
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            post_data.clear();
-            post_data.addAll((Collection<? extends QuestionPost>) filterResults.values);
+            post_data.clear(); //clears all the unfiltered question post
+            post_data.addAll((Collection<? extends QuestionPost>) filterResults.values); //adds the list of filtered question posts based on query to the array list of question posts
             notifyDataSetChanged();
 
         }

@@ -186,18 +186,18 @@ public class HomeActivity extends BaseNavigationActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_toolbar_menu, menu);
+        getMenuInflater().inflate(R.menu.top_toolbar_menu, menu); //inflates the top toolbar menu which holds the search bar function
         final MenuItem search_item = menu.findItem(R.id.search_posts);
         SearchView search_view = (android.widget.SearchView) search_item.getActionView();
         search_view.setMaxWidth(android.R.attr.maxWidth);
         search_view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public boolean onQueryTextSubmit(String s) { //This method is invoked when the user submits the query text on the search bar
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(String s) { //This method is invoked when there is a change detected in the query text within the search bar
                 viewAdapter.getFilter().filter(s);
                 return false;
             }

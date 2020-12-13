@@ -195,7 +195,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         cameraButton = findViewById(R.id.cameraButton);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //if the camera button is clicked, there will be an implicit intent bringing the user to the phones camera
                 dispatchTakePictureIntent();
             }
         });
@@ -204,7 +204,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
 
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //if gallery button is clicked, there will be an implicit intent bringing the user to the gallery
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -397,7 +397,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) { //if the picture source was from the camera, then this if branch will be selected
             Bundle extras  = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageBitmap = Bitmap.createScaledBitmap(imageBitmap,400,400,true);
@@ -411,7 +411,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
             imagePost.setMaxWidth(400);
             pictureLayout.addView(imagePost);
 
-        } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+        } else if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) { //if the picture source was from the gallery, this if branch will be selected
             Bitmap bitmap=null;
             imageUri = data.getData();
             imageUriArray.add(imageUri);
@@ -435,7 +435,7 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
+    public Uri getImageUri(Context inContext, Bitmap inImage) { //function to generate image URI from a bitmap
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
