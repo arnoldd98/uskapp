@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()){ //selects the correct method to call based on the id of each item in the log-in menu
             case R.id.register_select:
                 startActivity(new Intent(this,SignupActivity.class));
                 break;
@@ -73,22 +73,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void userLogin(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        if(email.isEmpty()){
+        if(email.isEmpty()){ //checks if the string in the e-mail field is empty or not
             editTextEmail.setError("Email required!");
             editTextEmail.requestFocus();
             return;
         }
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){ //to verify whether the string in the e-mail field matches a valid email address
             editTextEmail.setError("Invalid email!");
             editTextEmail.requestFocus();
             return;
         }
-        if(password.isEmpty()){
+        if(password.isEmpty()){ //checks if the passwor field is empty
             editTextPassword.setError("Password required!");
             editTextPassword.requestFocus();
             return;
         }
-        if(password.length()<8){
+        if(password.length()<8){ //sets the condition of password string to be at least 8 characters length
             editTextPassword.setError("Invalid password!");
             editTextPassword.requestFocus();
             return;
