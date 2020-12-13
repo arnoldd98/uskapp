@@ -278,6 +278,7 @@ public class ProfileActivity extends BaseNavigationActivity {
                     boolean toggle_anonymity = snapshot.child("toggle_anonymity").getValue(Boolean.class);
                     String subject = snapshot.child("subject").getValue(String.class);
                     DataSnapshot arraySnapTagsID = snapshot.child("tagsList");
+                    DataSnapshot arraySnapPicID = snapshot.child("postImageIDs");
                     ArrayList<Tag> tags = new ArrayList<Tag>();
                     for (DataSnapshot id : arraySnapTagsID.getChildren()) {
                         String value = id.child("tagName").getValue(String.class);
@@ -299,6 +300,23 @@ public class ProfileActivity extends BaseNavigationActivity {
                         String value = id.getValue(String.class);
                         qnPost.addUserUpvote(value);
                     }
+                    final ArrayList<Bitmap> qnPics = new ArrayList<>();
+                    for(DataSnapshot id : arraySnapPicID.getChildren()){
+                        String value = id.getValue(String.class);
+                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("QuestionPictures")
+                                .child(value);
+                        imageRef.getBytes(2048 * 2048)
+                                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                          @Override
+                                                          public void onSuccess(byte[] bytes) {
+                                                              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                                              qnPics.add(bitmap);
+                                                              favoritedAdapter.notifyDataSetChanged();
+                                                          }
+                                                      }
+                                );
+                    }
+                    qnPost.setPictures(qnPics);
 
                     boolean valid =true;
                     for(Post p : favourited_posts){
