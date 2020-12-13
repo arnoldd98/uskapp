@@ -43,6 +43,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -262,9 +265,9 @@ public class PostFocusActivity extends AppCompatActivity {
                                                         public void onClick(View v) {
                                                             Intent image_intent = new Intent(PostFocusActivity.this, ViewImageActivity.class);
                                                             image_intent.putExtra("PostText", text);
-                                                            Bitmap compressed_bitmap = Utils.compressBitmapLossless(bitmap);
-                                                            image_intent.putExtra("ImageBitmap", compressed_bitmap);
+                                                            String path = Utils.saveTempBitmapToStorage(bitmap, getApplicationContext());
 
+                                                            image_intent.putExtra("BitmapPath", path);
                                                             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                                             startActivity(image_intent);
                                                         }
@@ -290,7 +293,7 @@ public class PostFocusActivity extends AppCompatActivity {
 
                             postTextTv.setText(text);
                             upVoteTv.setText(upvotes + " ups");
-                            commentTv.setText(String.valueOf(currentPost.getAnswerPostIDs().size()));
+                            commentTv.setText(currentPost.getAnswerPostIDs().size() + " comments");
 
                             // set recyclerview showing tags of post under question text
                             if (tagsList != null) {
@@ -388,10 +391,10 @@ public class PostFocusActivity extends AppCompatActivity {
                     }
                 }
 
-                if(PostFocusActivity.this.is_upVoted){
+                if(is_upVoted){
                     //IF USER HAS NOT VOTED ADD A VOTE TO FIREBASE DATA
                     //upVoteIv.setImageResource(R.drawable.empty_triangle);
-                    currentPost.increaseUpVote();
+                    currentPost.addUserUpvote(local_user.getCurrentUserId());
                     givePosterKarma(currentPost.getUserID());
                     int i = currentPost.getUpvotes();
                     String id = currentPost.getPostID();
@@ -403,35 +406,22 @@ public class PostFocusActivity extends AppCompatActivity {
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
-                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
+                    is_upVoted = true;
 
                 } else {
                     //USER ALREADY VOTED BEFORE AND NOW WANT TO REMOVE HIS VOTE
                     // REMOVING USERS UPVOTE
-                    int newUpvoteCount = currentPost.getUpvotes()-1;
+                    currentPost.removeUserUpvote(local_user.getCurrentUserId());
                     String id = currentPost.getPostID();
 
                     //UPDATING FIREBASE
                     final DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("upvotes");
-                    postRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            int numVotes = snapshot.getValue(Integer.class);
-                            postRef.setValue(numVotes-1);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                    postRef.setValue(newUpvoteCount);
+                    postRef.setValue(currentPost.getUpvotes());
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
 
-                    currentPost.removeUserUpvote(local_user.getCurrentUserId());
                     ArrayList<String> newUsersID = currentPost.getUsersWhoUpVoted();
 
                     postRef2.setValue(newUsersID);
