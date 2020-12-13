@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+// Adapter for the recyclerview used in SubjectActivity
 public class SubjectAdapter extends RecyclerView.Adapter {
     private ArrayList<String> subjectArrayList;
     private int[] androidcolors;

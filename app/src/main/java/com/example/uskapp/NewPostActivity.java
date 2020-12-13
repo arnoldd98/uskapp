@@ -429,18 +429,10 @@ public class NewPostActivity extends AppCompatActivity implements View.OnClickLi
                 imagePost.setImageURI(imageUri);
             }
             imagePost.setScaleType(ImageView.ScaleType.CENTER);
-            //imagePost.setImageBitmap(bitmapv2);
             imagePost.setMaxHeight(600);
             imagePost.setMaxWidth(600);
             pictureLayout.addView(imagePost);
         }
-    }
-
-    public void popUpImageOptions() {
-        final Dialog bottomDialogue = new Dialog(this, R.style.ImageDialogSheet);
-        bottomDialogue.setContentView(R.layout.choose_image_options_view);
-        bottomDialogue.setCancelable(true);
-        bottomDialogue.show();
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {

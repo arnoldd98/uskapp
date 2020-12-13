@@ -17,9 +17,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+
+// to select subjects such that posts of a selected subject are shown
+// click on back button to return to home feed
+// otherwise selecting a subject would open up HomeActivity but with posts under a specific subject
 public class SubjectActivity extends AppCompatActivity {
-
-
     RecyclerView recycler;
     SubjectAdapter adapter;
     ArrayList<String> subjectTitle;
@@ -55,8 +57,6 @@ public class SubjectActivity extends AppCompatActivity {
             }
 
         });
-
-
 
         //connect bottons with their ids
         recycler = findViewById(R.id.subjectRecyler);

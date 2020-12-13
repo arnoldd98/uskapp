@@ -40,6 +40,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+// Utilities class consisting of some helper functions which are shared between different activities
 public class Utils {
     public static final int CAMERA_REQUEST = 1;
     public static final int PICK_IMAGE = 2;
