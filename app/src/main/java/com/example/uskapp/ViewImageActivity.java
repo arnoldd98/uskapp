@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.ortiz.touchview.TouchImageView;
 
+import java.io.FileNotFoundException;
+
 /* View image in full view
  Takes in Bitmap in the Intent provided and sets the current focused image to be the input Bitmap
  Used in any scenario when an image has to be viewed in full view
@@ -41,6 +43,10 @@ public class ViewImageActivity extends AppCompatActivity {
     LinearLayout show_associated_post_layout;
     TextView associated_post_text;
     boolean options_visible;
+
+    final public static String BITMAP_PATH_KEY = "BitmapPath";
+    final public static String URI_KEY = "ImageUri";
+    final public static String TEXT_KEY = "PostText";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,7 @@ public class ViewImageActivity extends AppCompatActivity {
         // if called from PostFocusActivity (when answering questions),
         // set the post text to whatever was written in the EditText before sending
         associated_post_text = (TextView) findViewById(R.id.associated_post_text);
-        String post_text = getIntent().getStringExtra("PostText");
+        String post_text = getIntent().getStringExtra(TEXT_KEY);
         if (!post_text.isEmpty()) associated_post_text.setText(post_text);
         else {
             image_focus_container_layout.removeView(show_associated_post_layout);
@@ -73,13 +79,22 @@ public class ViewImageActivity extends AppCompatActivity {
         focused_image_view = (TouchImageView) findViewById(R.id.focused_image_view);
 
         // set image to URI or Bitmap, depending on which one is included in intent
-        Uri image_uri = (Uri) getIntent().getParcelableExtra("ImageUri");
-        Bitmap image_bitmap = (Bitmap) getIntent().getParcelableExtra("ImageBitmap");
+        Uri image_uri = (Uri) getIntent().getParcelableExtra(URI_KEY);
+        String bitmap_path = (String) getIntent().getStringExtra(BITMAP_PATH_KEY);
         if (image_uri != null) focused_image_view.setImageURI(image_uri);
-        else focused_image_view.setImageBitmap(image_bitmap);
+        else {
+            try {
+                Bitmap bitmap = Utils.loadTempBitmapFromStorage(bitmap_path, getApplicationContext());
+                focused_image_view.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                Toast.makeText(ViewImageActivity.this, "Image file cannot be found!", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
 
 
-
+        // tap on screen to bring up image options
+        // can view post content, or go back
         focused_image_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -63,9 +63,12 @@ public class HomeActivity extends BaseNavigationActivity {
     // helper variables for indicateCurrentSearchTermFunction
     boolean is_search;
 
+    public LocalUser local_user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        local_user = LocalUser.getCurrentUser();
         final Activity activity = this;
 
         home_container = (ConstraintLayout) findViewById(R.id.home_container);

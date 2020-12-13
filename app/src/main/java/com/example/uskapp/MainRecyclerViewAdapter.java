@@ -204,13 +204,13 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
 
         //DISPLAY NUMBER OF UPVOTES
-        holder.comment_indicator_textview.setText(String.valueOf(post_data.get(position).getAnswerPostIDs().size()));
+        holder.comment_indicator_textview.setText(post_data.get(position).getAnswerPostIDs().size() + " comments");
         holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
         final boolean[] upvoted = {false};
 
         //CHECKS IF USER ALREADY VOTED
         for(String upvoteIDs : post.getUsersWhoUpVoted()){
-            if(upvoteIDs.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) ){
+            if(upvoteIDs.equals(local_user.getCurrentUserId()) ){
                 holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
                 upvoted[0] = true;
             }
@@ -224,16 +224,19 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 //IF USER HAS ALREADY VOTED
                 if(upvoted[0]){
                     holder.ups_indicator_image.setImageResource(R.drawable.empty_triangle);
-                    int newUpvoteCount = post.getUpvotes()-1;
+                    System.out.println("Before upvotes: " + post.getUsersWhoUpVoted());
+                    post.removeUserUpvote(local_user.getCurrentUserId());
                     minusPosterKarma(post.getUserID());
+                    System.out.println("After upvotes: " + post.getUsersWhoUpVoted());
                     String id = post_data.get(position).getPostID();
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("upvotes");
-                    postRef.setValue(newUpvoteCount);
+                    postRef.setValue(post.getUpvotes());
+                    System.out.println("UPVOTES: " + post.getUpvotes());
+                    holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
                     ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
-                    newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
                     upvoted[0] = false;
                     MainRecyclerViewAdapter.this.notifyDataSetChanged();
@@ -241,17 +244,19 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 //IF USER HAS NOT VOTED
                 else{
                     holder.ups_indicator_image.setImageResource(R.drawable.blue_triangle);
-                    post.increaseUpVote();
+                    System.out.println("Before upvotes: " + post.getUsersWhoUpVoted());
+                    post.addUserUpvote(local_user.getCurrentUserId());
                     givePosterKarma(post.getUserID());
-                    int i = post.getUpvotes();
                     String id = post_data.get(position).getPostID();
+                    System.out.println("After upvotes: " + post.getUsersWhoUpVoted());
                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("upvotes");
-                    postRef.setValue(i);
+                    postRef.setValue(post.getUpvotes());
+                    System.out.println("UPVOTES: " + post.getUpvotes());
+                    holder.ups_indicator_textview.setText(post.getUpvotes() + " ups");
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
                             .child(id).child("usersWhoUpVoted");
                     ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
-                    newUsersID.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     postRef2.setValue(newUsersID);
                     upvoted[0] = true;
                     MainRecyclerViewAdapter.this.notifyDataSetChanged();

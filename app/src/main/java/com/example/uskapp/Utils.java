@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -31,6 +32,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -214,5 +218,32 @@ public class Utils {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
         Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
         return decoded;
+    }
+
+    // saves a bitmap to storage in cache directory
+    public static String saveTempBitmapToStorage(Bitmap bitmap, Context context) {
+        File dir = context.getCacheDir();
+        File path = new File(dir, "temp_bmp.jpg");
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(path);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return path.getAbsolutePath();
+    }
+
+    // get temporary bitmap from cache directory
+    public static Bitmap loadTempBitmapFromStorage(String path, Context context) throws FileNotFoundException{
+        File f = new File(path);
+        Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f));
+        return bitmap;
     }
 }

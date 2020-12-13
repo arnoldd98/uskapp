@@ -51,6 +51,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
+import static com.example.uskapp.ViewImageActivity.BITMAP_PATH_KEY;
+import static com.example.uskapp.ViewImageActivity.TEXT_KEY;
+
 
 /*
     Activity which places the post in focus. Opens after pressing a
@@ -264,10 +267,10 @@ public class PostFocusActivity extends AppCompatActivity {
                                                         @Override
                                                         public void onClick(View v) {
                                                             Intent image_intent = new Intent(PostFocusActivity.this, ViewImageActivity.class);
-                                                            image_intent.putExtra("PostText", text);
+                                                            image_intent.putExtra(TEXT_KEY, text);
                                                             String path = Utils.saveTempBitmapToStorage(bitmap, getApplicationContext());
 
-                                                            image_intent.putExtra("BitmapPath", path);
+                                                            image_intent.putExtra(BITMAP_PATH_KEY, path);
                                                             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                                             startActivity(image_intent);
                                                         }

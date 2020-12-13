@@ -129,7 +129,7 @@ public abstract class Post implements Comparable<Post> {
     }
 
     public int getUpvotes() {
-        return upvotes;
+        return this.usersWhoUpVoted.size();
     }
 
     public void increaseUpVote(){

@@ -269,6 +269,7 @@ public class ProfileActivity extends BaseNavigationActivity {
             postRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!snapshot.child("name").exists()) return;
                     String name = snapshot.child("name").getValue(String.class);
                     String userID = snapshot.child("userID").getValue(String.class);
                     String postID = snapshot.child("postID").getValue(String.class);

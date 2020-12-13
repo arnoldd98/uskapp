@@ -1,6 +1,7 @@
 package com.example.uskapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -27,23 +27,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.uskapp.ViewImageActivity.BITMAP_PATH_KEY;
+import static com.example.uskapp.ViewImageActivity.TEXT_KEY;
+
 
 // RecyclerView Adapter used in PostFocusActivity showing all the answers to the current post
 
 public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecyclerViewAdapter.ViewHolder> {
     private List<AnswerPost> answer_data;
     private ArrayList<Bitmap> answerProfileBitmaps;
-    private ArrayList<Bitmap> ArrayListAnswerImages;
+    private ArrayList<Bitmap> answer_images_list;
     private Context ctx;
+    private LocalUser local_user = LocalUser.getCurrentUser();
 
     public AnswerRecyclerViewAdapter(Context ctx, List<AnswerPost> answer_data,ArrayList<Bitmap> answerProfileBitmaps, ArrayList<Bitmap> ArrayListAnswerImages) {
         this.answer_data = answer_data;
         for (AnswerPost answerPost : answer_data) {
-            System.out.println("HERE IS IT");
-            System.out.println(answerPost.getPostID());
         }
         this.answerProfileBitmaps=answerProfileBitmaps;
-        this.ArrayListAnswerImages = ArrayListAnswerImages;
+        this.answer_images_list = ArrayListAnswerImages;
         this.ctx = ctx;
     }
 
@@ -55,7 +57,6 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
         return answer_data.size();
 
     }
-
 
     @NonNull
     @Override
@@ -70,7 +71,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder,final int position) {
-        AnswerPost answer = answer_data.get(position);
+        final AnswerPost answer = answer_data.get(position);
         // ANONYMITY HANDLING
         if (answer.toggle_anonymity){
             holder.answerer_profile_iv.setImageResource(R.drawable.image);
@@ -90,19 +91,35 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
         if (answer.getTimestamp() != null) holder.answer_post_timestamp_tv.setText(answer.getTimestamp());
         holder.up_answer_btn.setText(answer.getUpvotes() + " ups");
         holder.answer_tv.setText(answer.getText());
+
+        Bitmap attached_image = null;
         //  ADDING IMAGES OF REPLIES
-        if(ArrayListAnswerImages != null){
+        if(answer_images_list != null){
             ImageView imageView = new ImageView(ctx);
             imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
             try {
-                imageView.setImageBitmap(Bitmap.createScaledBitmap(ArrayListAnswerImages.get(position),600,600,true));
+                attached_image = answer_images_list.get(position);
+                imageView.setImageBitmap(Bitmap.createScaledBitmap(attached_image,600,600,true));
                 holder.clickable_to_images_layout1.addView(imageView);
             } catch (Exception e){
                 e.printStackTrace();
             }
         }
 
+        final Bitmap finalAttached_image = attached_image;
+        holder.answer_container_layout1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (finalAttached_image == null) return;
+                String answer_text = answer.getText();
+                Intent image_intent = new Intent(ctx, ViewImageActivity.class);
+                image_intent.putExtra(TEXT_KEY, answer_text);
 
+                String path = Utils.saveTempBitmapToStorage(finalAttached_image, ctx);
+                image_intent.putExtra(BITMAP_PATH_KEY, path);
+                ctx.startActivity(image_intent);
+            }
+        });
 
         //upvoting button
         // checks if valid
@@ -119,7 +136,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                 }
 
                 if(valid){
-                    post.increaseUpVote();
+                    post.addUserUpvote(local_user.getCurrentUserId());
                     int i = post.getUpvotes();
                     givePosterKarma(post.getUserID());
                     String id = answer_data.get(position).getPostID();
@@ -129,21 +146,20 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<AnswerRecycl
                     DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("AnswerPost")
                             .child(id).child("usersWhoUpVoted");
                     ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
-                    newUsersID.add(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
                     postRef2.setValue(newUsersID);
                 } else {
                     minusPosterKarma(post.getUserID());
+                    post.removeUserUpvote(local_user.getCurrentUserId());
                     String id = answer_data.get(position).getPostID();
-                    int i = post.getUpvotes()-1;
-                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                    int i = post.getUpvotes();
+                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("AnswerPost")
                             .child(id).child("upvotes");
                     postRef.setValue(i);
-                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("QuestionPost")
+                    DatabaseReference postRef2 = FirebaseDatabase.getInstance().getReference("AnswerPost")
                             .child(id).child("usersWhoUpVoted");
                     ArrayList<String> newUsersID = post.getUsersWhoUpVoted();
-                    newUsersID.remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    newUsersID.remove(local_user.getCurrentUserId());
                     postRef2.setValue(newUsersID);
-                    Toast.makeText(ctx, "already voted", Toast.LENGTH_SHORT).show();
                 }
             }
 
