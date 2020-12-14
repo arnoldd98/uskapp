@@ -56,7 +56,7 @@ import static com.example.uskapp.ViewImageActivity.TEXT_KEY;
 
 
 /*
-    Activity which places the post in focus. Opens after pressing a
+    Activity which places the post in focus. Opens after pressing a post in the home recyclerview
  */
 public class PostFocusActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1;
